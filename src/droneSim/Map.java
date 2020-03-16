@@ -30,8 +30,15 @@ public class Map {
 	
 	//TODO
 	public void saveMap() {}
-	public void loadMap() {}
-	public DeliveryPoint getPoint() {return new DeliveryPoint(0, 0);}
+	public void loadMap(String mapName, String fileAddress) {
+		// save current map
+		saveMap();
+		this.mapName = mapName;
+		this.fileAddress = fileAddress;
+		// TODO get file access and delivery points
+	}
+	public DeliveryPoint getPoint(int x, int y) {return new DeliveryPoint(0, 0);}// override = in point class??
+	public ArrayList<DeliveryPoint> getPoints() {return points;}
 	public void newPoint(DeliveryPoint point) {} // or could take a x, y??
 	public void deletePoint(DeliveryPoint point) {}
 	
