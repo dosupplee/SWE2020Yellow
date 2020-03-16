@@ -5,7 +5,7 @@ public class Food {
 	private double weight; // the weight of the food item
 	
 	
-	/** 
+	/**  
 	 * Food constructor: takes name and weight
 	 * @param name
 	 * @param weight
