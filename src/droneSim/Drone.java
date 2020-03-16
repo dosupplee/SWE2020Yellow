@@ -6,6 +6,13 @@ public class Drone {
 	private double speed; // the speed of the drone
 	private double maxFlightTime; // the maximum flight time
 	
+	/**
+	 * Creates a Drone class
+	 * @param name
+	 * @param weightCapacity
+	 * @param speed
+	 * @param maxFlightTime
+	 */
 	public Drone(String name, double weightCapacity, double speed, double maxFlightTime) {
 		this.name = name;
 		this.weightCapacity = weightCapacity;
