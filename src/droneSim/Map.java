@@ -1,6 +1,7 @@
 package droneSim;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Map {
 	private String mapName;		// name of map
@@ -37,10 +38,27 @@ public class Map {
 		this.fileAddress = fileAddress;
 		// TODO get file access and delivery points
 	}
-	public DeliveryPoint getPoint(int x, int y) {return new DeliveryPoint(0, 0);}// override = in point class??
+	public DeliveryPoint getPoint(int x, int y) {return new DeliveryPoint(0, 0,"NULL");}// override = in point class??
 	public ArrayList<DeliveryPoint> getPoints() {return points;}
 	public void newPoint(DeliveryPoint point) {} // or could take a x, y??
 	public void deletePoint(DeliveryPoint point) {}
+	
+	
+	/*
+	 * Returns a random point from the currentMap
+	 * Takes in nothing
+	 * Returns the randomly chosen point
+	 */
+	public DeliveryPoint getRandomPoint()
+	{
+		Random rand = new Random();
+		
+		int randPoint = rand.nextInt(points.size());
+		
+		return points.get(randPoint);
+	}
+	
+	
 	
 
 }

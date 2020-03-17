@@ -96,6 +96,11 @@ public class Meal {
 	public void setProbability(double probability) {
 		this.probability = probability;
 	}
+	
+	public ArrayList<Food> getFoodItems()
+	{
+		return foodItems;
+	}
 
 
 }

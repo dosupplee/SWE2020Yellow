@@ -4,15 +4,17 @@ public class DeliveryPoint {
 	
 	private int x;
 	private int y; 
+	private String name;
 	
 	/**
 	 * Creates a Delivery Point
 	 * @param x
 	 * @param y
 	 */
-	public DeliveryPoint(int x, int y) {
+	public DeliveryPoint(int x, int y, String name) {
 		this.x = x;
 		this.y = y;
+		this.name = name;
 	}
 
 	/**
@@ -43,6 +45,16 @@ public class DeliveryPoint {
 	 */
 	public void setY(int y) {
 		this.y = y;
+	}
+	
+	public String getName()
+	{
+		return name;
+	}
+	
+	public void setName(String name)
+	{
+		this.name =name;
 	}
 	
 	
