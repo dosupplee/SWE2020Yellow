@@ -11,7 +11,21 @@ public class Main
 	final static int numShifts = 5;
 
 	private static ArrayList<Meal> allMeals;
+	private static ArrayList<Food> allFoods;
+	private static ArrayList<Order> orderBacklog;
 	private static Map currentMap;
+	
+	private static double avgTimeFIFO;
+	private static double slowestTimeFIFO;
+	private static double fastestTimeFIFO;
+	private static double sumFIFO;
+	
+	private static double avgTimeKnapsack;
+	private static double slowestTimeKnapsack
+	private static double fastestTimeKnapsack;
+	private static double sumKnapsack;
+	
+	
 	
 	public static void main(String[] args) 
 	{
@@ -50,8 +64,47 @@ public class Main
 		return currentMap;
 	}
 	
+	public static void createAllOrders() {
+		// TODO generate the orders for the simulation
+	}
 	
-
+	public static void runSimulation() {
+		// TODO run the simulation
+	}
 	
-
+	public static void runTSP() {
+		
+	}
+	
+	public static void packFIFO() {
+		// TODO pack drones for FIFO simulation
+	}
+	
+	public static void packKnapsack() {
+		// TODO pack drones for knapsack simulation
+	}
+	
+	public static void loadFoodSettings() {
+		// TODO load the saved food settings
+	}
+	
+	public static void saveFoodSettings() {
+		// TODO save the current food settings
+	}
+	
+	public static void addMeal(Meal mealToAdd) {
+		// TODO add a new meal
+	}
+	
+	public static void addFood(Food foodToAdd) {
+		// TODO add a new food
+	}
+	
+	public static void deleteFood(int foodIndex) {
+		// TODO implement deleting a food
+	}
+	
+	public static void deleteMeal(int mealIndex) {
+		// TODO implement deleting a meal
+	}
 }
