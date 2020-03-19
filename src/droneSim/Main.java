@@ -19,11 +19,13 @@ public class Main {
 	private static double fastestTimeKnapsack;
 	private static double sumKnapsack;
 
+
 	public static void main(String[] args) {
 		// current setup
 		currentSetup = new CurrentSetup();
 
 		XMLOrderGenerator gen = new XMLOrderGenerator(numShifts, currentSetup);
+
 		gen.generateAllOrders();
 
 	}
