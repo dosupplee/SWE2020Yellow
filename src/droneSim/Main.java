@@ -21,7 +21,7 @@ public class Main
 	private static double sumFIFO;
 	
 	private static double avgTimeKnapsack;
-	private static double slowestTimeKnapsack
+	private static double slowestTimeKnapsack;
 	private static double fastestTimeKnapsack;
 	private static double sumKnapsack;
 	
