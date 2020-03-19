@@ -1,10 +1,10 @@
 package droneSim;
 
 import java.util.ArrayList;
+import java.util.Iterator;
  
 public class Meal {
 	private String name; // name of meal
-	private double weight; // weight of meal
 	private double probability; // probability of being picked in an order
 	private ArrayList<Food> foodItems;
 	
@@ -15,9 +15,8 @@ public class Meal {
 	 * @param weight
 	 * @param probability
 	 */
-	public Meal(String name, double weight, double probability) {
+	public Meal(String name, double probability) {
 		this.name = name;
-		this.weight = weight;
 		this.probability = probability;
 		this.foodItems = new ArrayList<Food>();
 	}
@@ -29,9 +28,8 @@ public class Meal {
 	 * @param probability
 	 * @param foods
 	 */
-	public Meal(String name, double weight, double probability, ArrayList<Food> foods) {
+	public Meal(String name, double probability, ArrayList<Food> foods) {
 		this.name = name;
-		this.weight = weight;
 		this.probability = probability;
 		
 		// deep copy the foods
@@ -76,14 +74,13 @@ public class Meal {
 	 * @return the weight
 	 */
 	public double getWeight() {
+		int weight = 0;
+		for (Food food : foodItems) {
+			weight += food.getWeight();
+		}
 		return weight;
 	}
-	/**
-	 * @param weight the weight to set
-	 */
-	public void setWeight(double weight) {
-		this.weight = weight;
-	}
+	
 	/**
 	 * @return the probability
 	 */

@@ -37,7 +37,7 @@ public class Main
 		
 		//Create some basic meal stuffs ArrayList<Meal> 
 		allMeals = new ArrayList<Meal>();
-		Meal comboMeal = new Meal("Combo Meal",24,100); //I shouldnt have to give it a weight here
+		Meal comboMeal = new Meal("Combo Meal",100); //I shouldnt have to give it a weight here
 		comboMeal.addFood(allFoods.get(0));
 		comboMeal.addFood(allFoods.get(1));
 		comboMeal.addFood(allFoods.get(2));

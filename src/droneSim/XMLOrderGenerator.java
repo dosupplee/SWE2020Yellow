@@ -72,8 +72,8 @@ public class XMLOrderGenerator {
 	         transformer.transform(source, result);
 	         
 	         // Output to console for testing
-	        // StreamResult consoleResult = new StreamResult(System.out);
-	        // transformer.transform(source, consoleResult);
+	         // StreamResult consoleResult = new StreamResult(System.out);
+	         // transformer.transform(source, consoleResult);
 	      } 
 		 catch (Exception e) 
 		 {
@@ -117,7 +117,7 @@ public class XMLOrderGenerator {
 			currentProb += currentMeal.getProbability();
 		i++;
 		}
-		while(currentProb<99 || ourMeal == null);
+		while(currentProb < 99 || ourMeal == null);
 		
 		
 		return ourMeal;

@@ -11,7 +11,6 @@ public class Food {
 	 * @param weight
 	 */
 	public Food(String name, double weight) {
-		super();
 		this.name = name;
 		this.weight = weight;
 	}
