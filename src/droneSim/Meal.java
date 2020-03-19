@@ -1,18 +1,16 @@
 package droneSim;
 
 import java.util.ArrayList;
-import java.util.Iterator;
  
 public class Meal {
 	private String name; // name of meal
 	private double probability; // probability of being picked in an order
-	private ArrayList<Food> foodItems;
+	private ArrayList<Food> foodItems; // foods in the meal
 	
 	
 	/**
 	 * Creates a meal with no foods
 	 * @param name
-	 * @param weight
 	 * @param probability
 	 */
 	public Meal(String name, double probability) {
@@ -24,7 +22,6 @@ public class Meal {
 	/**
 	 * Creates a meal with given foods
 	 * @param name
-	 * @param weight
 	 * @param probability
 	 * @param foods
 	 */
@@ -64,12 +61,15 @@ public class Meal {
 	public String getName() {
 		return name;
 	}
+	
 	/**
-	 * @param name the name to set
+	 * set the meal's name
+	 * @param name 
 	 */
 	public void setName(String name) {
 		this.name = name;
 	}
+	
 	/**
 	 * @return the weight
 	 */
@@ -82,18 +82,24 @@ public class Meal {
 	}
 	
 	/**
-	 * @return the probability
+	 * @return probability
 	 */
 	public double getProbability() {
 		return probability;
 	}
+	
 	/**
-	 * @param probability the probability to set
+	 * sets the probability
+	 * @param probability 
 	 */
 	public void setProbability(double probability) {
 		this.probability = probability;
 	}
 	
+	/**
+	 * Returns all the food items in the meal
+	 * @return foodItems
+	 */
 	public ArrayList<Food> getFoodItems()
 	{
 		return foodItems;

@@ -14,7 +14,6 @@ public class Trip {
 	 * @param tripTime
 	 */
 	public Trip(ArrayList<Order> orders, String algorithm, double tripTime) {
-		super();
 		this.orders = orders;
 		this.algorithm = algorithm;
 		this.tripTime = tripTime;

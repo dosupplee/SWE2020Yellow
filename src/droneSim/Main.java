@@ -107,4 +107,28 @@ public class Main
 	public static void deleteMeal(int mealIndex) {
 		// TODO implement deleting a meal
 	}
+	
+	/**
+	 * Rescales all the probabilies so they add up to 100
+	 * 
+	 * Run whenever you change the probabilites or add new meals.
+	 */
+	public void adjustMealProbabilities() {
+		if (allMeals.isEmpty()) { // if there are no meals
+			return;
+		}
+		
+		// get sum of all probabilities
+		double probSum = 0; 
+		for (Meal meal : allMeals) {
+			probSum += meal.getProbability();
+		}
+		
+		// set new scaled probabilities (multiply by 100 for % output)
+		for (Meal meal : allMeals) {
+			double newProb = meal.getProbability() / probSum;
+			meal.setProbability(newProb);
+		}
+	}
+	
 }
