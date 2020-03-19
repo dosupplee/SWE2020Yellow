@@ -105,5 +105,24 @@ public class Meal {
 		return foodItems;
 	}
 
+	/**
+	 * overide equals method 
+	 */
+	@Override 
+	public boolean equals(Object o) {
+		if (this == o) { // if same object
+			return true;
+		}
+		if (!(o instanceof Meal)) { // if other is not an instance of Meal
+			return false;
+		}
+		
+		Meal other = (Meal) o;
+		return (this.name.equals(other.name)  // check if same contents
+				&& this.probability == other.getProbability()
+				&& this.getWeight() == other.getWeight() 
+				);
+	}
+
 
 }

@@ -77,4 +77,23 @@ public class Drone {
 	}
 	
 
+	/**
+	 * overide equals method 
+	 */
+	@Override 
+	public boolean equals(Object o) {
+		if (this == o) { // if same object
+			return true;
+		}
+		if (!(o instanceof Drone)) { // if other is not an instance of Drone
+			return false;
+		}
+		
+		Drone other = (Drone) o;
+		return (this.name.equals(other.name)  // check if same contents
+				&& this.weightCapacity == other.getWeightCapacity()
+				&& this.speed == other.getSpeed()
+				&& this.maxFlightTime == other.getMaxFlightTime()
+				);
+	}
 }

@@ -37,7 +37,7 @@ public class Main
 		
 		//Create some basic meal stuffs ArrayList<Meal> 
 		allMeals = new ArrayList<Meal>();
-		Meal comboMeal = new Meal("Combo Meal",100); //I shouldnt have to give it a weight here
+		Meal comboMeal = new Meal("Combo Meal",1.0); //I shouldnt have to give it a weight here
 		comboMeal.addFood(allFoods.get(0));
 		comboMeal.addFood(allFoods.get(1));
 		comboMeal.addFood(allFoods.get(2));
@@ -108,12 +108,13 @@ public class Main
 		// TODO implement deleting a meal
 	}
 	
+	
 	/**
 	 * Rescales all the probabilies so they add up to 100
 	 * 
 	 * Run whenever you change the probabilites or add new meals.
 	 */
-	public void adjustMealProbabilities() {
+	public static void adjustMealProbabilities() {
 		if (allMeals.isEmpty()) { // if there are no meals
 			return;
 		}
