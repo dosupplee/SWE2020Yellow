@@ -100,7 +100,7 @@ public class XMLOrderGenerator {
 	 */
 	public Meal getRandomMeal()
 	{
-		int randNum = rand.nextInt(100); //rand number to find random meal
+		double randNum = rand.nextDouble(); //rand number to find random meal
 		Meal ourMeal = null; //the meal that matches the random generator
 		int i = 0; //the current meal id that we are inspecting
 		int currentProb = 0; //the current aggregate proability we are up to
@@ -117,7 +117,7 @@ public class XMLOrderGenerator {
 			currentProb += currentMeal.getProbability();
 		i++;
 		}
-		while(currentProb < 99 || ourMeal == null);
+		while(currentProb < 1 || ourMeal == null);
 		
 		
 		return ourMeal;

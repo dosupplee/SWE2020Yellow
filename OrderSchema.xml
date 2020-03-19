@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<order>
+  <shift></shift>
+  <time></time>
+  <clientName></clientName>
+  <deliveryPointName></deliveryPointName>
+  <contents>
+  	<burgers>5</burgers>
+  	<fries>2</fries>
+  	<drinks>5</drinks>
+  </contents>
+</order>
