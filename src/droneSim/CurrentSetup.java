@@ -12,6 +12,7 @@ public class CurrentSetup {
 	private ArrayList<Food> allFoods;
 	private ArrayList<DeliveryPoint> points;
 	private Map currentMap;
+	private Drone currentDrone; //TODO
 
 	public CurrentSetup() {
 		allFoods = new ArrayList<>();
@@ -281,4 +282,10 @@ public class CurrentSetup {
 	public int getOrdersPerHour(int hour) {
 		return ordersPerHour[hour];
 	}
+	
+	
+	
+	// --------------------------------------------
+	// DRONE STUFF
+	// --------------------------------------------
 }
