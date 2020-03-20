@@ -3,7 +3,10 @@ package droneSim;
 import java.util.ArrayList;
 
 public class CurrentSetup {
-	final int numShifts = 5;
+	private final int numShifts = 5; // number of shifts to simulate
+	private final int numHours = 4; // how many hours there are in a shift
+	private final int[] ordersPerHour = {15,17,22,15}; // must be the length of numHours
+
 
 	private ArrayList<Meal> allMeals;
 	private ArrayList<Food> allFoods;
@@ -249,5 +252,33 @@ public class CurrentSetup {
 			double newProb = meal.getProbability() / probSum;
 			meal.setProbability(newProb);
 		}
+	}
+	
+	
+	
+	// --------------------------------------------
+	// RUNNING STUFF
+	// --------------------------------------------
+	
+	/**
+	 * @return the numShifts
+	 */
+	public int getNumShifts() {
+		return numShifts;
+	}
+
+	/**
+	 * @return the numHours
+	 */
+	public int getNumHours() {
+		return numHours;
+	}
+	
+	/**
+	 * returns the orders for a given hour
+	 * @return the ordersPerHour
+	 */
+	public int getOrdersPerHour(int hour) {
+		return ordersPerHour[hour];
 	}
 }

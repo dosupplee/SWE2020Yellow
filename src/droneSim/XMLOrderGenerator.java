@@ -17,14 +17,12 @@ import org.w3c.dom.Element;
 
 public class XMLOrderGenerator {
 
-	private int numShifts;
 	private Random rand;
 	private Document document;
 	private Element rootElement;
 	private CurrentSetup currentSetup;
 
-	public XMLOrderGenerator(int numShifts, CurrentSetup currentSetup) {
-		this.numShifts = numShifts;
+	public XMLOrderGenerator(CurrentSetup currentSetup) {
 		this.currentSetup = currentSetup;
 		rand = new Random();
 	}
@@ -45,15 +43,14 @@ public class XMLOrderGenerator {
 			document.appendChild(rootElement);
 
 
-			int numOrders = 15;
-			for (int shift = 0; shift < numShifts; shift++) // for each shift
+			for (int shift = 0; shift < currentSetup.getNumShifts(); shift++) // for each shift
 			{
-				for (int hour = 0; hour < 4; hour++) // for each hour
+				for (int hour = 0; hour < currentSetup.getNumHours(); hour++) // for each hour
 				{
 					// generate random minutes
-					ArrayList<Integer> randomMinutes = generateRandomOrderTimes(numOrders);
+					ArrayList<Integer> randomMinutes = generateRandomOrderTimes(currentSetup.getOrdersPerHour(hour));
 
-					for (int order = 0; order < numOrders; order++) // for each order
+					for (int order = 0; order < currentSetup.getOrdersPerHour(hour); order++) // for each order
 					{
 						createIndividualOrder(shift, hour, randomMinutes.get(order));
 					}

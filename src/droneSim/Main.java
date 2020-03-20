@@ -6,7 +6,6 @@ package droneSim;
 import java.util.ArrayList;
 
 public class Main {
-	final static int numShifts = 5;
 	private static CurrentSetup currentSetup;
 
 	private static double avgTimeFIFO;
@@ -24,7 +23,7 @@ public class Main {
 		// current setup
 		currentSetup = new CurrentSetup();
 
-		XMLOrderGenerator gen = new XMLOrderGenerator(numShifts, currentSetup);
+		XMLOrderGenerator gen = new XMLOrderGenerator(currentSetup);
 
 		gen.generateAllOrders();
 
