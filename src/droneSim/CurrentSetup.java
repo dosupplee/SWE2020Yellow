@@ -3,6 +3,7 @@ package droneSim;
 import java.util.ArrayList;
 
 public class CurrentSetup {
+	//TODO change to not final so the user can update these???
 	private final int numShifts = 5; // number of shifts to simulate
 	private final int numHours = 4; // how many hours there are in a shift
 	private final int[] ordersPerHour = {15,17,22,15}; // must be the length of numHours
@@ -12,13 +13,14 @@ public class CurrentSetup {
 	private ArrayList<Food> allFoods;
 	private ArrayList<DeliveryPoint> points;
 	private Map currentMap;
-	private Drone currentDrone; //TODO
+	private Drone currentDrone;
 
 	public CurrentSetup() {
 		allFoods = new ArrayList<>();
 		allMeals = new ArrayList<>();
 		points = new ArrayList<>();
 		loadFoodSettings();
+		loadDefaultDroneSettings();
 	}
 
 	// --------------------------------------------
@@ -288,4 +290,19 @@ public class CurrentSetup {
 	// --------------------------------------------
 	// DRONE STUFF
 	// --------------------------------------------
+	
+	/**
+	 * Loads custom drone settings
+	 */
+	public void loadCustomDroneSettings() {
+		//TODO 
+		//currentDrone = new Drone(name, weightCapacity, speed, maxFlightTime, turnAroundTime, dropOffTime)	
+	}
+	
+	/**
+	 * Loads the default drone settings
+	 */
+	public void loadDefaultDroneSettings() {
+		currentDrone = new Drone();
+	}
 }
