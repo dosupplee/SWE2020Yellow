@@ -19,7 +19,7 @@ public class CurrentSetup {
 		allFoods = new ArrayList<>();
 		allMeals = new ArrayList<>();
 		points = new ArrayList<>();
-		loadFoodSettings();
+		loadDefaultFoodSettings();
 		loadDefaultDroneSettings();
 	}
 
@@ -90,6 +90,11 @@ public class CurrentSetup {
 	public void loadFoodSettings() {
 		// TODO load the saved food settings
 		
+	}
+	
+	public void loadDefaultFoodSettings() {
+		// TODO load the saved food settings
+		
 		// Create some basic food stuffs
 		addFood(new Food("Burger", 6));
 		addFood(new Food("Drink", 14));
@@ -104,6 +109,7 @@ public class CurrentSetup {
 
 		// Create some basic point stuffs
 
+		addDeliveryPoint(new DeliveryPoint(0, 0, "SAC"));
 		addDeliveryPoint(new DeliveryPoint(5, 12, "HAL"));
 		addDeliveryPoint(new DeliveryPoint(12, 18, "STEM"));
 		

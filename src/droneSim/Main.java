@@ -28,6 +28,7 @@ public class Main {
 		XMLOrderGenerator gen = new XMLOrderGenerator(currentSetup);
 
 		gen.generateAllOrders();
+		System.out.println("Made it");
 
 	}
 

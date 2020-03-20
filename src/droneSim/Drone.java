@@ -7,31 +7,33 @@ package droneSim;
  *
  */
 public class Drone {
-	private String name;   // the name of the drone
+	private String name; // the name of the drone
 	private int weightCapacity; // the weight capacity of the drone (OZ)
-	private double speed; // the speed of the drone (MPH)
+	private double speed; // the speed of the drone (MPS)
 	private double maxFlightTime; // the maximum flight time (seconds)
 	private double turnAroundTime; // time between flights (seconds)
 	private double dropOffTime; // time to unload the drone at a delivery point (seconds)
-	
+
 	/**
 	 * Creates a custom Drone class
+	 * 
 	 * @param name
 	 * @param weightCapacity
-	 * @param speed
+	 * @param speed (MPH, but stored in MPS)
 	 * @param maxFlightTime
 	 * @param turnAroundTime
 	 * @param dropOffTime
 	 */
-	public Drone(String name, int weightCapacity, double speed, double maxFlightTime, double turnAroundTime, double dropOffTime) {
+	public Drone(String name, int weightCapacity, double speed, double maxFlightTime, double turnAroundTime,
+			double dropOffTime) {
 		this.name = name;
 		this.weightCapacity = weightCapacity;
-		this.speed = speed;
+		this.speed = speed * 3600;
 		this.maxFlightTime = maxFlightTime;
 		this.turnAroundTime = turnAroundTime;
 		this.dropOffTime = dropOffTime;
 	}
-	
+
 	/**
 	 * Default constructor with default values
 	 */
@@ -46,6 +48,7 @@ public class Drone {
 
 	/**
 	 * get time between flights
+	 * 
 	 * @return the turnAroundTime
 	 */
 	public double getTurnAroundTime() {
@@ -54,7 +57,8 @@ public class Drone {
 
 	/**
 	 * set time between flights
-	 * @param turnAroundTime 
+	 * 
+	 * @param turnAroundTime
 	 */
 	public void setTurnAroundTime(double turnAroundTime) {
 		this.turnAroundTime = turnAroundTime;
@@ -62,6 +66,7 @@ public class Drone {
 
 	/**
 	 * get time to unload the drone at a delivery point
+	 * 
 	 * @return the dropOffTime
 	 */
 	public double getDropOffTime() {
@@ -70,7 +75,8 @@ public class Drone {
 
 	/**
 	 * set time to unload the drone at a delivery point
-	 * @param dropOffTime 
+	 * 
+	 * @param dropOffTime
 	 */
 	public void setDropOffTime(double dropOffTime) {
 		this.dropOffTime = dropOffTime;
@@ -84,7 +90,8 @@ public class Drone {
 	}
 
 	/**
-	 * @param name the name to set
+	 * @param name
+	 *            the name to set
 	 */
 	public void setName(String name) {
 		this.name = name;
@@ -98,7 +105,8 @@ public class Drone {
 	}
 
 	/**
-	 * @param weightCapacity the weightCapacity to set
+	 * @param weightCapacity
+	 *            the weightCapacity to set
 	 */
 	public void setWeightCapacity(int weightCapacity) {
 		this.weightCapacity = weightCapacity;
@@ -108,18 +116,19 @@ public class Drone {
 	 * @return the speed in MPH
 	 */
 	public double getSpeedMPH() {
-		return speed;
+		return (speed / 3600.0);
 	}
-	
+
 	/**
 	 * @return the speed in MPS
 	 */
 	public double getSpeedMPS() {
-		return (speed * 3600.0);
+		return speed;
 	}
 
 	/**
-	 * @param speed the speed to set
+	 * @param speed
+	 *            the speed to set
 	 */
 	public void setSpeed(double speed) {
 		this.speed = speed;
@@ -133,17 +142,37 @@ public class Drone {
 	}
 
 	/**
-	 * @param maxFlightTime the maxFlightTime to set
+	 * @param maxFlightTime
+	 *            the maxFlightTime to set
 	 */
 	public void setMaxFlightTime(double maxFlightTime) {
 		this.maxFlightTime = maxFlightTime;
 	}
-	
 
 	/**
-	 * overide equals method 
+	 * Converts Seconds to Minutes
+	 * 
+	 * @param seconds
+	 * @return
 	 */
-	@Override 
+	public double convertStoM(double seconds) {
+		return seconds / 60.0;
+	}
+	
+	/**
+	 * Converts Minutes to Seconds
+	 * 
+	 * @param minutes
+	 * @return
+	 */
+	public double convertMtoS(double minutes) {
+		return minutes * 60.0;
+	}
+
+	/**
+	 * overide equals method
+	 */
+	@Override
 	public boolean equals(Object o) {
 		if (this == o) { // if same object
 			return true;
@@ -151,12 +180,10 @@ public class Drone {
 		if (!(o instanceof Drone)) { // if other is not an instance of Drone
 			return false;
 		}
-		
+
 		Drone other = (Drone) o;
-		return (this.name.equals(other.name)  // check if same contents
-				&& this.weightCapacity == other.getWeightCapacity()
-				&& this.speed == other.getSpeedMPH()
-				&& this.maxFlightTime == other.getMaxFlightTime()
-				);
+		return (this.name.equals(other.name) // check if same contents
+				&& this.weightCapacity == other.getWeightCapacity() && this.speed == other.getSpeedMPH()
+				&& this.maxFlightTime == other.getMaxFlightTime());
 	}
 }
