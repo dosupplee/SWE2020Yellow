@@ -4,20 +4,17 @@ import java.util.ArrayList;
  
 public class Meal {
 	private String name; // name of meal
-	private double weight; // weight of meal
 	private double probability; // probability of being picked in an order
-	private ArrayList<Food> foodItems;
+	private ArrayList<Food> foodItems; // foods in the meal
 	
 	
 	/**
 	 * Creates a meal with no foods
 	 * @param name
-	 * @param weight
 	 * @param probability
 	 */
-	public Meal(String name, double weight, double probability) {
+	public Meal(String name, double probability) {
 		this.name = name;
-		this.weight = weight;
 		this.probability = probability;
 		this.foodItems = new ArrayList<Food>();
 	}
@@ -25,13 +22,11 @@ public class Meal {
 	/**
 	 * Creates a meal with given foods
 	 * @param name
-	 * @param weight
 	 * @param probability
 	 * @param foods
 	 */
-	public Meal(String name, double weight, double probability, ArrayList<Food> foods) {
+	public Meal(String name, double probability, ArrayList<Food> foods) {
 		this.name = name;
-		this.weight = weight;
 		this.probability = probability;
 		
 		// deep copy the foods
@@ -66,40 +61,67 @@ public class Meal {
 	public String getName() {
 		return name;
 	}
+	
 	/**
-	 * @param name the name to set
+	 * set the meal's name
+	 * @param name 
 	 */
 	public void setName(String name) {
 		this.name = name;
 	}
+	
 	/**
 	 * @return the weight
 	 */
 	public double getWeight() {
+		int weight = 0;
+		for (Food food : foodItems) {
+			weight += food.getWeight();
+		}
 		return weight;
 	}
+	
 	/**
-	 * @param weight the weight to set
-	 */
-	public void setWeight(double weight) {
-		this.weight = weight;
-	}
-	/**
-	 * @return the probability
+	 * @return probability
 	 */
 	public double getProbability() {
 		return probability;
 	}
+	
 	/**
-	 * @param probability the probability to set
+	 * sets the probability
+	 * @param probability 
 	 */
 	public void setProbability(double probability) {
 		this.probability = probability;
 	}
 	
+	/**
+	 * Returns all the food items in the meal
+	 * @return foodItems
+	 */
 	public ArrayList<Food> getFoodItems()
 	{
 		return foodItems;
+	}
+
+	/**
+	 * overide equals method 
+	 */
+	@Override 
+	public boolean equals(Object o) {
+		if (this == o) { // if same object
+			return true;
+		}
+		if (!(o instanceof Meal)) { // if other is not an instance of Meal
+			return false;
+		}
+		
+		Meal other = (Meal) o;
+		return (this.name.equals(other.name)  // check if same contents
+				&& this.probability == other.getProbability()
+				&& this.getWeight() == other.getWeight() 
+				);
 	}
 
 

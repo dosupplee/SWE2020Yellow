@@ -1,5 +1,6 @@
 package droneSim;
 
+
 public class Food {
 	private String name;   // the name of the food item
 	private double weight; // the weight of the food item
@@ -11,7 +12,6 @@ public class Food {
 	 * @param weight
 	 */
 	public Food(String name, double weight) {
-		super();
 		this.name = name;
 		this.weight = weight;
 	}
@@ -44,6 +44,22 @@ public class Food {
 	 */
 	public void setWeight(double weight) {
 		this.weight = weight;
+	}
+	
+	/**
+	 * overide equals method 
+	 */
+	@Override 
+	public boolean equals(Object o) {
+		if (this == o) { // if same object
+			return true;
+		}
+		if (!(o instanceof Food)) { // if other is not an instance of Food
+			return false;
+		}
+		
+		Food other = (Food) o; // check if same contents
+		return (this.name.equals(other.name) && this.weight == other.getWeight());
 	}
 
 }
