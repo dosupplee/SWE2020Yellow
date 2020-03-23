@@ -56,7 +56,7 @@ public class Drone {
 	}
 
 	/**
-	 * set time between flights
+	 * set time between flights (seconds)
 	 * 
 	 * @param turnAroundTime
 	 */
@@ -65,7 +65,7 @@ public class Drone {
 	}
 
 	/**
-	 * get time to unload the drone at a delivery point
+	 * get time to unload the drone at a delivery point (seconds)
 	 * 
 	 * @return the dropOffTime
 	 */
@@ -74,7 +74,7 @@ public class Drone {
 	}
 
 	/**
-	 * set time to unload the drone at a delivery point
+	 * set time to unload the drone at a delivery point (seconds)
 	 * 
 	 * @param dropOffTime
 	 */
@@ -128,10 +128,10 @@ public class Drone {
 
 	/**
 	 * @param speed
-	 *            the speed to set
+	 *            the speed to set (MPH
 	 */
-	public void setSpeed(double speed) {
-		this.speed = speed;
+	public void setSpeedMPH(double speed) {
+		this.speed = speed * 3600; // convert to MPS
 	}
 
 	/**
