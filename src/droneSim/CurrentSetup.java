@@ -108,11 +108,13 @@ public class CurrentSetup {
 		addMeal(comboMeal);
 		
 		
-		Meal frenchFryDelight = new Meal("Combo Meal", 0.25); 
+		Meal frenchFryDelight = new Meal("French Fry Delight", 0.25); 
 		frenchFryDelight.addFood(getFood(2));
 		frenchFryDelight.addFood(getFood(2));
 		frenchFryDelight.addFood(getFood(2));
 		addMeal(frenchFryDelight);
+		
+		adjustMealProbabilities();
 
 		// Create some basic point stuffs
 

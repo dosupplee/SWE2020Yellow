@@ -103,7 +103,7 @@ public class XMLOrderGenerator {
 			// otherwise increment current prob by meal's prob
 			currentProb += currentMeal.getScaledProbability();
 			i++;
-		} while (currentProb < 1.0 || ourMeal == null);
+		} while (currentProb < 1.0 && ourMeal == null);
 
 		return ourMeal;
 	}

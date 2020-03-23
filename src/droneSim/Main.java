@@ -33,25 +33,33 @@ public class Main {
 		
 		System.out.println("Orders Generated");
 		
-		for(int shift = 0;shift<currentSetup.getNumShifts();shift++)
+		//This Section Mimics how we will be occassionally refreshing our order backlog list at certain times
+		
+		for(int shift = 0;shift<currentSetup.getNumShifts();shift++) //for each shift
 		{
-			boolean canStopLastHour = false;
-			for(int hour=0;hour<4;hour++)
+			boolean canStopLastHour = false; //if we can stop our final hour overRun
+			for(int hour=0;hour<4;hour++) //for each hour
 			{
 				int min = 0;
-				while((min<60 && hour<=2) ||((min<60 ||canStopLastHour==false)&&hour==3))
+				//while either is one of the first three hours or is the final hour and have finished all orders
+				while((min<60 && hour<=2) ||((min<60 ||canStopLastHour==false)&&hour==3)) 
 				{
 					System.out.println("\nShift ("+Integer.toString(shift)+") - Printing Out New Orders Received at: "+Integer.toString(hour)+":"+Integer.toString(min)+":00");
 					String time = Integer.toString(hour)+":"+Integer.toString(min)+":00";
+					
+					//grab new orders from parser
+					//Normally we will be appending to existing backlog
 					ArrayList<Order> newOrders = parse.getNewOrders(shift,time);
 					
+					//list new orders grabbed
 					for(int i=0;i<newOrders.size();i++)
 					{
 						Order order = newOrders.get(i);
-						System.out.println("\t"+Double.toString(order.getOrderTime())+" - "
+						System.out.println("\t"+order.getOrderTime().toString()+" - "
 						+ order.getMeal().getName() + " - " + order.getDeliveryPoint().getName());
 					}
 					
+					//if have gotten the last few orders from that shift
 					if(hour==3 && min>=60 && newOrders.size()==0)
 						canStopLastHour = true;
 					

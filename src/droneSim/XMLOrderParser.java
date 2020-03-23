@@ -40,6 +40,7 @@ public class XMLOrderParser
 		}
 	}
 	
+	
 	/*
 	 * Finds the "newly created orders" that came in between two times
 	 * Takes the shift to search, the lastTime searched, and the currentTime
@@ -51,32 +52,35 @@ public class XMLOrderParser
 		
 		 NodeList orderList = document.getElementsByTagName("order");
 
-		 int thisPseudoTime = getPseudoTime(thisTime); 
-			 
-		 
-		 //init order time for first while check
+		 Time currentTime = new Time(thisTime);
 		
 		 
-		 boolean canAdd = true;
+		 boolean canAdd = true; //if we can keep looking for more orders
 		 do
 		 {
-			 if(nextOrderToGrab<orderList.getLength())
+			 if(nextOrderToGrab<orderList.getLength()) //if havent reached end of all total orders
 			 {
 				 Node currentOrderNode = orderList.item(nextOrderToGrab);
 				 Element element = (Element) currentOrderNode;
-				 if(currentOrderNode.getNodeType() == Node.ELEMENT_NODE) 
+				 
+				 if(currentOrderNode.getNodeType() == Node.ELEMENT_NODE) //if of right type
 				 {
+					 //get the values from the XML
 					 int currentOrderShift = Integer.parseInt(element.getElementsByTagName("shift").item(0).getTextContent());
 					 String currentOrderTime = element.getElementsByTagName("time").item(0).getTextContent();
+					 Time orderTimeObject = new Time(currentOrderTime);
 					 String mealName = element.getElementsByTagName("mealName").item(0).getTextContent();
 					 String deliveryPointName = element.getElementsByTagName("deliveryName").item(0).getTextContent();
 					 
-					 if(thisPseudoTime > getPseudoTime(currentOrderTime) && shift == currentOrderShift)
+					 //if it has passed our current time ie if we can 'see' this order yet
+					 if(currentTime.compareTo(orderTimeObject) > 0 && shift == currentOrderShift)
 					 {
+						//find values from list 
 						 Meal thisMeal = Main.getCurrentSetup().getMealFromName(mealName);
 						 DeliveryPoint thisDeliveryPoint = Main.getCurrentSetup().getCurrentMap().getDeliveryPointFromName(deliveryPointName);
 						 
-						 Order newOrder = new Order(thisMeal,thisDeliveryPoint,1.0);
+						 //create new order with those values
+						 Order newOrder = new Order(thisMeal,thisDeliveryPoint,orderTimeObject);
 						 myOrders.add(newOrder);
 						 nextOrderToGrab++;
 					 }
@@ -96,26 +100,7 @@ public class XMLOrderParser
 		
 		return myOrders;
 		
-	}
-	
-	/*
-	 * Gets an integer for 
-	 * 
-	 * 
-	 */
-	public int getPseudoTime(String time)
-	{
-		 String[] timeInt = time.split(":",3);
-		 int hour =  Integer.parseInt(timeInt[0]);
-		 int min =  Integer.parseInt(timeInt[1]);
-		 int sec =  Integer.parseInt(timeInt[2]);
-		 
-		 int pseudoTime = (hour * 60) + min;
-		 
-		 return pseudoTime;
-	}
-	
-	
+	}	
 	
 	
 }
