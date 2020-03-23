@@ -97,11 +97,11 @@ public class XMLOrderGenerator {
 			Meal currentMeal = currentSetup.getMeal(i);
 
 			// if the base prob + meals probs exceeds the random number
-			if (currentProb + currentMeal.getProbability() >= randNum) {
+			if (currentProb + currentMeal.getScaledProbability() >= randNum) {
 				ourMeal = currentMeal;
 			}
 			// otherwise increment current prob by meal's prob
-			currentProb += currentMeal.getProbability();
+			currentProb += currentMeal.getScaledProbability();
 			i++;
 		} while (currentProb < 1.0 || ourMeal == null);
 

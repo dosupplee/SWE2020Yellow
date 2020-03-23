@@ -4,30 +4,37 @@ import java.util.ArrayList;
  
 public class Meal {
 	private String name; // name of meal
-	private double probability; // probability of being picked in an order
+	private double rawProb; // raw probability of being picked in an order (user input)
+	private double scaledProb; // scaled probability of being picked in an order (use for picking order)
 	private ArrayList<Food> foodItems; // foods in the meal
 	
 	
 	/**
 	 * Creates a meal with no foods
+	 * Must call adjustMealProbabilities() from currentSetup to scale
+	 * probabilities accross meals
 	 * @param name
 	 * @param probability
 	 */
-	public Meal(String name, double probability) {
+	public Meal(String name, double rawProbability) {
 		this.name = name;
-		this.probability = probability;
+		this.rawProb = rawProbability;
+		this.scaledProb = 0.0;
 		this.foodItems = new ArrayList<Food>();
 	}
 	
 	/**
 	 * Creates a meal with given foods
+	 * Must call adjustMealProbabilities() from currentSetup to scale
+	 * probabilities accross meals
 	 * @param name
 	 * @param probability
 	 * @param foods
 	 */
-	public Meal(String name, double probability, ArrayList<Food> foods) {
+	public Meal(String name, double rawProbability, ArrayList<Food> foods) {
 		this.name = name;
-		this.probability = probability;
+		this.rawProb = rawProbability;
+		this.scaledProb = 0.0;
 		
 		// deep copy the foods
 		this.foodItems = new ArrayList<Food>();
@@ -82,18 +89,33 @@ public class Meal {
 	}
 	
 	/**
-	 * @return probability
+	 * @return rawProb
 	 */
-	public double getProbability() {
-		return probability;
+	public double getRawProbability() {
+		return rawProb;
 	}
 	
 	/**
-	 * sets the probability
-	 * @param probability 
+	 * @return scaledProb
 	 */
-	public void setProbability(double probability) {
-		this.probability = probability;
+	public double getScaledProbability() {
+		return scaledProb; 
+	}
+	
+	/**
+	 * sets the raw probability
+	 * @param rawProbability 
+	 */
+	public void setRawProbability(double rawProbability) {
+		this.rawProb = rawProbability;
+	}
+	
+	/**
+	 * sets the raw probability
+	 * @param rawProbability 
+	 */
+	public void setScaledProbability(double scaledProbability) {
+		this.scaledProb = scaledProbability;
 	}
 	
 	/**
@@ -119,7 +141,8 @@ public class Meal {
 		
 		Meal other = (Meal) o;
 		return (this.name.equals(other.name)  // check if same contents
-				&& this.probability == other.getProbability()
+				&& this.rawProb == other.getRawProbability()
+				&& this.scaledProb == other.getScaledProbability()
 				&& this.getWeight() == other.getWeight() 
 				);
 	}
