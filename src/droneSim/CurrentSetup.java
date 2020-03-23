@@ -101,11 +101,20 @@ public class CurrentSetup {
 		addFood(new Food("FrenchFries", 4));
 
 		// Create some basic meal stuffs ArrayList<Meal>
-		Meal comboMeal = new Meal("Combo Meal", 1.0); // I shouldnt have to give it a weight here
+		Meal comboMeal = new Meal("Combo Meal", 0.75); 
 		comboMeal.addFood(getFood(0));
 		comboMeal.addFood(getFood(1));
 		comboMeal.addFood(getFood(2));
 		addMeal(comboMeal);
+		
+		
+		Meal frenchFryDelight = new Meal("French Fry Delight", 0.25); 
+		frenchFryDelight.addFood(getFood(2));
+		frenchFryDelight.addFood(getFood(2));
+		frenchFryDelight.addFood(getFood(2));
+		addMeal(frenchFryDelight);
+		
+		adjustMealProbabilities();
 
 		// Create some basic point stuffs
 
@@ -176,6 +185,24 @@ public class CurrentSetup {
 		}
 
 		return allMeals.get(mealIndex);
+	}
+	
+	
+	/*
+	 * Iterates through all existing meals and finds the one with specified name
+	 * Takes in the mealName to look for
+	 * Returns the meal
+	 */
+	public Meal getMealFromName(String name)
+	{
+		for(int i=0;i<allMeals.size();i++)
+		{
+			if(allMeals.get(i).getName().equals(name))
+				return allMeals.get(i);
+		}
+		
+		return null;
+		
 	}
 
 	/**

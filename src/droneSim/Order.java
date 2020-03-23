@@ -5,7 +5,7 @@ public class Order {
 	
 	private Meal meal;					 // meal ordered
 	private DeliveryPoint deliveryPoint; // location order is delivered too
-	private double orderTime;			 // time ordered
+	private Time orderTime;			 // time ordered
 	private double deliveryTime;		 // time delivered
 	
 	
@@ -16,11 +16,23 @@ public class Order {
 	 * @param orderTime
 	 * @param deliveryTime
 	 */
-	public Order(Meal meal, DeliveryPoint deliveryPoint, double orderTime, double deliveryTime) {
+	public Order(Meal meal, DeliveryPoint deliveryPoint, Time orderTime, double deliveryTime) {
 		this.meal = meal;
 		this.deliveryPoint = deliveryPoint;
 		this.orderTime = orderTime;
 		this.deliveryTime = deliveryTime;
+	}
+	
+	/*
+	 * Version of constructor that does not require deliveryTime
+	 * 
+	 * 
+	 */
+	public Order(Meal meal, DeliveryPoint deliveryPoint, Time orderTime) {
+		this.meal = meal;
+		this.deliveryPoint = deliveryPoint;
+		this.orderTime = orderTime;
+		this.deliveryTime = 0.0;
 	}
 	
 	
@@ -51,13 +63,13 @@ public class Order {
 	/**
 	 * @return the orderTime
 	 */
-	public double getOrderTime() {
+	public Time getOrderTime() {
 		return orderTime;
 	}
 	/**
 	 * @param orderTime the orderTime to set
 	 */
-	public void setOrderTime(double orderTime) {
+	public void setOrderTime(Time orderTime) {
 		this.orderTime = orderTime;
 	}
 	/**
