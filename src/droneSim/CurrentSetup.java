@@ -278,13 +278,13 @@ public class CurrentSetup {
 		// get sum of all probabilities
 		double probSum = 0;
 		for (Meal meal : allMeals) {
-			probSum += meal.getProbability();
+			probSum += meal.getRawProbability();
 		}
 
 		// set new scaled probabilities (multiply by 100 for % output)
 		for (Meal meal : allMeals) {
-			double newProb = meal.getProbability() / probSum;
-			meal.setProbability(newProb);
+			double newProb = meal.getRawProbability() / probSum;
+			meal.setScaledProbability(newProb);
 		}
 	}
 	
