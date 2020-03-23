@@ -99,8 +99,14 @@ public class Time {
 	/**
 	 * adds 1 second to timer
 	 */
-	public void incrementTimer() {
+	public void incrementTimerSecond() {
 		seconds++;
+	}
+	/**
+	 * adds 1 minute to timer
+	 */
+	public void incrementTimerMinute() {
+		seconds += 60;
 	}
 
 	// --------------------------------------------
