@@ -23,6 +23,18 @@ public class Order {
 		this.deliveryTime = deliveryTime;
 	}
 	
+	/*
+	 * Version of constructor that does not require deliveryTime
+	 * 
+	 * 
+	 */
+	public Order(Meal meal, DeliveryPoint deliveryPoint, double orderTime) {
+		this.meal = meal;
+		this.deliveryPoint = deliveryPoint;
+		this.orderTime = orderTime;
+		this.deliveryTime = 0.0;
+	}
+	
 	
 	/**
 	 * @return the meal

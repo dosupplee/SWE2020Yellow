@@ -58,6 +58,24 @@ public class Map {
 		return points.get(randPoint);
 	}
 	
+	/*
+	 * Returns the delivery point with the specified name
+	 * Takes in a delivery point name to find
+	 * Returns the found delivery point
+	 */
+	public DeliveryPoint getDeliveryPointFromName(String name)
+	{
+		for(int i=0;i<points.size();i++)
+		{
+			if(points.get(i).getName().equals(name))
+			{
+				return points.get(i);
+			}
+		}
+		
+		return null;
+	}
+	
 	
 	
 

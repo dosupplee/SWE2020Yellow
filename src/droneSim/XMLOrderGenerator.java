@@ -163,10 +163,20 @@ public class XMLOrderGenerator {
 
 		// set Delivery Point
 		deliveryName.appendChild(document.createTextNode(point.getName()));
+		
+		
+		// Create Meal Name
+		Element mealName = document.createElement("mealName");
+		order.appendChild(mealName);
+
+		// set Delivery Point
+		mealName.appendChild(document.createTextNode(meal.getName()));
 
 		// contents
 		Element contents = document.createElement("contents");
 		order.appendChild(contents);
+		
+		
 		
 		Element food;
 		ArrayList<Food> foodItems = meal.getFoodItems();
