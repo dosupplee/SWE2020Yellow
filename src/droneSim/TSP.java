@@ -9,8 +9,8 @@ public class TSP {
 	private ArrayList<DeliveryPoint> citiesToSearch;
 	
 	
-	public TSP(int n, ArrayList<DeliveryPoint> points) {
-		this.numPoints = n;
+	public TSP(ArrayList<DeliveryPoint> points) {
+		this.numPoints = points.size();
 		this.citiesToSearch = points;
 		this.currentPath = new ArrayList<DeliveryPoint>();
 		this.bestPath = new ArrayList<DeliveryPoint>();
@@ -33,11 +33,13 @@ public class TSP {
 				
 				recursiveFindPath(newPath, remaining);
 				remaining.add(current);
+				//System.out.println(i);
 			}
 		} else {
+			//System.out.print("Size of next path: " + path.size());
 			if (copyToBest(path)) {
 				System.out.print("Found Best path:\n Home -> ");
-				for (int i = 0; i < numPoints + 2; i++) {
+				for (int i = 0; i < numPoints; i++) {
 					System.out.print(bestPath.get(i).getName() + " -> ");
 				}
 				System.out.print("Home \n\n");
@@ -58,13 +60,18 @@ public class TSP {
 		int length = 0;
 		length += findDistance(new DeliveryPoint(0,0,"Home"), toCheck.get(0));
 		for (int i = 0; i < toCheck.size() - 1; i++) {
+			System.out.println(toCheck.get(i).getName());
 			length += findDistance(toCheck.get(i), toCheck.get(i + 1));
 		}
-		length += length += findDistance(new DeliveryPoint(0,0,"Home"), toCheck.get(toCheck.size() - 1));
+		System.out.println();
+		length += findDistance(new DeliveryPoint(0,0,"Home"), toCheck.get(toCheck.size() - 1));
 		
 		if (length < bestLengthSoFar) {
+			//System.out.println("\nSize of toCheck: " + toCheck.size());
+			bestLengthSoFar = length;
+			System.out.println("Length is: " + length);
 			for (int i = 0; i < toCheck.size(); i++) {
-				bestPath.add(toCheck.remove(0));
+				bestPath.add(toCheck.get(i));
 			}
 			return true;
 		}
