@@ -10,6 +10,25 @@ public class Meal {
 	
 	
 	/**
+	 * Defualt Meal constructor.
+	 * Creates a meal with:
+	 * - burger
+	 * - fry
+	 * - drink
+	 */
+	public Meal() {
+		name = "DefaultMeal";
+		rawProb = 1.0;
+		scaledProb = 1.0;
+		foodItems = new ArrayList<Food>();
+
+		// Create basic food items
+		addFood(new Food("Burger", 6));
+		addFood(new Food("Drink", 14));
+		addFood(new Food("FrenchFries", 4));	
+	}
+	
+	/**
 	 * Creates a meal with no foods
 	 * Must call adjustMealProbabilities() from currentSetup to scale
 	 * probabilities accross meals

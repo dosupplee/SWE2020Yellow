@@ -179,32 +179,6 @@ public class Time {
 		return out;
 	}
 	
-	/*
-	 * @Override
-	public String toString() 
-	{
-		// calculte seconds
-		int secondsToAdd = (int) (seconds+star % 60);
-
-		// calculate minutes
-		int minutesToAdd = (int) (seconds / 60); // s * (s/m) = m
-		
-		int exraHours = minutesToAdd / 60; // for if more than 60 min, else 0
-		minutesToAdd %= 60; // puts in 0-59 min range
-
-		// calculate hours
-		int hoursToAdd = exraHours; // add the extra hours from minutes
-		hoursToAdd %= 24; // puts in 0-24 min range
-
-		String out = (hoursToAdd) + ":"; // hours
-		out += (minutesToAdd) + ":"; // minutes
-		out += (secondsToAdd); // seconds
-
-		return out;
-	}
-	 * 
-	 * 
-	 */
 	
 	public int compareTo(Time otherTime) 
 	{
