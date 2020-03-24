@@ -1,44 +1,75 @@
+package droneSim;
 import java.util.*;
 
 public class TSP {
 	private int numPoints;
-	private DeliveryPoint baseMatrix[];
-
 	private int bestLengthSoFar = Integer.MAX_VALUE;
+	private ArrayList<DeliveryPoint> currentPath;
+	private ArrayList<DeliveryPoint> bestPath;
+	private ArrayList<DeliveryPoint> citiesToSearch;
 	
-	public TSP(int n, DeliveryPoint delivPoints[]) {
+	
+	public TSP(int n, ArrayList<DeliveryPoint> points) {
 		this.numPoints = n;
-		this.baseMatrix[] = new DeliveryPoint[n + 2];
-		this.baseMatrix[0] = new DeliveryPoint(0, 0, "Home");
-		
-		int counter = 0;
-		while (delivPoints[counter] != NULL) {
-			this.baseMatrix[counter + 1] = delivPoints[counter];
-		}
-		this.baseMatrix[n + 2] = new DeliveryPoint(0, 0, "Home");
+		this.citiesToSearch = points;
+		this.currentPath = new ArrayList<DeliveryPoint>();
+		this.bestPath = new ArrayList<DeliveryPoint>();
 	}
 	
 	
-	public DeliveryPoint[] runAlgorithm(DeliveryPoint c, ArrayList<DeliveryPoint> r) {
-		int lengthSoFar = 0;
-		DeliveryPoint curr = c;
-		ArrayList<DeliveryPoint> remaining = r.clone();
-		remaining.remove(curr);
+	public ArrayList<DeliveryPoint> runTSP() {
+		recursiveFindPath(currentPath, citiesToSearch);
+		return bestPath;
+	}
+	
+	
+	private void recursiveFindPath(ArrayList<DeliveryPoint> path, ArrayList<DeliveryPoint> remaining) {
 		
-		if (remaining.isEmpty()) {
-			return findDistance(curr, new DeliveryPoint(0,0,"Home"));
-		} else {
+		if (!remaining.isEmpty()) {
 			for (int i = 0; i < remaining.size(); i++) {
-				runAlgorithm(remaining.get(i), remaining);
-				return findDistance(curr, remaining.get(i));
+				DeliveryPoint current = new DeliveryPoint(remaining.remove(0));
+				ArrayList<DeliveryPoint> newPath = (ArrayList<DeliveryPoint>) path.clone();
+				newPath.add(current);
+				
+				recursiveFindPath(newPath, remaining);
+				remaining.add(current);
+			}
+		} else {
+			if (copyToBest(path)) {
+				System.out.print("Found Best path:\n Home -> ");
+				for (int i = 0; i < numPoints + 2; i++) {
+					System.out.print(bestPath.get(i).getName() + " -> ");
+				}
+				System.out.print("Home \n\n");
 			}
 		}
+
 	}
 	
 	
 	private int findDistance(DeliveryPoint a, DeliveryPoint b) {
-		return Math.Sqrt( ( (a.getY() - b.getY()) * (a.getY() - b.getY()) ) 
+		return (int) Math.sqrt( ( (a.getY() - b.getY()) * (a.getY() - b.getY()) ) 
 				+ ( (a.getX() - b.getX()) * (a.getX() - b.getX()) ) );
+	}
+	
+	
+	private boolean copyToBest(ArrayList<DeliveryPoint> toCheck) {
+		//calculate length of path passed
+		int length = 0;
+		length += findDistance(new DeliveryPoint(0,0,"Home"), toCheck.get(0));
+		for (int i = 0; i < toCheck.size() - 1; i++) {
+			length += findDistance(toCheck.get(i), toCheck.get(i + 1));
+		}
+		length += length += findDistance(new DeliveryPoint(0,0,"Home"), toCheck.get(toCheck.size() - 1));
+		
+		if (length < bestLengthSoFar) {
+			for (int i = 0; i < toCheck.size(); i++) {
+				bestPath.add(toCheck.remove(0));
+			}
+			return true;
+		}
+		
+		return false;
 	}
 	
 			

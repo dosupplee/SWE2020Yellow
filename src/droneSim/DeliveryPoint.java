@@ -16,6 +16,16 @@ public class DeliveryPoint {
 		this.y = y;
 		this.name = name;
 	}
+	
+	/**
+	 * Deep copy constructor (MIGHT NEED THE BIG 3 ???? TODO)
+	 * @param DeliveryPoint other
+	 */
+	public DeliveryPoint(DeliveryPoint other) {
+		this.x = other.x;
+		this.y = other.y;
+		this.setName(other.name);
+	}
 
 	/**
 	 * @return the x
