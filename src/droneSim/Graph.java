@@ -144,7 +144,8 @@ public class Graph extends JFrame {
 		pack();
 		setTitle(frameTitle);
 		setLocationRelativeTo(null);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
+//		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); 
 		
 		//----------------------------
 		// Display
