@@ -179,7 +179,6 @@ public class Time {
 		return out;
 	}
 	
-	
 	public int compareTo(Time otherTime) 
 	{
 		int pseudoTime = (startHour * 60) + startMinute;
@@ -187,5 +186,53 @@ public class Time {
 		
 		return pseudoTime - otherPseudoTime;
 	}
+	
+	// --------------------------------------------
+	// GET/SET STUFF
+	// --------------------------------------------
+	
+	/**
+	 * @return the startHour
+	 */
+	public int getStartHour() {
+		return startHour;
+	}
+
+	/**
+	 * @param startHour the startHour to set
+	 */
+	public void setStartHour(int startHour) {
+		this.startHour = startHour;
+	}
+
+	/**
+	 * @return the startMinute
+	 */
+	public int getStartMinute() {
+		return startMinute;
+	}
+
+	/**
+	 * @param startMinute the startMinute to set
+	 */
+	public void setStartMinute(int startMinute) {
+		this.startMinute = startMinute;
+	}
+
+	/**
+	 * @return the startSecond
+	 */
+	public int getStartSecond() {
+		return startSecond;
+	}
+
+	/**
+	 * @param startSecond the startSecond to set
+	 */
+	public void setStartSecond(int startSecond) {
+		this.startSecond = startSecond;
+	}
+
+	
 
 }
