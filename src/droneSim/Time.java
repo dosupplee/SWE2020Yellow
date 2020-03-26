@@ -123,7 +123,7 @@ public class Time {
 	}
 
 	/**
-	 * set shift to 1
+	 * set shift to 1 
 	 */
 	public void resetShift() {
 		shiftNum = 1;
