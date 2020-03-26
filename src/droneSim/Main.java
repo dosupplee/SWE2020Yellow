@@ -97,7 +97,11 @@ public class Main {
 		bestPath = driver.runTSP();
 	}
 
-	public static void packFIFO() {
+	public static void packFIFO(ArrayList<Order> orders) {
+		Queue<Order> ordersFIFO = new LinkedList<Order>();
+		
+		for (int i = 0; i < orders.length; i++) {
+		}
 		// TODO pack drones for FIFO simulation
 	}
 

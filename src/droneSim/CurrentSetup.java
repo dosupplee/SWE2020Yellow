@@ -318,6 +318,20 @@ public class CurrentSetup {
 		return ordersPerHour[hour];
 	}
 	
+	/**
+	 * gets the weight of each food item within the order
+	 * @return weight of order
+	 * */
+	public double getOrderWeight(Order order) {
+		double weightOrder = 0.0;
+		for (Meal meal : order) {
+			for (Food food : meal) {
+				weightOrder += food.getWeight();
+			}
+		}
+		return weightOrder;
+	}
+	
 	
 	
 	// --------------------------------------------
@@ -338,4 +352,5 @@ public class CurrentSetup {
 	public void loadDefaultDroneSettings() {
 		currentDrone = new Drone();
 	}
+	
 }
