@@ -99,7 +99,7 @@ public class Meal {
 	/**
 	 * @return the weight
 	 */
-	public double getWeight() {
+	public int getWeight() {
 		int weight = 0;
 		for (Food food : foodItems) {
 			weight += food.getWeight();

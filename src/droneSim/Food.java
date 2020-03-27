@@ -3,7 +3,7 @@ package droneSim;
 
 public class Food {
 	private String name;   // the name of the food item
-	private double weight; // the weight of the food item
+	private int weight; // the weight of the food item
 	
 	
 	/**  
@@ -11,7 +11,7 @@ public class Food {
 	 * @param name
 	 * @param weight
 	 */
-	public Food(String name, double weight) {
+	public Food(String name, int weight) {
 		this.name = name;
 		this.weight = weight;
 	}
@@ -42,7 +42,7 @@ public class Food {
 	 * @param weight
 	 * Sets food weight
 	 */
-	public void setWeight(double weight) {
+	public void setWeight(int weight) {
 		this.weight = weight;
 	}
 	

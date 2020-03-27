@@ -86,4 +86,8 @@ public class Order {
 	}
 
 	
+	public int getOrderWeight() {
+		return meal.getWeight();
+	}
+	
 }
