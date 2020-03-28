@@ -171,7 +171,7 @@ public class CurrentSetup {
 	public Food getFood(int foodIndex) {
 		int indexH = allFoods.size() - 1; // last index
 		if (foodIndex < 0 || foodIndex > indexH) { // check if a valid index
-			return new Food("NULL", 0.0); // TODO throw error??
+			return new Food("NULL", 0); // TODO throw error??
 		}
 
 		return allFoods.get(foodIndex);
