@@ -337,4 +337,9 @@ public class CurrentSetup {
 		currentDrone = new Drone();
 	}
 	
+	public int getDroneWeight()
+	{
+		return currentDrone.getWeightCapacity();
+	}
+	
 }
