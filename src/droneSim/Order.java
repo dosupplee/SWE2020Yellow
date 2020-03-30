@@ -5,7 +5,7 @@ public class Order {
 	
 	private Meal meal;					 // meal ordered
 	private DeliveryPoint deliveryPoint; // location order is delivered too
-	private Time orderTime;			 // time ordered
+	private Time orderTime;			 	// time ordered
 	private double deliveryTime;		 // time delivered
 	
 	
@@ -85,5 +85,9 @@ public class Order {
 		this.deliveryTime = deliveryTime;
 	}
 
+	
+	public int getOrderWeight() {
+		return meal.getWeight();
+	}
 	
 }

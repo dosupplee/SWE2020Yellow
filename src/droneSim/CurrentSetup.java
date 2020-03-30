@@ -171,7 +171,7 @@ public class CurrentSetup {
 	public Food getFood(int foodIndex) {
 		int indexH = allFoods.size() - 1; // last index
 		if (foodIndex < 0 || foodIndex > indexH) { // check if a valid index
-			return new Food("NULL", 0.0); // TODO throw error??
+			return new Food("NULL", 0); // TODO throw error??
 		}
 
 		return allFoods.get(foodIndex);
@@ -316,9 +316,7 @@ public class CurrentSetup {
 	 */
 	public int getOrdersPerHour(int hour) {
 		return ordersPerHour[hour];
-	}
-	
-	
+	}	
 	
 	// --------------------------------------------
 	// DRONE STUFF
@@ -338,4 +336,5 @@ public class CurrentSetup {
 	public void loadDefaultDroneSettings() {
 		currentDrone = new Drone();
 	}
+	
 }

@@ -81,10 +81,26 @@ public class Main {
 	}
 
 	public static void runTSP() {
-
+		ArrayList<DeliveryPoint> pointsToVisit = new ArrayList<DeliveryPoint>();
+		ArrayList<DeliveryPoint> bestPath;
+		
+		DeliveryPoint hal = new DeliveryPoint(0, 5, "HAL");
+		pointsToVisit.add(hal);
+		DeliveryPoint stem = new DeliveryPoint(-2, -8, "STEM");
+		pointsToVisit.add(stem);
+		DeliveryPoint lincoln = new DeliveryPoint(9, -15, "Lincoln");
+		pointsToVisit.add(lincoln);
+		DeliveryPoint library = new DeliveryPoint(9, -6, "Library");
+		pointsToVisit.add(library);
+		
+		TSP driver = new TSP(pointsToVisit);
+		bestPath = driver.runTSP();
 	}
 
-	public static void packFIFO() {
+	public static void packFIFO(ArrayList<Order> orders) {
+		Queue<Order> ordersFIFO = new LinkedList<Order>();
+		
+
 		// TODO pack drones for FIFO simulation
 	}
 

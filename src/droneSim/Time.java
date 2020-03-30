@@ -123,7 +123,7 @@ public class Time {
 	}
 
 	/**
-	 * set shift to 1
+	 * set shift to 1 
 	 */
 	public void resetShift() {
 		shiftNum = 1;
@@ -179,33 +179,6 @@ public class Time {
 		return out;
 	}
 	
-	/*
-	 * @Override
-	public String toString() 
-	{
-		// calculte seconds
-		int secondsToAdd = (int) (seconds+star % 60);
-
-		// calculate minutes
-		int minutesToAdd = (int) (seconds / 60); // s * (s/m) = m
-		
-		int exraHours = minutesToAdd / 60; // for if more than 60 min, else 0
-		minutesToAdd %= 60; // puts in 0-59 min range
-
-		// calculate hours
-		int hoursToAdd = exraHours; // add the extra hours from minutes
-		hoursToAdd %= 24; // puts in 0-24 min range
-
-		String out = (hoursToAdd) + ":"; // hours
-		out += (minutesToAdd) + ":"; // minutes
-		out += (secondsToAdd); // seconds
-
-		return out;
-	}
-	 * 
-	 * 
-	 */
-	
 	public int compareTo(Time otherTime) 
 	{
 		int pseudoTime = (startHour * 60) + startMinute;
@@ -213,5 +186,53 @@ public class Time {
 		
 		return pseudoTime - otherPseudoTime;
 	}
+	
+	// --------------------------------------------
+	// GET/SET STUFF
+	// --------------------------------------------
+	
+	/**
+	 * @return the startHour
+	 */
+	public int getStartHour() {
+		return startHour;
+	}
+
+	/**
+	 * @param startHour the startHour to set
+	 */
+	public void setStartHour(int startHour) {
+		this.startHour = startHour;
+	}
+
+	/**
+	 * @return the startMinute
+	 */
+	public int getStartMinute() {
+		return startMinute;
+	}
+
+	/**
+	 * @param startMinute the startMinute to set
+	 */
+	public void setStartMinute(int startMinute) {
+		this.startMinute = startMinute;
+	}
+
+	/**
+	 * @return the startSecond
+	 */
+	public int getStartSecond() {
+		return startSecond;
+	}
+
+	/**
+	 * @param startSecond the startSecond to set
+	 */
+	public void setStartSecond(int startSecond) {
+		this.startSecond = startSecond;
+	}
+
+	
 
 }
