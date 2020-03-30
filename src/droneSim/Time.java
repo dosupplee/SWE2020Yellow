@@ -1,5 +1,8 @@
 package droneSim;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * 24 hour time class
  * 
@@ -21,6 +24,17 @@ public class Time {
 	public Time() {
 		shiftNum = 1;
 		seconds = 0;
+		startHour = 0;
+		startMinute = 0;
+		startSecond = 0;
+	}
+	
+	/**
+	 * Time constructor: time = "0:0:0" + timer seconds
+	 */
+	public Time(long timerSeconds) {
+		shiftNum = 1;
+		seconds = timerSeconds;
 		startHour = 0;
 		startMinute = 0;
 		startSecond = 0;
@@ -67,6 +81,10 @@ public class Time {
 		parseStartTimeString(time);
 	}
 
+	// --------------------------------------------
+	// TIME TOOL'S STUFF
+	// --------------------------------------------
+
 	/**
 	 * returns a copy of this time instance
 	 * 
@@ -74,6 +92,49 @@ public class Time {
 	 */
 	public Time copy() {
 		return new Time(shiftNum, seconds, startHour, startMinute, startSecond);
+	}
+
+	/**
+	 * Do Stop - Start
+	 * 
+	 * Returns (thisT - thatT) uses the current time
+	 * returns a time instance with start time 0:0:0
+	 * 
+	 * @param that
+	 * @return
+	 */
+	public Time subtractTime(Time that) {
+		String time1 = this.toString();
+		String time2 = that.toString();
+ 
+		Time newTime = null;
+		try { // get the difference in seconds
+			SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
+			Date date1 = format.parse(time1);
+			Date date2 = format.parse(time2);
+			long difference = date1.getTime() - date2.getTime();
+			long seconds = difference/1000; // convert from mili-sec to sec
+			
+			newTime = new Time(seconds);
+		} catch (Exception e) {
+			System.err.println("Bad Time Format");
+		}
+		
+		
+		return newTime;
+	}
+	
+	
+	/**
+	 * returns (+) if this > that
+	 * @param otherTime
+	 * @return
+	 */
+	public int compareTo(Time otherTime) {
+		int pseudoTime = (startHour * 60) + startMinute;
+		int otherPseudoTime = (otherTime.startHour * 60) + otherTime.startMinute;
+
+		return pseudoTime - otherPseudoTime;
 	}
 
 	// --------------------------------------------
@@ -102,6 +163,7 @@ public class Time {
 	public void incrementTimerSecond() {
 		seconds++;
 	}
+
 	/**
 	 * adds 1 minute to timer
 	 */
@@ -123,7 +185,7 @@ public class Time {
 	}
 
 	/**
-	 * set shift to 1 
+	 * set shift to 1
 	 */
 	public void resetShift() {
 		shiftNum = 1;
@@ -154,43 +216,70 @@ public class Time {
 	}
 
 	/**
-	 * Returns current time "h:m:s"  
+	 * Returns current time "h:m:s"
 	 */
 	@Override
-	public String toString() 
-	{
-		// calculte seconds
-		int secondsToAdd = (int) ((seconds+startSecond) % 60);
+	public String toString() {
+		String out = getCurrentHour() + ":"; // hours
+		out += getCurrentMinute() + ":"; // minutes
+		out += getCurrentSecond(); // seconds
 
+		return out;
+	}
+
+	// --------------------------------------------
+	// GET/SET STUFF
+	// --------------------------------------------
+
+	// -------------------
+	// CURRENT TIME
+	// -------------------
+
+	/**
+	 * return the current hour
+	 * 
+	 * @return
+	 */
+	public int getCurrentHour() {
 		// calculate minutes
-		int minutesToAdd = startMinute +  (int) ((seconds+startSecond) / 60); // s * (s/m) = m
-		
+		int minutesToAdd = startMinute + (int) ((seconds + startSecond) / 60); // s * (s/m) = m
+
 		int exraHours = startHour + (minutesToAdd / 60); // for if more than 60 min, else 0
 		minutesToAdd %= 60; // puts in 0-59 min range
 
 		// calculate hours
-		int hoursToAdd = exraHours; // add the extra hours from minutes
-		hoursToAdd %= 24; // puts in 0-24 hr range
-
-		String out = (hoursToAdd) + ":"; // hours
-		out += (minutesToAdd) + ":"; // minutes
-		out += (secondsToAdd); // seconds
-
-		return out;
+		int currentHour = exraHours; // add the extra hours from minutes
+		currentHour %= 24; // puts in 0-24 hr range
+		return currentHour;
 	}
-	
-	public int compareTo(Time otherTime) 
-	{
-		int pseudoTime = (startHour * 60) + startMinute;
-		int otherPseudoTime = (otherTime.startHour*60) + otherTime.startMinute;
-		
-		return pseudoTime - otherPseudoTime;
+
+	/**
+	 * return the current minute
+	 * 
+	 * @return
+	 */
+	public int getCurrentMinute() {
+		// calculate minutes
+		int currentMinute = startMinute + (int) ((seconds + startSecond) / 60); // s * (s/m) = m
+		currentMinute %= 60; // puts in 0-59 min range
+
+		return currentMinute;
 	}
-	
-	// --------------------------------------------
-	// GET/SET STUFF
-	// --------------------------------------------
-	
+
+	/**
+	 * return the current Second
+	 * 
+	 * @return
+	 */
+	public int getCurrentSecond() {
+		// calculte seconds
+		return (int) ((seconds + startSecond) % 60);
+	}
+
+	// -------------------
+	// START TIME
+	// -------------------
+
 	/**
 	 * @return the startHour
 	 */
@@ -199,7 +288,8 @@ public class Time {
 	}
 
 	/**
-	 * @param startHour the startHour to set
+	 * @param startHour
+	 *            the startHour to set
 	 */
 	public void setStartHour(int startHour) {
 		this.startHour = startHour;
@@ -213,7 +303,8 @@ public class Time {
 	}
 
 	/**
-	 * @param startMinute the startMinute to set
+	 * @param startMinute
+	 *            the startMinute to set
 	 */
 	public void setStartMinute(int startMinute) {
 		this.startMinute = startMinute;
@@ -227,12 +318,11 @@ public class Time {
 	}
 
 	/**
-	 * @param startSecond the startSecond to set
+	 * @param startSecond
+	 *            the startSecond to set
 	 */
 	public void setStartSecond(int startSecond) {
 		this.startSecond = startSecond;
 	}
-
-	
 
 }
