@@ -14,7 +14,7 @@ public class KnapsackPacker
 	
 	
 	/*
-	 * Uses Knapsack packing algorithim to find most effecient packing of orderBacklog
+	 * Uses Knapsack packing algorithm to find most efficient packing of orderBacklog
 	 * Any skipped orders from last iteration are automatically packed
 	 * Takes in orderBacklog to take orders from
 	 * Returns an ArrayList of packed orders
@@ -27,7 +27,7 @@ public class KnapsackPacker
 		 if(skippedOrders!=null)
 	        	orderCountAdjust = skippedOrders.size()-1;
 	
-		//finds the number of orders that we are going to solve the packing algorithim with
+		//finds the number of orders that we are going to solve the packing algorithm with
 		int numOrders = findLastValidItem(orderCountAdjust+1,orderBacklog);
 		 
 		//Need to account for the skipped orders that are fast-tracked

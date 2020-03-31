@@ -1,5 +1,7 @@
 package droneSim;
 
+import java.util.ArrayList;
+
 /**
  * Note: Time is stored in seconds
  * 
@@ -13,6 +15,10 @@ public class Drone {
 	private int maxFlightTime; // the maximum flight time (seconds)
 	private int turnAroundTime; // time between flights (seconds)
 	private int dropOffTime; // time to unload the drone at a delivery point (seconds)
+	
+	private int bestLengthSoFar;	//Tracks the distance of the quickest route so far
+	private ArrayList<DeliveryPoint> bestPath;	//Holds the quickest route so far
+	private ArrayList<DeliveryPoint> orderLocations;	//Holds a list of the points in the route to visit
 
 	/**
 	 * Creates a custom Drone class
@@ -32,20 +38,119 @@ public class Drone {
 		this.maxFlightTime = maxFlightTime;
 		this.turnAroundTime = turnAroundTime;
 		this.dropOffTime = dropOffTime;
+		this.bestLengthSoFar = Integer.MAX_VALUE;
+		this.orderLocations = new ArrayList<DeliveryPoint>();
 	}
 
 	/**
 	 * Default constructor with default values
 	 */
 	public Drone() {
-		name = "DefaultDrone";
-		weightCapacity = 12 * 16; // in oz
-		speed = 20; // 20 mph
-		maxFlightTime = 20 * 60; // 20 minutes
-		turnAroundTime = 3 * 60; // 3 minutes
-		dropOffTime = 30; // 30 seconds
+		this.name = "DefaultDrone";
+		this.weightCapacity = 12 * 16; // in oz
+		this.speed = 20; // 20 mph
+		this.maxFlightTime = 20 * 60; // 20 minutes
+		this.turnAroundTime = 3 * 60; // 3 minutes
+		this.dropOffTime = 30; // 30 seconds
+		this.bestLengthSoFar = Integer.MAX_VALUE;
+		this.orderLocations = new ArrayList<DeliveryPoint>();
 	}
 
+	
+	
+	/**
+	 * Main function to run the algorithm and print the output
+	 * 
+	 * @return ArrayList<DeliveryPoint> containing the fastest path to take
+	 */
+	public int runTSP(ArrayList<Order> orders) {
+		for (int i = 0; i < orders.size(); i++) {
+			orderLocations.add(orders.get(i).getDeliveryPoint());
+		}
+		
+		//Ensure that the print and recursion only run if there are valid points to visit
+		if (orderLocations.size() > 0) {
+			//Start the recursive algorithm using an empty ArrayList and the points to visit
+			recursiveFindPath(new ArrayList<DeliveryPoint>(), orderLocations);
+			
+			//Print the best path to take as text
+			System.out.print("\n\nFound Best path of distance: \n Home -> ");
+			
+			for (int i = 0; i < bestPath.size(); i++) {
+				System.out.print(bestPath.get(i).getName() + " -> ");
+			}
+			
+			System.out.print("Home \n\n");
+		}
+		
+		return bestLengthSoFar;
+	}
+	
+	
+	/**
+	 * Recursive brute force path finder with pruning capabilities to shorten the runtime
+	 * 
+	 * @param travelledPath: the path travelled so far in this recursion branch
+	 * @param remaining: holds the points not visited yet in this recursion branch
+	 */
+	private void recursiveFindPath(ArrayList<DeliveryPoint> travelledPath, ArrayList<DeliveryPoint> remaining) {
+		//Only continue with recursion if the current branch has not reached the end
+		if (!remaining.isEmpty()) {
+			//Continue on with branches for each child node (unvisited delivery point)
+			for (int i = 0; i < remaining.size(); i++) {
+				//TODO comment
+				DeliveryPoint current = new DeliveryPoint(remaining.remove(0));
+				ArrayList<DeliveryPoint> newPath = (ArrayList<DeliveryPoint>) travelledPath.clone();
+				newPath.add(current);
+				
+				if (findTotalDistance(newPath) < bestLengthSoFar) {
+					recursiveFindPath(newPath, remaining);
+				}
+				remaining.add(current);
+			}
+		//Check if this completed branch is the quickest so far
+		} else {
+			//TODO comment
+			int length = findTotalDistance(travelledPath);
+			if (length < bestLengthSoFar) {
+				bestPath = travelledPath;
+				bestLengthSoFar = length;
+			}
+		}
+	}
+	
+	/**
+	 * Finds the distance between two DeliveryPoints
+	 * @param a first delivery point
+	 * @param b second delivery point
+	 * @return int of calculated distance
+	 */
+	private int findP2PDistance(DeliveryPoint a, DeliveryPoint b) {
+		//Use basic 2D distance formula and cast into integer
+		return (int) Math.sqrt( Math.pow(a.getY() - b.getY(), 2) 
+				+ Math.pow(a.getX() - b.getX(), 2) );
+	}
+	
+	/**
+	 * Finds the total distance of a given path based on the order of the passed ArrayList
+	 * @param path ArrayList<DeliveryPoint> to find total distance
+	 * @return int of sum calculated distance
+	 */
+	private int findTotalDistance(ArrayList<DeliveryPoint> path) {
+		int length = 0; //Hold sum of distances calculated
+		//Find distance between Home and first point
+		length += findP2PDistance(new DeliveryPoint(0,0,"Home"), path.get(0));
+		//Find distance between the first and second, second and third, etc.
+		for (int i = 0; i < path.size() - 2; i++) {
+			length += findP2PDistance(path.get(i), path.get(i + 1));
+		}
+		//Find distance between the last point and Home
+		length += findP2PDistance(new DeliveryPoint(0,0,"Home"), path.get(path.size() - 1));
+		
+		return length;
+	}
+	
+	
 	/**
 	 * get time between flights
 	 * 

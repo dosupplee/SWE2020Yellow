@@ -10,6 +10,8 @@ import java.util.Queue;
 
 public class Main {
 	private static CurrentSetup currentSetup;
+	
+	private static enum Packager {FIFO, Knapsack};
 
 	private static double avgTimeFIFO;
 	private static double slowestTimeFIFO;
@@ -34,10 +36,21 @@ public class Main {
 		
 		System.out.println("Orders Generated");
 		
+		Packager packageType = Packager.Knapsack;
+		
 		//Create Knapsack packer
 		KnapsackPacker kp = new KnapsackPacker();
+		sumKnapsack = 0;
+		slowestTimeKnapsack = Double.MAX_VALUE;
+		fastestTimeKnapsack = 0.0;
 		
-		//This Section Mimics how we will be occassionally refreshing our order backlog list at certain times
+		//Create FIFO packer
+		FIFOPacker fp = new FIFOPacker();
+		sumFIFO = 0;
+		slowestTimeFIFO = Double.MAX_VALUE;
+		fastestTimeFIFO = 0.0;
+		
+		//This Section Mimics how we will be occasionally refreshing our order backlog list at certain times
 		
 		ArrayList<Order> orderBacklog = new ArrayList<Order>();
 		ArrayList<Order> packedOrders = new ArrayList<Order>();
@@ -58,9 +71,9 @@ public class Main {
 					String time = Integer.toString(hour)+":"+Integer.toString(min)+":00";
 					
 					//grab new orders from parser
-					//Normally we will be appending to existing backlog
 					ArrayList<Order> newOrders = parse.getNewOrders(shift,time);
 					
+					//Append now-valid orders to the delivery backlog
 					orderBacklog.addAll(newOrders);
 					
 					//list new orders grabbed
@@ -80,7 +93,12 @@ public class Main {
 						+ order.getMeal().getName() + " - " + order.getDeliveryPoint().getName());
 					}
 					
-					packedOrders = kp.pack(orderBacklog);
+					if (packageType == Packager.Knapsack) {
+						packedOrders = kp.pack(orderBacklog);
+					} else {
+						packedOrders = fp.pack(orderBacklog);
+					}
+					
 
 					//list new orders grabbed
 					System.out.println("\tPacked Orders:");
@@ -110,10 +128,28 @@ public class Main {
 					
 					/*
 					 * Here we would take the packed orders and add them to drones list
-					 * As well as insitgate drone's tsp
+					 * As well as instigate drone's tsp
 					 * 
-					 * incriment currentTime accordingly (how long the trip took + recharge of batteries)
+					 * Increment currentTime accordingly (how long the trip took + recharge of batteries)
 					 */
+					int timeTaken = currentSetup.getDrone().runTSP(packedOrders);
+					if (packageType == Packager.Knapsack) {
+						sumKnapsack += timeTaken;
+						if (timeTaken < slowestTimeKnapsack) {
+							slowestTimeKnapsack = timeTaken;
+						}
+						if (timeTaken > fastestTimeKnapsack) {
+							fastestTimeKnapsack = timeTaken;
+						}
+					} else if (packageType == Packager.FIFO) {
+						sumFIFO += timeTaken;
+						if (timeTaken < slowestTimeFIFO) {
+							slowestTimeFIFO = timeTaken;
+						}
+						if (timeTaken > fastestTimeFIFO) {
+							fastestTimeFIFO = timeTaken;
+						}
+					}
 					
 					/*
 					 * Here we would update time calcs for orders after TSP is done
@@ -130,7 +166,7 @@ public class Main {
 				}
 			}
 			
-			// incriment the shift and reset the timer
+			// Increment the shift and reset the timer
 			currentTime.incrementShift();
 			currentTime.resetTimer();
 		}
@@ -139,13 +175,6 @@ public class Main {
 
 	}
 
-	public static void createAllOrders() {
-		// TODO generate the orders for the simulation
-	}
-
-	public static void runSimulation() {
-		// TODO run the simulation
-	}
 
 	public static void runTSP() {
 		ArrayList<DeliveryPoint> pointsToVisit = new ArrayList<DeliveryPoint>();
@@ -164,48 +193,6 @@ public class Main {
 		bestPath = driver.runTSP();
 	}
 
-	public ArrayList<Order> packFIFO(ArrayList<Order> orderBacklog) {
-		
-		// get the number of orders that need to be packed
-		boolean keepPacking = true;
-		
-		// get the drone carrying capacity per trip
-		int droneCarryWeight = getCurrentSetup().getDroneWeight();
-		
-		// trip weight to see if below drone carry capacity
-		double testTripWeight = 0.0;
-				
-		// arrayList containing the packed drones with their respective weight
-		ArrayList<Order> packed = new ArrayList<Order>();
-		
-		// just used to get the first order in the backlog
-		int currentOrder = 0;
-		
-		while (keepPacking) {
-			
-			// get the first order to pack
-			Order orderToPack = orderBacklog.get(currentOrder);
-			
-			// add that order's weight to the test weight
-			testTripWeight += orderToPack.getOrderWeight();
-			// if the test weight is still below or equal to the drone carry compacity
-			if (testTripWeight <= droneCarryWeight) {
-				
-				// add the item to the packed list
-				packed.add(orderToPack);
-	
-				// remove the item from the backlog
-				orderBacklog.remove(currentOrder);
-			}
-			// if the trip weight exceeds the drone carrying capacity
-			else {
-				// exit the while loop
-				keepPacking = false;
-			}
-		}
-		// return the arrayList of the packed items
-		return packed;
-	}
 	
 	public static CurrentSetup getCurrentSetup()
 	{
