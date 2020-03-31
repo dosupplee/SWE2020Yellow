@@ -157,18 +157,34 @@ public class Time {
 		seconds = 0;
 	}
 
+	
 	/**
 	 * adds 1 second to timer
 	 */
 	public void incrementTimerSecond() {
 		seconds++;
 	}
+	
+	/**
+	 * adds n seconds to timer
+	 */
+	public void incrementTimerSecond(int n) {
+		seconds += n;
+	}
+
 
 	/**
 	 * adds 1 minute to timer
 	 */
 	public void incrementTimerMinute() {
 		seconds += 60;
+	}
+	
+	/**
+	 * adds n minutes to timer
+	 */
+	public void incrementTimerMinute(int n) {
+		seconds += 60 * n;
 	}
 
 	// --------------------------------------------
