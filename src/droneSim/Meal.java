@@ -145,6 +145,20 @@ public class Meal {
 	{
 		return foodItems;
 	}
+	
+	@Override
+	public String toString() {
+		String out = name + ",";
+		out += rawProb + ",";
+		out += scaledProb + ",";
+		
+		for (Food food : foodItems) {
+			out += food.getName() + ",";
+		}
+		
+		out = out.substring(0, out.lastIndexOf(",")); // get rid of last ","
+		return out;
+	}
 
 	/**
 	 * overide equals method 

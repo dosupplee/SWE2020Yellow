@@ -1,6 +1,10 @@
 package droneSim;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class CurrentSetup {
 	//TODO change to not final so the user can update these???
@@ -19,10 +23,14 @@ public class CurrentSetup {
 		allFoods = new ArrayList<>();
 		allMeals = new ArrayList<>();
 		points = new ArrayList<>();
+		
 		loadDefaultFoodSettings();
 		loadDefaultDroneSettings();
 	}
-
+		
+	//loadFoodSettings("foodSettings_2020.csv");
+	//saveFoodSettings("foodSettings_2020.csv");
+	
 	// --------------------------------------------
 	// MAP STUFF
 	// --------------------------------------------
@@ -87,11 +95,6 @@ public class CurrentSetup {
 	// FILE/SETTINGS STUFF
 	// --------------------------------------------
 	
-	public void loadFoodSettings() {
-		// TODO load the saved food settings
-		
-	}
-	
 	public void loadDefaultFoodSettings() {
 		// TODO load the saved food settings
 		
@@ -125,9 +128,157 @@ public class CurrentSetup {
 		
 		setCurrentMap(new Map("mainMap", "C://MapLocation", getDeliveryPoints()));
 	}
+	
+	
+	public void loadFoodSettings(String fileName) {
+		File csvFile = new File(fileName); // open file
+		if (!csvFile.exists()) { // if the file does not exist
+			System.err.println("File not found");
+			return;
+		}
+		
+		try {
+			Scanner fileReader = new Scanner(csvFile);
+			String currentLine = "";
+			boolean stillFoods = true;
+			boolean moreMeals = true;
+			
+			//------------------
+			// FOODS
+			//------------------
+			if (fileReader.hasNextLine()) {
+				String titlesFood = fileReader.nextLine(); // get the titles (not used)
+			}
+			
+			
+			
+			while (fileReader.hasNextLine() && stillFoods) { //  while more foods
+				currentLine = fileReader.nextLine();
+				System.out.println(currentLine);
+				
+				// parse current line
+				String[] items = currentLine.split(",");
+				
+				if (items.length == 2) { // if name, weight
+					var name = items[0].trim();
+					var weight = Integer.parseInt(items[1].trim());
+					
+					// add food to list
+					Food food = new Food(name, weight);
+					allFoods.add(food);
+				} else { // if starting meal section
+					stillFoods = false;
+				}
+			}
+			
+			
+			//------------------
+			// MEALS
+			//------------------
+			// get meal titles
+			String titlesMeal = currentLine; // get the titles (not used)
+			
+			while (fileReader.hasNextLine() && moreMeals) { //  while more foods
+				currentLine = fileReader.nextLine();
+				System.out.println(currentLine);
+				
+				// parse current line
+				String[] items = currentLine.split(",");
+				
+				if (items.length >= 3) { // if a meal
+					var name = items[0].trim();
+					var rawProb = Double.parseDouble(items[1].trim());
+					var scaledProb = Double.parseDouble(items[2].trim());
+					
+					Meal meal = new Meal(name, rawProb);
+					meal.setScaledProbability(scaledProb);
+					
+					// add the foods
+					for (int i = 3; i < items.length; i++) {
+						String foodName = items[i].trim(); // name of food
+					
+						boolean foodFound = false;
+						for (Food food : allFoods) { // get food 
+							if (food.getName().equals(foodName)) {
+								meal.addFood(food);
+								foodFound = true;
+							}
+						}
+						if (!foodFound) { // if not a valid food
+							System.err.println("Food \"" + foodName + "\" not found.");
+						}
+					}
+					
+					allMeals.add(meal); // add meal to list
+					
+				} else { // if starting meal section
+					moreMeals = false;
+				}
+			}
+			
+			
+			fileReader.close(); // close the file reader
+			adjustMealProbabilities();
+		} catch (Exception e) {
+			System.err.println(e.getMessage());
+		}
+	}
 
-	public void saveFoodSettings() {
-		// TODO save the current food settings
+	/**
+	 * Save food in a csv format
+	 * all foods
+	 * all meals
+	 * -----------------------
+	 * name, weight (oz)
+	 * <pizza>,<5>
+	 * .
+	 * .
+	 * .
+	 * name, rawProb, scaledProb, food names
+	 * <french fry delight>, <30>, <0.3>, <fry>, <fry>,<fry>
+	 * .
+	 * .
+	 * .
+	 */
+	public void saveFoodSettings(String fileName) {
+		if (allFoods == null || allFoods.size() == 0) { // if no food to save
+			return;
+		}
+		
+		File csvFile = new File(fileName); // open/create file
+		try {
+			PrintWriter fileWriter = new PrintWriter(csvFile); // create output stream
+		
+			//---------------------
+			// add the titles
+			//---------------------
+			fileWriter.append("name,weight (oz)" + "\n");
+			
+			//---------------------
+			// add the foods
+			//---------------------
+			for (Food food : allFoods) {
+				String foodCSVformat = food.toString();
+				fileWriter.append(foodCSVformat + "\n"); // append food item with new line
+			}
+			
+			//---------------------
+			// add the meals
+			//---------------------
+			fileWriter.append("name,raw prob,scaled prob,foods:" + "\n"); // add meal header
+			for (Meal meal : allMeals) {
+				String mealCSVformat = meal.toString();
+				fileWriter.append(mealCSVformat + "\n"); // append food item with new line
+			}
+			
+			//---------------------
+			// flush & close the file writer
+			//---------------------
+			fileWriter.flush();
+			fileWriter.close();;
+		} catch (FileNotFoundException e) {
+			System.err.println(e.getMessage());
+		}
 	}
 
 	// --------------------------------------------
