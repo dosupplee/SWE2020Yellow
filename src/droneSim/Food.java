@@ -46,6 +46,11 @@ public class Food {
 		this.weight = weight;
 	}
 	
+	@Override
+	public String toString() {
+		return name + "," + weight;
+	}
+	
 	/**
 	 * overide equals method 
 	 */
