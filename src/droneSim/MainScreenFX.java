@@ -17,28 +17,61 @@ public class MainScreenFX extends Application {
 	
     @Override
     public void start(Stage stage) {
-
-        initUI(stage);
+    	new MainPage();
     }
+}
 
-    private void initUI(Stage stage) {
+class MainPage extends Stage {
+	// create new buttons
+	Button setupPageButton = new Button("SETUP");
+	Button runSimulation = new Button("RUN");
+	
+	// make a layout box for the screen
+	HBox screenLayout = new HBox();
+	
+	MainPage() {
+		
+		screenLayout.setPadding(new Insets(50));
+		
+		// add the buttons to the screen
+		screenLayout.getChildren().add(setupPageButton);
+		screenLayout.getChildren().add(runSimulation);
+		
+		// make this the current scene
+		this.setScene(new Scene(screenLayout, 800, 600));
+		this.show();
+		
+		setupPageButton.setOnAction((ActionEvent event) -> {
+			new SetupPage();
+		});
+	}
+	
+}
 
-        var btn = new Button();
-        btn.setText("Quit");
-        btn.setOnAction((ActionEvent event) -> {
-            Platform.exit();
-        });
+class SetupPage extends Stage {
+	// create new buttons
+		Button mainPageButton = new Button("BACK");
+		
+		// make a layout box for the screen
+		HBox screenLayout = new HBox();
+		
+		SetupPage() {
+			
+			screenLayout.setPadding(new Insets(50));
+			
+			// add the buttons to the screen
+			screenLayout.getChildren().add(mainPageButton);
+			
+			// make this the current scene
+			this.setScene(new Scene(screenLayout, 800, 600));
+			this.show();
+			
+			mainPageButton.setOnAction((ActionEvent event) -> {
+				new MainPage();
+			});
+		}
+}
 
-        var root = new HBox();
-        root.setPadding(new Insets(25));
-        root.getChildren().add(btn);
-
-        var scene = new Scene(root, 280, 200);
-
-        stage.setTitle("Quit button");
-        stage.setScene(scene);
-        stage.show();
-    }
-
-    
+class MapSetupPage extends Stage {
+	
 }
