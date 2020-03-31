@@ -226,9 +226,6 @@ public class KnapsackPacker
 		}
 		return arrayList.size();
 	}
-	
-	
-	
 }
 
 

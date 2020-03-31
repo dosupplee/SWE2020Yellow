@@ -153,11 +153,47 @@ public class Main {
 		bestPath = driver.runTSP();
 	}
 
-	public static void packFIFO(ArrayList<Order> orders) {
-		Queue<Order> ordersFIFO = new LinkedList<Order>();
+	public ArrayList<Order> packFIFO(ArrayList<Order> orderBacklog) {
 		
-
-		// TODO pack drones for FIFO simulation
+		// get the number of orders that need to be packed
+		boolean keepPacking = true;
+		
+		// get the drone carrying capacity per trip
+		int droneCarryWeight = getCurrentSetup().getDroneWeight();
+		
+		// trip weight to see if below drone carry capacity
+		double testTripWeight = 0.0;
+				
+		// arrayList containing the packed drones with their respective weight
+		ArrayList<Order> packed = new ArrayList<Order>();
+		
+		// just used to get the first order in the backlog
+		int currentOrder = 0;
+		
+		while (keepPacking) {
+			
+			// get the first order to pack
+			Order orderToPack = orderBacklog.get(currentOrder);
+			
+			// add that order's weight to the test weight
+			testTripWeight += orderToPack.getOrderWeight();
+			// if the test weight is still below or equal to the drone carry compacity
+			if (testTripWeight <= droneCarryWeight) {
+				
+				// add the item to the packed list
+				packed.add(orderToPack);
+	
+				// remove the item from the backlog
+				orderBacklog.remove(currentOrder);
+			}
+			// if the trip weight exceeds the drone carrying capacity
+			else {
+				// exit the while loop
+				keepPacking = false;
+			}
+		}
+		// return the arrayList of the packed items
+		return packed;
 	}
 	
 	public static CurrentSetup getCurrentSetup()
