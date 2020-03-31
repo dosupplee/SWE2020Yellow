@@ -42,6 +42,9 @@ public class Main {
 		ArrayList<Order> orderBacklog = new ArrayList<Order>();
 		ArrayList<Order> packedOrders = new ArrayList<Order>();
 		
+		// keep track of current time
+		Time currentTime = new Time();
+		
 		for(int shift = 0;shift<1/*currentSetup.getNumShifts()*/;shift++) //for each shift
 		{
 			boolean canStopLastHour = false; //if we can stop our final hour overRun
@@ -108,6 +111,8 @@ public class Main {
 					/*
 					 * Here we would take the packed orders and add them to drones list
 					 * As well as insitgate drone's tsp
+					 * 
+					 * incriment currentTime accordingly (how long the trip took + recharge of batteries)
 					 */
 					
 					/*
@@ -119,9 +124,15 @@ public class Main {
 					if(hour==3 && min>=60 && newOrders.size()==0)
 						canStopLastHour = true;
 					
+					// increment timer
 					min +=7;
+					currentTime.incrementTimerMinute(7);
 				}
 			}
+			
+			// incriment the shift and reset the timer
+			currentTime.incrementShift();
+			currentTime.resetTimer();
 		}
 		
 		System.out.println("<terminated>");
