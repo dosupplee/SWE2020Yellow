@@ -29,6 +29,11 @@ public class FIFOPacker {
 		// just used to get the first order in the backlog
 		int currentOrder = 0;
 		
+		// check to see if the backlog is empty
+		if (orderBacklog.isEmpty()) {
+			return packed;
+		}
+		
 		while (keepPacking) {
 			
 			// get the first order to pack

@@ -10,68 +10,51 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
 public class MainScreenFX extends Application {
+	
+	public static Stage window;
+	public static Scene mainScene, setupScene;
 
 	public static void main(String[] args) {
         launch(args);
     }
 	
-    @Override
-    public void start(Stage stage) {
-    	new MainPage();
-    }
-}
-
-class MainPage extends Stage {
-	// create new buttons
-	Button setupPageButton = new Button("SETUP");
-	Button runSimulation = new Button("RUN");
-	
-	// make a layout box for the screen
-	HBox screenLayout = new HBox();
-	
-	MainPage() {
-		
-		screenLayout.setPadding(new Insets(50));
-		
-		// add the buttons to the screen
-		screenLayout.getChildren().add(setupPageButton);
-		screenLayout.getChildren().add(runSimulation);
-		
-		// make this the current scene
-		this.setScene(new Scene(screenLayout, 800, 600));
-		this.show();
-		
-		setupPageButton.setOnAction((ActionEvent event) -> {
-			new SetupPage();
-		});
-	}
-	
-}
-
-class SetupPage extends Stage {
-	// create new buttons
-		Button mainPageButton = new Button("BACK");
-		
-		// make a layout box for the screen
-		HBox screenLayout = new HBox();
-		
-		SetupPage() {
-			
-			screenLayout.setPadding(new Insets(50));
-			
-			// add the buttons to the screen
-			screenLayout.getChildren().add(mainPageButton);
-			
-			// make this the current scene
-			this.setScene(new Scene(screenLayout, 800, 600));
-			this.show();
-			
-			mainPageButton.setOnAction((ActionEvent event) -> {
-				new MainPage();
-			});
-		}
-}
-
-class MapSetupPage extends Stage {
-	
+	 @Override
+	    public void start(Stage stage) {
+	  
+	    	window = stage;
+	    	
+	    	// create new buttons
+	    	Button setupPageButton = new Button("SETUP");
+	    	Button runSimulation = new Button("RUN");
+	    	Button mainPageButton = new Button("BACK");
+	    	
+	    	// layout for the main page
+	    	HBox screenLayoutMain = new HBox();
+	    	screenLayoutMain.setPadding(new Insets(50));
+	    	
+	    	screenLayoutMain.getChildren().addAll(setupPageButton, runSimulation);
+	    	
+	    	// layout for the setup page
+	    	HBox screenLayoutSetup = new HBox();
+	    	screenLayoutSetup.setPadding(new Insets(50));
+	    	
+	    	screenLayoutSetup.getChildren().addAll(mainPageButton);
+	 
+	    	// making the new scenes
+	    	mainScene = new Scene(screenLayoutMain, 800, 600);
+	    	setupScene = new Scene(screenLayoutSetup, 800, 600);
+	    	
+	    	// adding events for the button click
+	    	setupPageButton.setOnAction((ActionEvent event) -> {
+	    		window.setScene(setupScene); 
+	    	});
+	    	mainPageButton.setOnAction((ActionEvent event) ->  {
+	    		window.setScene(mainScene);
+	    	});
+	    	
+	    	
+	    	window.setScene(mainScene);
+	    	window.setTitle("Dromedary Drones");
+	    	window.show();
+	    }
 }
