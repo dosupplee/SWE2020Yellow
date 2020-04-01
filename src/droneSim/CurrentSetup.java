@@ -98,6 +98,9 @@ public class CurrentSetup {
 	public void loadDefaultFoodSettings() {
 		// TODO load the saved food settings
 		
+		allFoods.clear();
+		allMeals.clear();
+		
 		// Create some basic food stuffs
 		addFood(new Food("Burger", 6));
 		addFood(new Food("Drink", 14));
@@ -130,12 +133,15 @@ public class CurrentSetup {
 	}
 	
 	
-	public void loadFoodSettings(String fileName) {
-		File csvFile = new File(fileName); // open file
+	public void loadFoodSettings(File file) {
+		File csvFile = file; // open file
 		if (!csvFile.exists()) { // if the file does not exist
 			System.err.println("File not found");
 			return;
 		}
+		
+		allFoods.clear();
+		allMeals.clear();
 		
 		try {
 			Scanner fileReader = new Scanner(csvFile);
@@ -154,14 +160,14 @@ public class CurrentSetup {
 			
 			while (fileReader.hasNextLine() && stillFoods) { //  while more foods
 				currentLine = fileReader.nextLine();
-				System.out.println(currentLine);
+				//System.out.println(currentLine);
 				
 				// parse current line
 				String[] items = currentLine.split(",");
 				
 				if (items.length == 2) { // if name, weight
-					var name = items[0].trim();
-					var weight = Integer.parseInt(items[1].trim());
+					String name = items[0].trim();
+					int weight = Integer.parseInt(items[1].trim());
 					
 					// add food to list
 					Food food = new Food(name, weight);
@@ -180,15 +186,15 @@ public class CurrentSetup {
 			
 			while (fileReader.hasNextLine() && moreMeals) { //  while more foods
 				currentLine = fileReader.nextLine();
-				System.out.println(currentLine);
+				//System.out.println(currentLine);
 				
 				// parse current line
 				String[] items = currentLine.split(",");
 				
 				if (items.length >= 3) { // if a meal
-					var name = items[0].trim();
-					var rawProb = Double.parseDouble(items[1].trim());
-					var scaledProb = Double.parseDouble(items[2].trim());
+					String name = items[0].trim();
+					double rawProb = Double.parseDouble(items[1].trim());
+					double scaledProb = Double.parseDouble(items[2].trim());
 					
 					Meal meal = new Meal(name, rawProb);
 					meal.setScaledProbability(scaledProb);
@@ -240,12 +246,12 @@ public class CurrentSetup {
 	 * .
 	 * .
 	 */
-	public void saveFoodSettings(String fileName) {
+	public void saveFoodSettings(File file) {
 		if (allFoods == null || allFoods.size() == 0) { // if no food to save
 			return;
 		}
 		
-		File csvFile = new File(fileName); // open/create file
+		File csvFile = file; // open/create file
 		try {
 			PrintWriter fileWriter = new PrintWriter(csvFile); // create output stream
 		

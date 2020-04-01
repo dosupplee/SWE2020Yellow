@@ -1,6 +1,8 @@
 package droneSim;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Scanner;
 
@@ -11,6 +13,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import javafx.collections.*;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -179,7 +183,7 @@ public class MainScreenFX extends Application {
 		double screenH = 600;
 		int insets = 15;
 		int numColumns = 4;
-		int numRows = 14;
+		int numRows = 15;
 		double colW = screenW / numColumns - 11;
 		double rowH = screenH / numRows - insets / numRows;
 
@@ -215,12 +219,18 @@ public class MainScreenFX extends Application {
 		Button addFoodButton = new Button("ADD FOOD");
 		Button addMealButton = new Button("ADD MEAL");
 		Button clearMealButton = new Button("CLEAR MEAL");
+		// Button saveButton = new Button("SAVE");
+		// Button loadButton = new Button("LOAD");
+		// Button defaultButton = new Button("DEFAULTS");
 
 		mainPageButton.setMaxSize(150, 50);
 		createFoodButton.setMaxSize(150, 50);
 		addFoodButton.setMaxSize(150, 50);
 		addMealButton.setMaxSize(150, 50);
 		clearMealButton.setMaxSize(150, 50);
+		// saveButton.setMaxSize(150, 50);
+		// loadButton.setMaxSize(150, 50);
+		// defaultButton.setMaxSize(150, 50);
 
 		// create new text fields
 		TextField foodNameTextField = new TextField();
@@ -327,12 +337,14 @@ public class MainScreenFX extends Application {
 		clearMealButton.setOnAction(e -> {
 			mealCreaterTextArea.setText("");
 			mealProbabilityTextField.setText("");
+			mealNameTextField.setText("");
 		});
 		addMealButton.setOnAction(e -> {
 			String inTXT = mealCreaterTextArea.getText();
 			try {
 
-				if (inTXT.length() > 0 && mealProbabilityTextField.getText() != null && mealNameTextField.getText() != null) {
+				if (inTXT.length() > 0 && mealProbabilityTextField.getText() != null
+						&& mealNameTextField.getText() != null) {
 					// parse out meals
 					String[] lines = inTXT.split("\n\n");
 
@@ -346,19 +358,19 @@ public class MainScreenFX extends Application {
 						int quantity = Integer.parseInt(curS.substring(0, 1));
 						String name = curS.substring(curS.indexOf("-") + 2, curS.length()).trim();
 
-						//System.out.println(curSetup.getAllFoods());
+						// System.out.println(curSetup.getAllFoods());
 						for (Food food : curSetup.getAllFoods()) { // find the right food to add to meal
 							if (name.equals(food.getName())) {
 								for (int i = 0; i < quantity; i++) { // add the given quantity of food to meal
 									newMeal.addFood(food);
-									System.out.println("food added");
+									// System.out.println("food added");
 								}
 							}
 						}
 
 					}
 
-					System.out.println(newMeal);
+					// System.out.println(newMeal);
 					// add meal
 					curSetup.addMeal(newMeal);
 					curSetup.adjustMealProbabilities();
@@ -402,6 +414,11 @@ public class MainScreenFX extends Application {
 		// add back button
 		screenLayoutSetup.add(mainPageButton, 0, 11);
 
+		// file buttons
+		// screenLayoutSetup.add(saveButton, 1, 11);
+		// screenLayoutSetup.add(loadButton, 2, 11);
+		// screenLayoutSetup.add(defaultButton, 3, 11);
+
 		// ------------------
 		// right side
 		// ------------------
@@ -441,6 +458,94 @@ public class MainScreenFX extends Application {
 		// ------------------
 		//
 
-		setupScene = new Scene(screenLayoutSetup, screenW, screenH);
+		// menu
+		// create a menu
+		Menu m = new Menu("File");
+
+		// create menuitems
+		String saveS = "Save Settings";
+		String loadS = "Load Settings";
+		String defaultS = "Default Settings";
+		MenuItem m1 = new MenuItem(saveS);
+		MenuItem m2 = new MenuItem(loadS);
+		MenuItem m3 = new MenuItem(defaultS);
+
+		// create events for menu items
+		// action event
+		EventHandler<ActionEvent> event = new EventHandler<ActionEvent>() {
+			public void handle(ActionEvent e) {
+				String selectedS = ((MenuItem) e.getSource()).getText();
+				if (selectedS.equals(saveS)) {
+
+					FileChooser fileChooser = new FileChooser();
+
+					// Set extension filter
+					FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("CSV files (*.csv)",
+							"*.csv");
+					fileChooser.getExtensionFilters().add(extFilter);
+
+					// Show save file dialog
+					File file = fileChooser.showSaveDialog(window);
+
+					if (file != null) {
+						curSetup.saveFoodSettings(file);
+					}
+
+				} else if (selectedS.equals(loadS)) {
+
+					FileChooser fileChooser = new FileChooser();
+					FileChooser.ExtensionFilter fileExtensions = new FileChooser.ExtensionFilter("CSV files (*.csv)",
+							"*.csv");
+					fileChooser.getExtensionFilters().add(fileExtensions);
+
+					File selectedFile = fileChooser.showOpenDialog(window);
+
+					if (selectedFile != null) { // if a file was selected
+						curSetup.loadFoodSettings(selectedFile);
+
+					}
+
+				} else if (selectedS.equals(defaultS)) {
+					System.out.println("Selected def");
+					curSetup.loadDefaultFoodSettings();
+				}
+
+				// reload screen stuff
+				mealProbabilityTextField.clear();
+				String out = "";
+				for (Meal meal : curSetup.getAllMeals()) {
+					out += String.format("%-70s%-10.2f", meal.getName(), meal.getRawProbability());
+					out += "\n";
+					out += "\tContains: ";
+					for (Food food : meal.getFoodItems()) {
+						out += food.getName() + ", ";
+					}
+					out = out.substring(0, out.lastIndexOf(",")); // get rid of last ","
+					out += "\n\n";
+				}
+				mealProbTextArea.setText(out);
+
+			}
+		};
+
+		// add event
+		m1.setOnAction(event);
+		m2.setOnAction(event);
+		m3.setOnAction(event);
+
+		// add menu items to menu
+		m.getItems().add(m1);
+		m.getItems().add(m2);
+		m.getItems().add(m3);
+		// create a menubar
+		MenuBar mb = new MenuBar();
+
+		// add menu to menubar
+		mb.getMenus().add(m);
+
+		VBox vBox = new VBox(mb, screenLayoutSetup);
+
+		setupScene = new Scene(vBox, screenW, screenH);
 	}
+
 }
