@@ -175,7 +175,7 @@ public class Main {
 
 	}
 
-
+	/*
 	public static void runTSP() {
 		ArrayList<DeliveryPoint> pointsToVisit = new ArrayList<DeliveryPoint>();
 		ArrayList<DeliveryPoint> bestPath;
@@ -192,6 +192,7 @@ public class Main {
 		TSP driver = new TSP(pointsToVisit);
 		bestPath = driver.runTSP();
 	}
+	*/
 
 	
 	public static CurrentSetup getCurrentSetup()

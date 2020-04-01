@@ -1,3 +1,8 @@
+/*
+ * Implentation adapted from Tutorials Point
+ * https://www.tutorialspoint.com/java_xml/java_dom_parse_document.htm
+ */
+
 package droneSim;
 
 import javax.xml.parsers.*;
