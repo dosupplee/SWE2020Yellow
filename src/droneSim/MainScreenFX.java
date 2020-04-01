@@ -118,7 +118,7 @@ public class MainScreenFX extends Application {
 		
 		// create new combo box
 		// TODO
-		ObservableList<String> options = FXCollections.observableArrayList( "Pizza", "French Fries");
+		ObservableList<String> options = FXCollections.observableArrayList( "Pizza", "French Fries", "Burger", "Drink");
 		ComboBox<String> foodOptionsComboBox = new ComboBox<>(options);
 		foodOptionsComboBox.setPromptText("SELECT FOOD");
 		

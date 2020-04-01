@@ -497,4 +497,12 @@ public class CurrentSetup {
 		return currentDrone;
 	}
 	
+	public String[] getAllFoodNames() {
+		String[] names = new String[allFoods.size()];
+		for (int i = 0; i < names.length; i++) {
+			names[i] = allFoods.get(i).getName(); 
+		}
+		return names;
+	}
+	
 }
