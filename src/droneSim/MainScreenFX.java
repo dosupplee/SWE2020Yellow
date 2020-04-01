@@ -99,6 +99,11 @@ public class MainScreenFX extends Application {
 		slowestTime.setFont(new Font("Arial", 18));
 		fastestTime.setFont(new Font("Arial", 18));
 		
+		fileName.setTextFill(Color.WHITE);
+		avgTime.setTextFill(Color.WHITE);
+		slowestTime.setTextFill(Color.WHITE);
+		fastestTime.setTextFill(Color.WHITE);
+	
 		
 		// create new text Area for the running log
 		TextArea outputLog = new TextArea();
@@ -212,6 +217,12 @@ public class MainScreenFX extends Application {
 		Button addMealButton = new Button("ADD MEAL");
 		Button clearMealButton = new Button("CLEAR MEAL");
 		mainPageButton.setOnAction(e -> window.setScene(mainScene)); // go back to main screen
+		
+		mainPageButton.setMaxSize(150, 50);
+		createFoodButton.setMaxSize(150, 50);
+		addFoodButton.setMaxSize(150, 50);
+		addMealButton.setMaxSize(150, 50);
+		clearMealButton.setMaxSize(150, 50);
 	
 		// create new text fields
 		TextField foodNameTextField = new TextField();
@@ -226,10 +237,12 @@ public class MainScreenFX extends Application {
 		ObservableList<String> options = FXCollections.observableArrayList( "Pizza", "French Fries", "Burger", "Drink");
 		ComboBox<String> foodOptionsComboBox = new ComboBox<>(options);
 		foodOptionsComboBox.setPromptText("SELECT FOOD");
+		foodOptionsComboBox.setMaxWidth(150);
 		
 		ObservableList<Integer> qoptions = FXCollections.observableArrayList(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20);
 		ComboBox<Integer> foodQuantityComboBox = new ComboBox<>(qoptions);
 		foodQuantityComboBox.setPromptText("QUANTITY");
+		foodQuantityComboBox.setMaxWidth(150);
 	
 		// create new text Area
 		TextArea mealProbTextArea = new TextArea();
@@ -238,12 +251,24 @@ public class MainScreenFX extends Application {
 		
 		TextArea mealCreaterTextArea = new TextArea();
 		mealCreaterTextArea.setMaxWidth(colW);
-		mealCreaterTextArea.setMaxHeight(5.5 * rowH);
+		mealCreaterTextArea.setMaxHeight(6 * rowH);
 	
 		// create new labels
-		Label mealLabel = new Label("MEAL:");
-		Label probabilityLabel = new Label("PROBABILITY:");
-		Label inMealLabel = new Label("CURRENT FOODS IN MEAL:");
+		Label mealLabel = new Label("MEAL");
+		Label probabilityLabel = new Label("PROBABILITY");
+		Label inMealLabel = new Label("FOODS IN MEAL");
+		
+		mealLabel.setFont(new Font("Arial", 18));
+		probabilityLabel.setFont(new Font("Arial", 18));
+		inMealLabel.setFont(new Font("Arial", 18));
+		
+//		mealLabel.setUnderline(true);
+//		probabilityLabel.setUnderline(true);
+//		inMealLabel.setUnderline(true);
+//		
+		mealLabel.setTextFill(Color.WHITE);
+		probabilityLabel.setTextFill(Color.WHITE);
+		inMealLabel.setTextFill(Color.WHITE);
 	
 		// ------------------
 		// left area
