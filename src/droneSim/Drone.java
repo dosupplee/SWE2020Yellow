@@ -64,6 +64,9 @@ public class Drone {
 	 * @return ArrayList<DeliveryPoint> containing the fastest path to take
 	 */
 	public int runTSP(ArrayList<Order> orders) {
+		
+		orderLocations.clear();
+		
 		for (int i = 0; i < orders.size(); i++) {
 			orderLocations.add(orders.get(i).getDeliveryPoint());
 		}

@@ -1,3 +1,9 @@
+/*
+ * Theoretical Implentation Adapted from Fabian Terh
+ * https://medium.com/@fabianterh/how-to-solve-the-knapsack-problem-with-dynamic-programming-eb88c706d3cf
+ */
+
+
 package droneSim;
 
 import java.util.ArrayList;
@@ -178,6 +184,9 @@ public class KnapsackPacker
     			 skippedOrders.add(orderBacklog.get(i));
     		 }
 	     }
+         
+         if(ans==null)
+        	 ans = new ArrayList<Order>();
 	        
 	     return ans;
 	}
