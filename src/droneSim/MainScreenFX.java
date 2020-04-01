@@ -121,6 +121,10 @@ public class MainScreenFX extends Application {
 		ObservableList<String> options = FXCollections.observableArrayList( "Pizza", "French Fries");
 		ComboBox<String> foodOptionsComboBox = new ComboBox<>(options);
 		foodOptionsComboBox.setPromptText("SELECT FOOD");
+		
+		ObservableList<Integer> qoptions = FXCollections.observableArrayList(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20);
+		ComboBox<Integer> foodQuantityComboBox = new ComboBox<>(qoptions);
+		foodQuantityComboBox.setPromptText("QUANTITY");
 
 		// create new text Area
 		TextArea mealProbTextArea = new TextArea();
@@ -175,8 +179,10 @@ public class MainScreenFX extends Application {
 		screenLayoutSetup.add(mealCreaterTextArea, 3, 5, 1, 5);
 		
 		screenLayoutSetup.add(foodOptionsComboBox, 2, 6);
-		screenLayoutSetup.add(addFoodButton, 2, 7);
+		screenLayoutSetup.add(foodQuantityComboBox, 2, 7);
+		screenLayoutSetup.add(addFoodButton, 2, 8);
 		screenLayoutSetup.setHalignment(foodOptionsComboBox, HPos.CENTER);
+		screenLayoutSetup.setHalignment(foodQuantityComboBox, HPos.CENTER);
 		screenLayoutSetup.setHalignment(addFoodButton, HPos.CENTER);
 		
 		screenLayoutSetup.add(addMealButton, 2, 10);
