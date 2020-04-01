@@ -162,7 +162,11 @@ public class MainScreenFX extends Application {
  	}
  
  	public void makeSetupScreen() {
-			// -----------------------------------------
+ 		//TODO get from main (i.e. not new instance)
+		CurrentSetup curSetup = new CurrentSetup();	
+		curSetup.loadDefaultDroneSettings();
+ 		
+ 		// -----------------------------------------
 		// SETUP PAGE
 		// -----------------------------------------
 		// 5 columns wide
@@ -216,7 +220,6 @@ public class MainScreenFX extends Application {
 		Button addFoodButton = new Button("ADD FOOD");
 		Button addMealButton = new Button("ADD MEAL");
 		Button clearMealButton = new Button("CLEAR MEAL");
-		mainPageButton.setOnAction(e -> window.setScene(mainScene)); // go back to main screen
 		
 		mainPageButton.setMaxSize(150, 50);
 		createFoodButton.setMaxSize(150, 50);
@@ -234,7 +237,7 @@ public class MainScreenFX extends Application {
 		
 		// create new combo box
 		// TODO
-		ObservableList<String> options = FXCollections.observableArrayList( "Pizza", "French Fries", "Burger", "Drink");
+		ObservableList<String> options = FXCollections.observableArrayList(curSetup.getAllFoodNames());
 		ComboBox<String> foodOptionsComboBox = new ComboBox<>(options);
 		foodOptionsComboBox.setPromptText("SELECT FOOD");
 		foodOptionsComboBox.setMaxWidth(150);
@@ -252,6 +255,7 @@ public class MainScreenFX extends Application {
 		TextArea mealCreaterTextArea = new TextArea();
 		mealCreaterTextArea.setMaxWidth(colW);
 		mealCreaterTextArea.setMaxHeight(6 * rowH);
+		mealCreaterTextArea.setPromptText("YOUR CUSTOM MEAL...");
 	
 		// create new labels
 		Label mealLabel = new Label("MEAL");
@@ -262,13 +266,50 @@ public class MainScreenFX extends Application {
 		probabilityLabel.setFont(new Font("Arial", 18));
 		inMealLabel.setFont(new Font("Arial", 18));
 		
-//		mealLabel.setUnderline(true);
-//		probabilityLabel.setUnderline(true);
-//		inMealLabel.setUnderline(true);
-//		
 		mealLabel.setTextFill(Color.WHITE);
 		probabilityLabel.setTextFill(Color.WHITE);
 		inMealLabel.setTextFill(Color.WHITE);
+		
+		
+		// buttons action
+		mainPageButton.setOnAction(e -> window.setScene(mainScene)); // go back to main screen
+		createFoodButton.setOnAction(e -> {
+			try {
+				// parse new food
+				String name = foodNameTextField.getText();
+				int weight = Integer.parseInt(foodWeightTextField.getText());
+				Food food = new Food(name, weight);
+				curSetup.addFood(food);
+				
+				// update combo box
+				ObservableList<String> foodOptions = FXCollections.observableArrayList(curSetup.getAllFoodNames());
+				foodOptionsComboBox.setItems(foodOptions);
+				
+				foodNameTextField.setText("");
+				foodWeightTextField.setText("");
+			} catch (Exception e2) {
+				foodWeightTextField.setText(""); // if not an integer placed
+			}
+		});
+		addFoodButton.setOnAction(e -> {
+			if (foodOptionsComboBox.getValue() != null && foodQuantityComboBox.getValue() != null) {
+				try {
+					String mealName = foodOptionsComboBox.getValue();
+					int mealQuantity = foodQuantityComboBox.getValue(); 
+					mealCreaterTextArea.appendText(mealQuantity + "x\t- " + mealName);
+					mealCreaterTextArea.appendText("\n\n");
+					
+					//TODO reset combobox
+
+				} catch (Exception e2) {
+					System.err.println(e2.getMessage());
+				}
+				
+			}
+		});
+		clearMealButton.setOnAction(e -> {
+			mealCreaterTextArea.setText("");
+		});
 	
 		// ------------------
 		// left area
