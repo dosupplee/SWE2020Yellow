@@ -466,9 +466,11 @@ public class MainScreenFX extends Application {
 		String saveS = "Save Settings";
 		String loadS = "Load Settings";
 		String defaultS = "Default Settings";
+		String clearS = "Clear Meals";
 		MenuItem m1 = new MenuItem(saveS);
 		MenuItem m2 = new MenuItem(loadS);
 		MenuItem m3 = new MenuItem(defaultS);
+		MenuItem m4 = new MenuItem(clearS);
 
 		// create events for menu items
 		// action event
@@ -506,8 +508,9 @@ public class MainScreenFX extends Application {
 					}
 
 				} else if (selectedS.equals(defaultS)) {
-					System.out.println("Selected def");
 					curSetup.loadDefaultFoodSettings();
+				} else if (selectedS.equals(clearS)) {
+					curSetup.clearFoodsAndMeals();
 				}
 
 				// reload screen stuff
@@ -532,11 +535,13 @@ public class MainScreenFX extends Application {
 		m1.setOnAction(event);
 		m2.setOnAction(event);
 		m3.setOnAction(event);
+		m4.setOnAction(event);
 
 		// add menu items to menu
 		m.getItems().add(m1);
 		m.getItems().add(m2);
 		m.getItems().add(m3);
+		m.getItems().add(m4);
 		// create a menubar
 		MenuBar mb = new MenuBar();
 

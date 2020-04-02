@@ -98,8 +98,7 @@ public class CurrentSetup {
 	public void loadDefaultFoodSettings() {
 		// TODO load the saved food settings
 		
-		allFoods.clear();
-		allMeals.clear();
+		clearFoodsAndMeals();
 		
 		// Create some basic food stuffs
 		addFood(new Food("Burger", 6));
@@ -140,8 +139,7 @@ public class CurrentSetup {
 			return;
 		}
 		
-		allFoods.clear();
-		allMeals.clear();
+		clearFoodsAndMeals();
 		
 		try {
 			Scanner fileReader = new Scanner(csvFile);
@@ -511,4 +509,8 @@ public class CurrentSetup {
 		return names;
 	}
 	
+	public void clearFoodsAndMeals() {
+		allFoods.clear();
+		allMeals.clear();
+	}
 }
