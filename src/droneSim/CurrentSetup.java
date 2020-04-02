@@ -98,6 +98,8 @@ public class CurrentSetup {
 	public void loadDefaultFoodSettings() {
 		// TODO load the saved food settings
 		
+		clearFoodsAndMeals();
+		
 		// Create some basic food stuffs
 		addFood(new Food("Burger", 6));
 		addFood(new Food("Drink", 14));
@@ -121,21 +123,24 @@ public class CurrentSetup {
 
 		// Create some basic point stuffs
 
-		addDeliveryPoint(new DeliveryPoint(0, 0, "SAC"));
-		addDeliveryPoint(new DeliveryPoint(5, 12, "HAL"));
-		addDeliveryPoint(new DeliveryPoint(12, 18, "STEM"));
+		addDeliveryPoint(new DeliveryPoint(0, 5, "HAL"));
+		addDeliveryPoint(new DeliveryPoint(-2, -8, "STEM"));
+		addDeliveryPoint(new DeliveryPoint(9, -15, "Lincoln"));
+		addDeliveryPoint(new DeliveryPoint(9, -6, "Library"));
 		
 		
 		setCurrentMap(new Map("mainMap", "C://MapLocation", getDeliveryPoints()));
 	}
 	
 	
-	public void loadFoodSettings(String fileName) {
-		File csvFile = new File(fileName); // open file
+	public void loadFoodSettings(File file) {
+		File csvFile = file; // open file
 		if (!csvFile.exists()) { // if the file does not exist
 			System.err.println("File not found");
 			return;
 		}
+		
+		clearFoodsAndMeals();
 		
 		try {
 			Scanner fileReader = new Scanner(csvFile);
@@ -154,14 +159,14 @@ public class CurrentSetup {
 			
 			while (fileReader.hasNextLine() && stillFoods) { //  while more foods
 				currentLine = fileReader.nextLine();
-				System.out.println(currentLine);
+				//System.out.println(currentLine);
 				
 				// parse current line
 				String[] items = currentLine.split(",");
 				
 				if (items.length == 2) { // if name, weight
-					var name = items[0].trim();
-					var weight = Integer.parseInt(items[1].trim());
+					String name = items[0].trim();
+					int weight = Integer.parseInt(items[1].trim());
 					
 					// add food to list
 					Food food = new Food(name, weight);
@@ -180,15 +185,15 @@ public class CurrentSetup {
 			
 			while (fileReader.hasNextLine() && moreMeals) { //  while more foods
 				currentLine = fileReader.nextLine();
-				System.out.println(currentLine);
+				//System.out.println(currentLine);
 				
 				// parse current line
 				String[] items = currentLine.split(",");
 				
 				if (items.length >= 3) { // if a meal
-					var name = items[0].trim();
-					var rawProb = Double.parseDouble(items[1].trim());
-					var scaledProb = Double.parseDouble(items[2].trim());
+					String name = items[0].trim();
+					double rawProb = Double.parseDouble(items[1].trim());
+					double scaledProb = Double.parseDouble(items[2].trim());
 					
 					Meal meal = new Meal(name, rawProb);
 					meal.setScaledProbability(scaledProb);
@@ -240,12 +245,12 @@ public class CurrentSetup {
 	 * .
 	 * .
 	 */
-	public void saveFoodSettings(String fileName) {
+	public void saveFoodSettings(File file) {
 		if (allFoods == null || allFoods.size() == 0) { // if no food to save
 			return;
 		}
 		
-		File csvFile = new File(fileName); // open/create file
+		File csvFile = file; // open/create file
 		try {
 			PrintWriter fileWriter = new PrintWriter(csvFile); // create output stream
 		
@@ -493,8 +498,8 @@ public class CurrentSetup {
 		return currentDrone.getWeightCapacity();
 	}
 	
-	public Drone getDrone() {
-		return currentDrone;
+	public int sendDrone(ArrayList<Order> orders) {
+		return currentDrone.runTSP(orders);
 	}
 	
 	public String[] getAllFoodNames() {
@@ -505,4 +510,8 @@ public class CurrentSetup {
 		return names;
 	}
 	
+	public void clearFoodsAndMeals() {
+		allFoods.clear();
+		allMeals.clear();
+	}
 }

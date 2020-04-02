@@ -19,6 +19,7 @@ public class XMLOrderParser
 	private DocumentBuilderFactory factory;
 	private DocumentBuilder builder;
 	private Document document;
+	private CurrentSetup currentSetup;
 	
 	private int nextOrderToGrab;
 	
@@ -28,8 +29,9 @@ public class XMLOrderParser
 	 * Returns instansiated object
 	 */
 	
-	public XMLOrderParser(String file)
+	public XMLOrderParser(String file, CurrentSetup currentSetup)
 	{
+		this.currentSetup = currentSetup;
 		nextOrderToGrab = 0;
 		try
 		{
@@ -81,8 +83,8 @@ public class XMLOrderParser
 					 if(currentTime.compareTo(orderTimeObject) > 0 && shift == currentOrderShift)
 					 {
 						//find values from list 
-						 Meal thisMeal = Main.getCurrentSetup().getMealFromName(mealName);
-						 DeliveryPoint thisDeliveryPoint = Main.getCurrentSetup().getCurrentMap().getDeliveryPointFromName(deliveryPointName);
+						 Meal thisMeal = currentSetup.getMealFromName(mealName);
+						 DeliveryPoint thisDeliveryPoint = currentSetup.getCurrentMap().getDeliveryPointFromName(deliveryPointName);
 						 
 						 //create new order with those values
 						 Order newOrder = new Order(thisMeal,thisDeliveryPoint,orderTimeObject);
@@ -105,7 +107,15 @@ public class XMLOrderParser
 		
 		return myOrders;
 		
-	}	
+	}
+	
+	
+	/**
+	 * Reset parser to restart search at beginning of xml containing order data
+	 */
+	public void reset() {
+		nextOrderToGrab = 0;
+	}
 	
 	
 }

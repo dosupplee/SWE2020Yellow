@@ -12,9 +12,11 @@ public class KnapsackPacker
 {
 	
 	public ArrayList<Order> skippedOrders; 
+	private CurrentSetup currentSetup;
 	
-	public KnapsackPacker()
+	public KnapsackPacker(CurrentSetup currentSetup)
 	{
+		this.currentSetup = currentSetup;
 		skippedOrders = new ArrayList<Order>();
 	}
 	
@@ -37,7 +39,7 @@ public class KnapsackPacker
 		int numOrders = findLastValidItem(orderCountAdjust+1,orderBacklog);
 		 
 		//Need to account for the skipped orders that are fast-tracked
-        int droneWeight = Main.getCurrentSetup().getDroneWeight() - getAllWeight(skippedOrders);     
+        int droneWeight = currentSetup.getDroneWeight() - getAllWeight(skippedOrders);     
 
         // Create 2d array of possible solutions
         //Each possible weight has a row
@@ -219,7 +221,7 @@ public class KnapsackPacker
 	public int findLastValidItem(int numStart,ArrayList<Order> arrayList)
 	{
 		//MaxThisCycle is the space that can be filled this cycle while still allowing the next cycle to fulfill any skipped orders
-		int maxThisCycle = (Main.getCurrentSetup().getDroneWeight() * 2) - getAllWeight(skippedOrders);
+		int maxThisCycle = (currentSetup.getDroneWeight() * 2) - getAllWeight(skippedOrders);
 		int sum = 0;
 		
 		for(int i=numStart;i<arrayList.size();i++)
