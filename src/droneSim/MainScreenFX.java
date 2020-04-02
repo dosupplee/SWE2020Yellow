@@ -143,6 +143,7 @@ public class MainScreenFX extends Application {
 		TextArea outputResults = new TextArea();
 		outputResults.setMaxWidth(colW * .75);
 		outputResults.setMaxHeight(6 * rowH);
+		outputResults.setEditable(false);
 
 		// Main page buttons
 		Button setupPageButton = new Button("SETUP");
