@@ -34,7 +34,7 @@ public class Food {
 	/**
 	 * @return Returns food weight
 	 */
-	public double getWeight() {
+	public int getWeight() {
 		return weight;
 	}
 	

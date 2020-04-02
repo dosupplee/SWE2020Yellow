@@ -359,6 +359,7 @@ public class MainScreenFX extends Application {
 			if (foodOptionsComboBox.getValue() != null && foodQuantityComboBox.getValue() != null) {
 				try {
 					String mealName = foodOptionsComboBox.getValue();
+					mealName = mealName.substring(0, mealName.lastIndexOf("-")); // get rid of weight
 					int mealQuantity = foodQuantityComboBox.getValue();
 					mealCreaterTextArea.appendText(mealQuantity + "x\t- " + mealName);
 					mealCreaterTextArea.appendText("\n\n");

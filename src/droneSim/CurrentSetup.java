@@ -505,7 +505,7 @@ public class CurrentSetup {
 	public String[] getAllFoodNames() {
 		String[] names = new String[allFoods.size()];
 		for (int i = 0; i < names.length; i++) {
-			names[i] = allFoods.get(i).getName(); 
+			names[i] = allFoods.get(i).getName() + " - " + allFoods.get(i).getWeight() +" (oz)"; 
 		}
 		return names;
 	}
