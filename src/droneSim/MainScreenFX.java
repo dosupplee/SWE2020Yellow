@@ -21,6 +21,12 @@ import javafx.scene.layout.*;
 import javafx.scene.layout.RowConstraints;
 import javafx.stage.Stage;
 
+/**
+ * 
+ * TODO
+ * - Only let user add foods/meals within drone carrying capacity?
+ *
+ */
 public class MainScreenFX extends Application {
 
 	public static Stage window;
@@ -263,17 +269,20 @@ public class MainScreenFX extends Application {
 		TextArea mealProbTextArea = new TextArea();
 		mealProbTextArea.setMaxWidth(2 * colW);
 		mealProbTextArea.setMaxHeight(12 * rowH);
+		mealProbTextArea.setEditable(false);
 		// load meals
 		{
 			String out = "";
 			for (Meal meal : curSetup.getAllMeals()) {
-				out += String.format("%-70s%-10.2f", meal.getName(), meal.getRawProbability());
+				out += String.format("%-63s%.2f -> %.2f%%", meal.getName(), meal.getRawProbability(), (100 * meal.getScaledProbability()));
 				out += "\n";
 				out += "\tContains: ";
 				for (Food food : meal.getFoodItems()) {
 					out += food.getName() + ", ";
 				}
 				out = out.substring(0, out.lastIndexOf(",")); // get rid of last ","
+				out += "\n";
+				out += "\tWeight: " + meal.getWeight() + " (oz)";
 				out += "\n\n";
 			}
 			mealProbTextArea.setText(out);
@@ -281,14 +290,14 @@ public class MainScreenFX extends Application {
 
 		TextArea mealCreaterTextArea = new TextArea();
 		mealCreaterTextArea.setMaxWidth(colW);
-		mealCreaterTextArea.setMaxHeight(6 * rowH);
+//		mealCreaterTextArea.setMaxHeight(6 * rowH);
 		mealCreaterTextArea.setEditable(false);
 		mealCreaterTextArea.setPromptText("Your Custom Meal...");
 
 		// create new labels
 		Label mealLabel = new Label("MEAL");
 		Label probabilityLabel = new Label("PROBABILITY");
-		Label inMealLabel = new Label("FOODS IN MEAL");
+		Label inMealLabel = new Label("CUSTOM MEAL");
 
 		mealLabel.setFont(new Font("Arial", 18));
 		probabilityLabel.setFont(new Font("Arial", 18));
@@ -378,13 +387,15 @@ public class MainScreenFX extends Application {
 						mealProbabilityTextField.clear();
 						String out = "";
 						for (Meal meal : curSetup.getAllMeals()) {
-							out += String.format("%-70s%-10.2f", meal.getName(), meal.getRawProbability());
+							out += String.format("%-63s%.2f -> %.2f%%", meal.getName(), meal.getRawProbability(), (100 * meal.getScaledProbability()));
 							out += "\n";
 							out += "\tContains: ";
 							for (Food food : meal.getFoodItems()) {
 								out += food.getName() + ", ";
 							}
 							out = out.substring(0, out.lastIndexOf(",")); // get rid of last ","
+							out += "\n";
+							out += "\tWeight: " + meal.getWeight() + " (oz)";
 							out += "\n\n";
 						}
 						mealProbTextArea.setText(out);
@@ -433,9 +444,10 @@ public class MainScreenFX extends Application {
 		screenLayoutSetup.setHalignment(createFoodButton, HPos.CENTER);
 
 		// add some meal stuff
-		screenLayoutSetup.add(inMealLabel, 3, 4);
+		mealCreaterTextArea.setMaxHeight(4 * rowH);
+		screenLayoutSetup.add(inMealLabel, 3, 5);
 		screenLayoutSetup.setHalignment(inMealLabel, HPos.CENTER);
-		screenLayoutSetup.add(mealCreaterTextArea, 3, 5, 1, 5);
+		screenLayoutSetup.add(mealCreaterTextArea, 3, 6, 1, 4);
 
 		screenLayoutSetup.add(foodOptionsComboBox, 2, 5);
 		screenLayoutSetup.add(foodQuantityComboBox, 2, 6);
@@ -517,13 +529,15 @@ public class MainScreenFX extends Application {
 				mealProbabilityTextField.clear();
 				String out = "";
 				for (Meal meal : curSetup.getAllMeals()) {
-					out += String.format("%-70s%-10.2f", meal.getName(), meal.getRawProbability());
+					out += String.format("%-63s%.2f -> %.2f%%", meal.getName(), meal.getRawProbability(), (100 * meal.getScaledProbability()));
 					out += "\n";
 					out += "\tContains: ";
 					for (Food food : meal.getFoodItems()) {
 						out += food.getName() + ", ";
 					}
 					out = out.substring(0, out.lastIndexOf(",")); // get rid of last ","
+					out += "\n";
+					out += "\tWeight: " + meal.getWeight() + " (oz)";
 					out += "\n\n";
 				}
 				mealProbTextArea.setText(out);
