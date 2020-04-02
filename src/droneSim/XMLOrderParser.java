@@ -105,7 +105,15 @@ public class XMLOrderParser
 		
 		return myOrders;
 		
-	}	
+	}
+	
+	
+	/**
+	 * Reset parser to restart search at beginning of xml containing order data
+	 */
+	public void reset() {
+		nextOrderToGrab = 0;
+	}
 	
 	
 }

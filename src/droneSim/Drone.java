@@ -30,15 +30,14 @@ public class Drone {
 	 * @param turnAroundTime
 	 * @param dropOffTime
 	 */
-	public Drone(String name, int weightCapacity, int speed, int maxFlightTime, int turnAroundTime,
-			int dropOffTime) {
+	public Drone(String name, int weightCapacityLB, int speedMPH, int maxFlightTimeSec, int turnAroundTimeSec,
+			int dropOffTimeSec) {
 		this.name = name;
-		this.weightCapacity = weightCapacity;
-		this.speed = speed * 3600;
-		this.maxFlightTime = maxFlightTime;
-		this.turnAroundTime = turnAroundTime;
-		this.dropOffTime = dropOffTime;
-		this.bestLengthSoFar = Integer.MAX_VALUE;
+		this.weightCapacity = weightCapacity * 16; //Convert from lbs to oz
+		this.speed = (int) (speed * 1.5);
+		this.maxFlightTime = maxFlightTimeSec;
+		this.turnAroundTime = turnAroundTimeSec;
+		this.dropOffTime = dropOffTimeSec;
 		this.orderLocations = new ArrayList<DeliveryPoint>();
 	}
 
@@ -48,11 +47,10 @@ public class Drone {
 	public Drone() {
 		this.name = "DefaultDrone";
 		this.weightCapacity = 12 * 16; // in oz
-		this.speed = 20; // 20 mph
+		this.speed = (int) (20 * 1.5); // 20 mph to 30 ft/sec
 		this.maxFlightTime = 20 * 60; // 20 minutes
 		this.turnAroundTime = 3 * 60; // 3 minutes
 		this.dropOffTime = 30; // 30 seconds
-		this.bestLengthSoFar = Integer.MAX_VALUE;
 		this.orderLocations = new ArrayList<DeliveryPoint>();
 	}
 
@@ -66,6 +64,7 @@ public class Drone {
 	public int runTSP(ArrayList<Order> orders) {
 		
 		orderLocations.clear();
+		bestLengthSoFar = Integer.MAX_VALUE;
 		
 		for (int i = 0; i < orders.size(); i++) {
 			orderLocations.add(orders.get(i).getDeliveryPoint());
@@ -77,7 +76,7 @@ public class Drone {
 			recursiveFindPath(new ArrayList<DeliveryPoint>(), orderLocations);
 			
 			//Print the best path to take as text
-			System.out.print("\n\nFound Best path of distance: \n Home -> ");
+			System.out.print("\n\nFound Best path of distance: \nHome -> ");
 			
 			for (int i = 0; i < bestPath.size(); i++) {
 				System.out.print(bestPath.get(i).getName() + " -> ");
@@ -86,7 +85,10 @@ public class Drone {
 			System.out.print("Home \n\n");
 		}
 		
-		return bestLengthSoFar;
+		int secondsTaken = ((bestLengthSoFar * 10) / this.speed) + (this.dropOffTime * orderLocations.size()) +
+				this.turnAroundTime;
+		
+		return secondsTaken;
 	}
 	
 	

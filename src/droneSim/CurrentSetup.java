@@ -123,9 +123,10 @@ public class CurrentSetup {
 
 		// Create some basic point stuffs
 
-		addDeliveryPoint(new DeliveryPoint(0, 0, "SAC"));
-		addDeliveryPoint(new DeliveryPoint(5, 12, "HAL"));
-		addDeliveryPoint(new DeliveryPoint(12, 18, "STEM"));
+		addDeliveryPoint(new DeliveryPoint(0, 5, "HAL"));
+		addDeliveryPoint(new DeliveryPoint(-2, -8, "STEM"));
+		addDeliveryPoint(new DeliveryPoint(9, -15, "Lincoln"));
+		addDeliveryPoint(new DeliveryPoint(9, -6, "Library"));
 		
 		
 		setCurrentMap(new Map("mainMap", "C://MapLocation", getDeliveryPoints()));
@@ -497,8 +498,8 @@ public class CurrentSetup {
 		return currentDrone.getWeightCapacity();
 	}
 	
-	public Drone getDrone() {
-		return currentDrone;
+	public int sendDrone(ArrayList<Order> orders) {
+		return currentDrone.runTSP(orders);
 	}
 	
 	public String[] getAllFoodNames() {
