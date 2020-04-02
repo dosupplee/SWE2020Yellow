@@ -3,9 +3,11 @@ package droneSim;
 import java.util.ArrayList;
 
 public class FIFOPacker {
-
-	public FIFOPacker() {
-		
+	
+	private CurrentSetup currentSetup;
+	
+	public FIFOPacker(CurrentSetup currentSetup) {
+		this.currentSetup = currentSetup;
 	}
 	
 	/**
@@ -16,7 +18,7 @@ public class FIFOPacker {
 	public ArrayList<Order> pack(ArrayList<Order> orderBacklog) {
 	
 		// get the drone carrying capacity per trip
-		int droneCarryWeight = Main.getCurrentSetup().getDroneWeight();
+		int droneCarryWeight = currentSetup.getDroneWeight();
 		
 		// trip weight to see if below drone carry capacity
 		double tripWeight = 0.0;

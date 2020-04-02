@@ -29,8 +29,10 @@ import javafx.stage.Stage;
  */
 public class MainScreenFX extends Application {
 
-	public static Stage window;
-	public static Scene mainScene, setupScene;
+	public Stage window;
+	public Scene mainScene, setupScene;
+	private Runner runner;
+	private CurrentSetup curSetup;
 
 	public static void main(String[] args) {
 		launch(args);
@@ -38,6 +40,8 @@ public class MainScreenFX extends Application {
 
 	@Override
 	public void start(Stage stage) {
+		runner = new Runner();
+		curSetup = runner.getCurrentSetup();
 
 		makeMainScreen();
 		makeSetupScreen();
@@ -100,6 +104,23 @@ public class MainScreenFX extends Application {
 		Label avgTime = new Label("AVERAGE TIME:");
 		Label slowestTime = new Label("SLOWEST TIME:");
 		Label fastestTime = new Label("FASTEST TIME:");
+		
+		// Time textFields
+		TextField fastFifoTextField = new TextField();
+		TextField fastKnapTextField = new TextField();
+		
+		TextField slowFifoTextField = new TextField();
+		TextField slowKnapTextField = new TextField();
+		
+		TextField avgFifoTextField = new TextField();
+		TextField avgKnapTextField = new TextField();
+		
+		fastFifoTextField.setEditable(false);
+		fastKnapTextField.setEditable(false);
+		slowFifoTextField.setEditable(false);
+		slowKnapTextField.setEditable(false);
+		avgFifoTextField.setEditable(false);
+		avgKnapTextField.setEditable(false);
 
 		// change the size and font of the label
 		fileName.setFont(new Font("Arial", 18));
@@ -116,6 +137,7 @@ public class MainScreenFX extends Application {
 		TextArea outputLog = new TextArea();
 		outputLog.setMaxWidth(1.8 * colW);
 		outputLog.setMaxHeight(6 * rowH);
+		outputLog.setEditable(false);
 
 		// create new text Area for the results
 		TextArea outputResults = new TextArea();
@@ -128,6 +150,13 @@ public class MainScreenFX extends Application {
 		Button saveLogButton = new Button("SAVE LOG");
 		Button clearLogButton = new Button("CLEAR LOG");
 		Button selectFileButton = new Button("SELECT FILE");
+		
+		runSimulationButton.setOnAction(e -> {
+			StringBuilder sBuilder = runner.run();
+			outputLog.clear();
+			outputLog.appendText(sBuilder.toString());
+			//TODO Auto Scroll to bottom
+		});
 
 		// change the size of buttons
 		setupPageButton.setMaxSize(150, 50);
@@ -168,8 +197,6 @@ public class MainScreenFX extends Application {
 	}
 
 	public void makeSetupScreen() {
-		// TODO get from main (i.e. not new instance)
-		CurrentSetup curSetup = new CurrentSetup();
 		curSetup.loadDefaultDroneSettings();
 
 		// -----------------------------------------

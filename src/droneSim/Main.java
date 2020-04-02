@@ -4,9 +4,7 @@
 package droneSim;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList; 
-import java.util.Queue; 
+
 
 public class Main {
 	private static CurrentSetup currentSetup;
@@ -30,7 +28,7 @@ public class Main {
 		XMLOrderGenerator gen = new XMLOrderGenerator(currentSetup);
 		gen.generateAllOrders();
 		
-		XMLOrderParser parse = new XMLOrderParser("order.xml");
+		XMLOrderParser parse = new XMLOrderParser("order.xml", currentSetup);
 		
 		System.out.println("Orders Generated");
 		
@@ -38,13 +36,13 @@ public class Main {
 		int numOrders = 0;
 		
 		//Create Knapsack packer
-		KnapsackPacker kp = new KnapsackPacker();
+		KnapsackPacker kp = new KnapsackPacker(currentSetup);
 		sumKnapsack = 0;
 		slowestTimeKnapsack = Double.MAX_VALUE;
 		fastestTimeKnapsack = 0.0;
 		
 		//Create FIFO packer
-		FIFOPacker fp = new FIFOPacker();
+		FIFOPacker fp = new FIFOPacker(currentSetup);
 		sumFIFO = 0;
 		slowestTimeFIFO = Double.MAX_VALUE;
 		fastestTimeFIFO = 0.0;
