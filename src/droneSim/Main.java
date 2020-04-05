@@ -138,7 +138,7 @@ public class Main {
 						 * 
 						 * Increment currentTime accordingly (how long the trip took + recharge of batteries)
 						 */
-						int secondsTaken = currentSetup.sendDrone(packedOrders);
+						int secondsTaken = (int)currentSetup.sendDrone(packedOrders).getA();
 						if (packagerType == Packager.Knapsack) {
 							sumKnapsack += secondsTaken;
 							if (secondsTaken < slowestTimeKnapsack) {

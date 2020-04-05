@@ -1,13 +1,16 @@
 package droneSim;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Scanner;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -17,14 +20,13 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.scene.control.*;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.*;
-import javafx.scene.layout.RowConstraints;
 import javafx.stage.Stage;
 
 /**
  * 
- * TODO
- * - Only let user add foods/meals within drone carrying capacity?
+ * TODO - Only let user add foods/meals within drone carrying capacity?
  *
  */
 public class MainScreenFX extends Application {
@@ -104,17 +106,17 @@ public class MainScreenFX extends Application {
 		Label avgTime = new Label("AVERAGE TIME:");
 		Label slowestTime = new Label("SLOWEST TIME:");
 		Label fastestTime = new Label("FASTEST TIME:");
-		
+
 		// Time textFields
 		TextField fastFifoTextField = new TextField();
 		TextField fastKnapTextField = new TextField();
-		
+
 		TextField slowFifoTextField = new TextField();
 		TextField slowKnapTextField = new TextField();
-		
+
 		TextField avgFifoTextField = new TextField();
 		TextField avgKnapTextField = new TextField();
-		
+
 		fastFifoTextField.setEditable(false);
 		fastKnapTextField.setEditable(false);
 		slowFifoTextField.setEditable(false);
@@ -152,11 +154,59 @@ public class MainScreenFX extends Application {
 		Button clearLogButton = new Button("CLEAR LOG");
 		Button selectFileButton = new Button("SELECT FILE");
 		
+
 		runSimulationButton.setOnAction(e -> {
-			StringBuilder sBuilder = runner.run();
-			outputLog.clear();
-			outputLog.appendText(sBuilder.toString());
-			//TODO Auto Scroll to bottom
+
+			if (!runner.isRunning()) {
+				// show an alert to let the user know the simulation is running
+				Alert alert = new Alert(AlertType.NONE, "Running " + curSetup.getNumShifts() + " Simulations...", ButtonType.CLOSE);
+				alert.setTitle("Simulation Info:");
+				alert.show();
+
+				//TODO display graphs
+				Tuple results = runner.run(); // run the simulation and get strings
+				StringBuilder displayString = (StringBuilder) results.getA(); // text to display
+				StringBuilder logStringBuilder = (StringBuilder) results.getB(); // text to save
+				outputLog.clear();
+				outputLog.appendText(logStringBuilder.toString()); // add to log screen
+
+				if (alert.isShowing()) { // close the alert if still showing
+					alert.close();
+				}
+				
+				// Auto Scroll to bottom
+				outputLog.selectPositionCaret(outputLog.getLength()); 
+				outputLog.deselect();
+			}
+			
+		});
+
+		saveLogButton.setOnAction(e -> {
+			if (outputLog.getText() != null && !outputLog.getText().equals("")) {
+				String logString = outputLog.getText();
+
+				FileChooser fileChooser = new FileChooser();
+
+				// Set extension filter
+				// FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("CSV
+				// files (*.csv)", "*.csv");
+				FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
+				fileChooser.getExtensionFilters().add(extFilter);
+
+				// Show save file dialog
+				File file = fileChooser.showSaveDialog(window);
+
+				if (file != null) {
+					try {
+						PrintWriter pWriter = new PrintWriter(file);
+						pWriter.append(logString);
+						pWriter.flush();
+						pWriter.close();
+					} catch (FileNotFoundException e1) {
+						System.err.println(e1.getMessage());
+					}
+				}
+			}
 		});
 
 		// change the size of buttons
@@ -302,7 +352,8 @@ public class MainScreenFX extends Application {
 		{
 			String out = "";
 			for (Meal meal : curSetup.getAllMeals()) {
-				out += String.format("%-63s%.2f -> %.2f%%", meal.getName(), meal.getRawProbability(), (100 * meal.getScaledProbability()));
+				out += String.format("%-63s%.2f -> %.2f%%", meal.getName(), meal.getRawProbability(),
+						(100 * meal.getScaledProbability()));
 				out += "\n";
 				out += "\tContains: ";
 				for (Food food : meal.getFoodItems()) {
@@ -318,7 +369,7 @@ public class MainScreenFX extends Application {
 
 		TextArea mealCreaterTextArea = new TextArea();
 		mealCreaterTextArea.setMaxWidth(colW);
-//		mealCreaterTextArea.setMaxHeight(6 * rowH);
+		// mealCreaterTextArea.setMaxHeight(6 * rowH);
 		mealCreaterTextArea.setEditable(false);
 		mealCreaterTextArea.setPromptText("Your Custom Meal...");
 
@@ -374,8 +425,6 @@ public class MainScreenFX extends Application {
 		});
 		clearMealButton.setOnAction(e -> {
 			mealCreaterTextArea.setText("");
-			mealProbabilityTextField.setText("");
-			mealNameTextField.setText("");
 		});
 		addMealButton.setOnAction(e -> {
 			String inTXT = mealCreaterTextArea.getText();
@@ -393,7 +442,7 @@ public class MainScreenFX extends Application {
 					Meal newMeal = new Meal(mealName, rawProb);
 
 					for (String curS : lines) {
-						int quantity = Integer.parseInt(curS.substring(0, 1));
+						int quantity = Integer.parseInt(curS.substring(0, curS.indexOf("x")));
 						String name = curS.substring(curS.indexOf("-") + 2, curS.length()).trim();
 
 						// System.out.println(curSetup.getAllFoods());
@@ -408,26 +457,35 @@ public class MainScreenFX extends Application {
 
 					}
 
-					// System.out.println(newMeal);
-					// add meal
-					curSetup.addMeal(newMeal);
-					curSetup.adjustMealProbabilities();
-					{ // print
-						mealProbabilityTextField.clear();
-						String out = "";
-						for (Meal meal : curSetup.getAllMeals()) {
-							out += String.format("%-63s%.2f -> %.2f%%", meal.getName(), meal.getRawProbability(), (100 * meal.getScaledProbability()));
-							out += "\n";
-							out += "\tContains: ";
-							for (Food food : meal.getFoodItems()) {
-								out += food.getName() + ", ";
+					if (newMeal.getWeight() > curSetup.getDroneWeight()) { // if the meal weighs more than the drone can
+																			// carry
+						new createPopUp("ERROR:",
+								"Meal weight is greater than the Drone weight capacity.\n" + "\t- Meal Weight: "
+										+ newMeal.getWeight() + " (oz)\n" + "\t- Drone Capacity: "
+										+ curSetup.getDroneWeight() + " (oz)");
+					} else {
+						// System.out.println(newMeal);
+						// add meal
+						curSetup.addMeal(newMeal);
+						curSetup.adjustMealProbabilities();
+						{ // print
+							mealProbabilityTextField.clear();
+							String out = "";
+							for (Meal meal : curSetup.getAllMeals()) {
+								out += String.format("%-63s%.2f -> %.2f%%", meal.getName(), meal.getRawProbability(),
+										(100 * meal.getScaledProbability()));
+								out += "\n";
+								out += "\tContains: ";
+								for (Food food : meal.getFoodItems()) {
+									out += food.getName() + ", ";
+								}
+								out = out.substring(0, out.lastIndexOf(",")); // get rid of last ","
+								out += "\n";
+								out += "\tWeight: " + meal.getWeight() + " (oz)";
+								out += "\n\n";
 							}
-							out = out.substring(0, out.lastIndexOf(",")); // get rid of last ","
-							out += "\n";
-							out += "\tWeight: " + meal.getWeight() + " (oz)";
-							out += "\n\n";
+							mealProbTextArea.setText(out);
 						}
-						mealProbTextArea.setText(out);
 					}
 
 				}
@@ -558,7 +616,8 @@ public class MainScreenFX extends Application {
 				mealProbabilityTextField.clear();
 				String out = "";
 				for (Meal meal : curSetup.getAllMeals()) {
-					out += String.format("%-63s%.2f -> %.2f%%", meal.getName(), meal.getRawProbability(), (100 * meal.getScaledProbability()));
+					out += String.format("%-63s%.2f -> %.2f%%", meal.getName(), meal.getRawProbability(),
+							(100 * meal.getScaledProbability()));
 					out += "\n";
 					out += "\tContains: ";
 					for (Food food : meal.getFoodItems()) {
@@ -594,6 +653,24 @@ public class MainScreenFX extends Application {
 		VBox vBox = new VBox(mb, screenLayoutSetup);
 
 		setupScene = new Scene(vBox, screenW, screenH);
+	}
+
+	/**
+	 * Creates a custom pop up window with given text and title
+	 * @author LEHMANIT17
+	 *
+	 */
+	class createPopUp extends Stage {
+		createPopUp(String title, String msg) {
+			setTitle(title);
+			VBox y = new VBox();
+
+			y.getChildren().add(new MyLabel(msg));
+			y.setAlignment(Pos.CENTER);
+			setScene(new Scene(y, 300, 100));
+			show();
+
+		}
 	}
 
 }

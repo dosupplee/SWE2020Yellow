@@ -1,6 +1,7 @@
 package droneSim;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 
 public class Runner {
@@ -23,9 +24,20 @@ public class Runner {
 	private double slowestTimeKnapsack;
 	private double fastestTimeKnapsack;
 	private double sumKnapsack;
+	
+	private boolean simRunning = false;
+	private StringBuilder allTextSB;
+	private StringBuilder displayTextSB;
 
-	public StringBuilder run() {
-		StringBuilder sBuilder = new StringBuilder();
+	/**
+	 * 
+	 * @return (String builder for display text, String builder for saved text)
+	 */
+	public Tuple run() {
+		simRunning = true;
+		long startTime = new Date().getTime();
+		allTextSB = new StringBuilder(); // text to save to log file
+		displayTextSB = new StringBuilder(); // text to display to log screen
 		
 		// generate all orders to XML
 		XMLOrderGenerator gen = new XMLOrderGenerator(currentSetup);
@@ -33,7 +45,7 @@ public class Runner {
 
 		XMLOrderParser parse = new XMLOrderParser("order.xml", currentSetup);
 
-		sBuilder.append("\nOrders Generated");
+		allTextSB.append("\nOrders Generated");
 
 		Packager packagerType = Packager.Knapsack;
 		int numOrders = 0;
@@ -73,7 +85,7 @@ public class Runner {
 					// while either is one of the first three hours or is the final hour and have
 					// finished all orders
 					while ((min < 60 && hour <= 2) || ((min < 60 || canStopLastHour == false) && hour == 3)) {
-						sBuilder.append("\n\nShift (" + Integer.toString(shift) + ") - Current Time: "
+						allTextSB.append("\n\nShift (" + Integer.toString(shift) + ") - Current Time: "
 								+ Integer.toString(hour) + ":" + Integer.toString(min) + ":00\n");
 						String time = Integer.toString(hour) + ":" + Integer.toString(min) + ":00";
 
@@ -87,17 +99,17 @@ public class Runner {
 						orderBacklog.addAll(newOrders);
 
 						// list new orders grabbed
-						sBuilder.append("\n\tOrders Received");
+						allTextSB.append("\n\tNew Orders Received");
 						for (int i = 0; i < newOrders.size(); i++) {
 							Order order = newOrders.get(i);
-							sBuilder.append("\n\t\t" + order.getOrderTime().toString() + " - "
+							allTextSB.append("\n\t\t" + order.getOrderTime().toString() + " - "
 									+ order.getMeal().getName() + " - " + order.getDeliveryPoint().getName());
 						}
 
-						sBuilder.append("\n\tNow Orders:");
+						allTextSB.append("\n\tAll Current Orders:");
 						for (int i = 0; i < orderBacklog.size(); i++) {
 							Order order = orderBacklog.get(i);
-							sBuilder.append("\n\t\t" + order.getOrderTime().toString() + " - "
+							allTextSB.append("\n\t\t" + order.getOrderTime().toString() + " - "
 									+ order.getMeal().getName() + " - " + order.getDeliveryPoint().getName());
 						}
 
@@ -108,21 +120,21 @@ public class Runner {
 						}
 
 						// list new orders grabbed
-						sBuilder.append("\n\tPacked Orders:");
+						allTextSB.append("\n\tPacked Orders:");
 						if (packedOrders != null) {
 							for (int i = 0; i < packedOrders.size(); i++) {
 								Order order = packedOrders.get(i);
-								sBuilder.append("\n\t\t" + order.getOrderTime().toString() + " - "
+								allTextSB.append("\n\t\t" + order.getOrderTime().toString() + " - "
 										+ order.getMeal().getName() + " - " + order.getDeliveryPoint().getName());
 							}
 						}
 
 						// list skipped orders
-						sBuilder.append("\n\tSkipped Orders:");
+						allTextSB.append("\n\tSkipped Orders:");
 						if (packedOrders != null) {
 							for (int i = 0; i < kp.skippedOrders.size(); i++) {
 								Order order = kp.skippedOrders.get(i);
-								sBuilder.append("\n\t\t" + order.getOrderTime().toString() + " - "
+								allTextSB.append("\n\t\t" + order.getOrderTime().toString() + " - "
 										+ order.getMeal().getName() + " - " + order.getDeliveryPoint().getName());
 							}
 						}
@@ -134,7 +146,10 @@ public class Runner {
 						 * Increment currentTime accordingly (how long the trip took + recharge of
 						 * batteries)
 						 */
-						int secondsTaken = currentSetup.sendDrone(packedOrders);
+						Tuple tripResult = currentSetup.sendDrone(packedOrders);
+						int secondsTaken = (int) tripResult.getA();
+						String pathTaken = (String) tripResult.getB();
+						allTextSB.append(pathTaken);
 						if (packagerType == Packager.Knapsack) {
 							sumKnapsack += secondsTaken;
 							if (secondsTaken < slowestTimeKnapsack) {
@@ -181,22 +196,33 @@ public class Runner {
 		}
 
 		if (sumKnapsack > 1) {
-			sBuilder.append("\n\nSumKnapsack: " + sumKnapsack);
-			sBuilder.append("\nFastestTimeKnapsack: " + fastestTimeKnapsack);
-			sBuilder.append("\nSlowestTimeKnapsack: " + slowestTimeKnapsack);
-			sBuilder.append("\nAvgTimeKnapsack: " + (sumKnapsack / numOrders));
+			allTextSB.append("\n\nSumKnapsack: " + sumKnapsack);
+			allTextSB.append("\nFastestTimeKnapsack: " + fastestTimeKnapsack);
+			allTextSB.append("\nSlowestTimeKnapsack: " + slowestTimeKnapsack);
+			allTextSB.append("\nAvgTimeKnapsack: " + (sumKnapsack / numOrders));
 		}
 
 		if (sumFIFO > 1) {
-			sBuilder.append("\n\nSumFIFO: " + sumFIFO);
-			sBuilder.append("\nFastestTimeFIFO: " + fastestTimeFIFO);
-			sBuilder.append("\nSlowestTimeFIFO: " + slowestTimeFIFO);
-			sBuilder.append("\nAvgTimeFIFO: " + (sumFIFO / numOrders));
+			allTextSB.append("\n\nSumFIFO: " + sumFIFO);
+			allTextSB.append("\nFastestTimeFIFO: " + fastestTimeFIFO);
+			allTextSB.append("\nSlowestTimeFIFO: " + slowestTimeFIFO);
+			allTextSB.append("\nAvgTimeFIFO: " + (sumFIFO / numOrders));
 		}
 
-		sBuilder.append("\n<terminated>");
+		long stopTime = new Date().getTime();
+		double runTime = (stopTime - startTime) / 1000.0;
+		allTextSB.append("\n\nSimulation Took: ");
+		allTextSB.append(runTime + " seconds");
+		//sBuilder.append("\n<terminated>");
 
-		return sBuilder;
+		simRunning = false;
+		
+		Tuple results = new Tuple(displayTextSB, allTextSB);
+		return results;
+	}
+	
+	public boolean isRunning() {
+		return simRunning;
 	}
 
 	public CurrentSetup getCurrentSetup() {
