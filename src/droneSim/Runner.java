@@ -2,6 +2,8 @@ package droneSim;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.TreeMap;
 
 
 public class Runner {
@@ -26,7 +28,7 @@ public class Runner {
 	private double sumKnapsack;
 	
 	private boolean simRunning = false;
-	private StringBuilder allTextSB;
+	private StringBuilder csvTextSB;
 	private StringBuilder displayTextSB;
 
 	/**
@@ -36,8 +38,37 @@ public class Runner {
 	public Tuple run() {
 		simRunning = true;
 		long startTime = new Date().getTime();
-		allTextSB = new StringBuilder(); // text to save to log file
+		csvTextSB = new StringBuilder(); // text to save to log file
 		displayTextSB = new StringBuilder(); // text to display to log screen
+		// Hash map of (time -> numOrders)
+		HashMap<String, Integer> map = new HashMap<>();
+		
+		
+		/*
+		 * CSV file setup:
+		 * -----------------------------------
+		 * <Frame Title>
+		 * <Chart Title>
+		 * <tAxis Title>
+		 * <yAxis Title>
+		 * <s1 name>,<s2 name>,...,<sn name>
+		 * ###################################
+		 * <h:m:s>,<y>,...,<y>
+		 * <h:m:s>,<y>,...,<y>
+		 * .
+		 * .
+		 * .
+		 * <h:m:s>,<y>,...,<y>
+		 * -----------------------------------
+		 */
+		// create csv log headers
+		csvTextSB.append("Orders Over Time Chart\n");
+		csvTextSB.append("# Orders vs. Time for " +  currentSetup.getNumShifts() + " shifts\n");
+		csvTextSB.append("Time\n");
+		csvTextSB.append("# Orders\n");
+		csvTextSB.append("# Current Orders\n");
+		csvTextSB.append("########################\n");
+		
 		
 		// generate all orders to XML
 		XMLOrderGenerator gen = new XMLOrderGenerator(currentSetup);
@@ -45,7 +76,6 @@ public class Runner {
 
 		XMLOrderParser parse = new XMLOrderParser("order.xml", currentSetup);
 
-		allTextSB.append("\nOrders Generated");
 
 		Packager packagerType = Packager.Knapsack;
 		int numOrders = 0;
@@ -85,32 +115,35 @@ public class Runner {
 					// while either is one of the first three hours or is the final hour and have
 					// finished all orders
 					while ((min < 60 && hour <= 2) || ((min < 60 || canStopLastHour == false) && hour == 3)) {
-						allTextSB.append("\n\nShift (" + Integer.toString(shift) + ") - Current Time: "
-								+ Integer.toString(hour) + ":" + Integer.toString(min) + ":00\n");
 						String time = Integer.toString(hour) + ":" + Integer.toString(min) + ":00";
+						
 
 						// grab new orders from parser
 						ArrayList<Order> newOrders = parse.getNewOrders(shift, time);
 
 						// Maintain count of orders processed (for statistical analysis)
 						numOrders += newOrders.size();
+						
+						// add to csv graph
+						if (type == 0 && newOrders.size() != 0) { // only do it once, and only show times where there are orders
+							Time timeObj = new Time(time);
+							int oldVal = map.getOrDefault(timeObj.toString(), 0);
+					
+							map.put(timeObj.toString(),  newOrders.size() + oldVal);
+						}
+						
 
 						// Append now-valid orders to the delivery backlog
 						orderBacklog.addAll(newOrders);
 
 						// list new orders grabbed
-						allTextSB.append("\n\tNew Orders Received");
 						for (int i = 0; i < newOrders.size(); i++) {
 							Order order = newOrders.get(i);
-							allTextSB.append("\n\t\t" + order.getOrderTime().toString() + " - "
-									+ order.getMeal().getName() + " - " + order.getDeliveryPoint().getName());
 						}
+						
 
-						allTextSB.append("\n\tAll Current Orders:");
 						for (int i = 0; i < orderBacklog.size(); i++) {
 							Order order = orderBacklog.get(i);
-							allTextSB.append("\n\t\t" + order.getOrderTime().toString() + " - "
-									+ order.getMeal().getName() + " - " + order.getDeliveryPoint().getName());
 						}
 
 						if (packagerType == Packager.Knapsack) {
@@ -120,22 +153,16 @@ public class Runner {
 						}
 
 						// list new orders grabbed
-						allTextSB.append("\n\tPacked Orders:");
 						if (packedOrders != null) {
 							for (int i = 0; i < packedOrders.size(); i++) {
 								Order order = packedOrders.get(i);
-								allTextSB.append("\n\t\t" + order.getOrderTime().toString() + " - "
-										+ order.getMeal().getName() + " - " + order.getDeliveryPoint().getName());
 							}
 						}
 
 						// list skipped orders
-						allTextSB.append("\n\tSkipped Orders:");
 						if (packedOrders != null) {
 							for (int i = 0; i < kp.skippedOrders.size(); i++) {
 								Order order = kp.skippedOrders.get(i);
-								allTextSB.append("\n\t\t" + order.getOrderTime().toString() + " - "
-										+ order.getMeal().getName() + " - " + order.getDeliveryPoint().getName());
 							}
 						}
 
@@ -148,8 +175,8 @@ public class Runner {
 						 */
 						Tuple tripResult = currentSetup.sendDrone(packedOrders);
 						int secondsTaken = (int) tripResult.getA();
-						String pathTaken = (String) tripResult.getB();
-						allTextSB.append(pathTaken);
+						String pathTaken = (String) tripResult.getB(); //TODO save somewhere
+						//csvTextSB.append(pathTaken);
 						if (packagerType == Packager.Knapsack) {
 							sumKnapsack += secondsTaken;
 							if (secondsTaken < slowestTimeKnapsack) {
@@ -194,30 +221,41 @@ public class Runner {
 				packagerType = Packager.Knapsack;
 			}
 		}
+		
+		// print map to file
+		// TreeMap to store sorted values of HashMap 
+        TreeMap<String, Integer> sorted = new TreeMap<>(map); 
+		for (String t : sorted.keySet()) {
+			csvTextSB.append(t + ","+ sorted.get(t) +"\n");
+		}
+		
+		
+		displayTextSB.append("Simulation Results:\n----");
 
 		if (sumKnapsack > 1) {
-			allTextSB.append("\n\nSumKnapsack: " + sumKnapsack);
-			allTextSB.append("\nFastestTimeKnapsack: " + fastestTimeKnapsack);
-			allTextSB.append("\nSlowestTimeKnapsack: " + slowestTimeKnapsack);
-			allTextSB.append("\nAvgTimeKnapsack: " + (sumKnapsack / numOrders));
+			displayTextSB.append("\nSum Knapsack: " + sumKnapsack);
+			displayTextSB.append("\nFastest Time Knapsack: " + fastestTimeKnapsack);
+			displayTextSB.append("\nSlowest Time Knapsack: " + slowestTimeKnapsack);
+			displayTextSB.append("\nAverage Time Knapsack: " + (sumKnapsack / numOrders));
 		}
 
 		if (sumFIFO > 1) {
-			allTextSB.append("\n\nSumFIFO: " + sumFIFO);
-			allTextSB.append("\nFastestTimeFIFO: " + fastestTimeFIFO);
-			allTextSB.append("\nSlowestTimeFIFO: " + slowestTimeFIFO);
-			allTextSB.append("\nAvgTimeFIFO: " + (sumFIFO / numOrders));
+			displayTextSB.append("\n\nSum FIFO: " + sumFIFO);
+			displayTextSB.append("\nFastest Time FIFO: " + fastestTimeFIFO);
+			displayTextSB.append("\nSlowest Time FIFO: " + slowestTimeFIFO);
+			displayTextSB.append("\nAverage Time FIFO: " + (sumFIFO / numOrders));
 		}
 
 		long stopTime = new Date().getTime();
 		double runTime = (stopTime - startTime) / 1000.0;
-		allTextSB.append("\n\nSimulation Took: ");
-		allTextSB.append(runTime + " seconds");
+		displayTextSB.append("\n----\nNumber of Orders: " + numOrders);
+		displayTextSB.append("\nSimulation Took: ");
+		displayTextSB.append(runTime + " seconds");
 		//sBuilder.append("\n<terminated>");
 
 		simRunning = false;
 		
-		Tuple results = new Tuple(displayTextSB, allTextSB);
+		Tuple results = new Tuple(displayTextSB, csvTextSB);
 		return results;
 	}
 	
@@ -229,4 +267,11 @@ public class Runner {
 		return currentSetup;
 	}
 
+	public StringBuilder getLogStringBuilder() {
+		return csvTextSB;
+	}
+	
+	public StringBuilder getDisplayStringBuilder() {
+		return displayTextSB;
+	}
 }

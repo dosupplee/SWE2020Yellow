@@ -132,6 +132,7 @@ public class TimeGraph extends JFrame {
 						
 						// add value to series
 						seriesValsY.get(i - 1).add(y);
+						//seriesValsY.get(i-1).addor
 					}
 				}
 			}
@@ -195,12 +196,11 @@ public class TimeGraph extends JFrame {
 		 * orientation, and three flags indicating whether to show legend, tooltips, and
 		 * URLs.
 		 */
-		chart = ChartFactory.createTimeSeriesChart(
+		chart = ChartFactory.createScatterPlot(
 				chartTitle, // title
 				tTitle, // x axis
 				yTitle, // y axis
-				dataset,  
-				true, true, false);
+				dataset);
 		
 
 		// Get a reference to the plot in order to customize it.
@@ -214,10 +214,10 @@ public class TimeGraph extends JFrame {
 		 * 
 		 * Can calulate on own though...
 		 */
-		XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
+		//XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
 //		renderer.setSeriesPaint(0, Color.RED);
 //		renderer.setSeriesStroke(0, new BasicStroke(2.0f));
-		plot.setRenderer(renderer);
+		//plot.setRenderer(renderer);
 		
 		// Sets the background colour of the plot area.
 		plot.setBackgroundPaint(Color.white);
@@ -230,9 +230,11 @@ public class TimeGraph extends JFrame {
 		plot.setDomainGridlinePaint(Color.BLACK);
 		
 		// format time axis
-		DateAxis axis = (DateAxis) plot.getDomainAxis();
+		DateAxis axis = new DateAxis();
         axis.setDateFormatOverride(new SimpleDateFormat("hh:mm:ss a"));
         axis.setVerticalTickLabels(true);
+        plot.setDomainAxis(axis);
+        
         
 		// Remove the border around the legend.
 		chart.getLegend().setFrame(BlockBorder.NONE);

@@ -2,11 +2,16 @@ package droneSim;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Scanner;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -168,7 +173,30 @@ public class MainScreenFX extends Application {
 				StringBuilder displayString = (StringBuilder) results.getA(); // text to display
 				StringBuilder logStringBuilder = (StringBuilder) results.getB(); // text to save
 				outputLog.clear();
-				outputLog.appendText(logStringBuilder.toString()); // add to log screen
+				outputLog.appendText(displayString.toString()); // add to log screen
+				
+				
+				// graph
+				
+				// Show save file dialog
+				File csvFile = new File("Number of Orders vs Time_time graph.csv");
+
+				if (csvFile != null) {
+					try {
+						PrintWriter pWriter = new PrintWriter(csvFile);
+						pWriter.append(logStringBuilder.toString());
+						pWriter.flush();
+						pWriter.close();
+						
+						// graph result
+						TimeGraph timeGraph = new TimeGraph();
+						timeGraph.createDataSet(csvFile);
+						timeGraph.showGraph();
+			
+					} catch (FileNotFoundException e1) {
+						System.err.println(e1.getMessage());
+					}
+				}
 
 				if (alert.isShowing()) { // close the alert if still showing
 					alert.close();
@@ -182,26 +210,36 @@ public class MainScreenFX extends Application {
 		});
 
 		saveLogButton.setOnAction(e -> {
-			if (outputLog.getText() != null && !outputLog.getText().equals("")) {
-				String logString = outputLog.getText();
+			if (runner.getDisplayStringBuilder() != null && !runner.getDisplayStringBuilder().toString().equals("")) {
+				String logString = runner.getDisplayStringBuilder().toString();
 
 				FileChooser fileChooser = new FileChooser();
 
 				// Set extension filter
 				// FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("CSV
 				// files (*.csv)", "*.csv");
-				FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
+				FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("ZIP files (*.zip)", "*.zip");
 				fileChooser.getExtensionFilters().add(extFilter);
 
 				// Show save file dialog
-				File file = fileChooser.showSaveDialog(window);
+				File zip = fileChooser.showSaveDialog(window);
 
-				if (file != null) {
+				// create the files to zip
+				if (zip != null) {
 					try {
-						PrintWriter pWriter = new PrintWriter(file);
+						//File csvFile = new File("Number of Orders vs Time_time graph.csv");
+						 //zipFiles(String[] filePaths, File zipFile) 
+						
+						// create stats file
+						File statsFile = new File("Simulation Results.txt");
+						PrintWriter pWriter = new PrintWriter(statsFile);
 						pWriter.append(logString);
 						pWriter.flush();
 						pWriter.close();
+						
+						// zip stats file with the graph file
+						String[] fileNames = {"Simulation Statisitcs.txt", "Number of Orders vs Time_time graph.csv"};
+						zipFiles(fileNames, zip);
 					} catch (FileNotFoundException e1) {
 						System.err.println(e1.getMessage());
 					}
@@ -246,6 +284,28 @@ public class MainScreenFX extends Application {
 			File selectedSetupFile = selectSetupFile.showOpenDialog(window);
 		});
 	}
+	
+	private void zipFiles(String[] filePaths, File zipFile) {
+        try { 
+            FileOutputStream fos = new FileOutputStream(zipFile);
+            ZipOutputStream zos = new ZipOutputStream(fos);
+ 
+            for (String aFile : filePaths) {
+                zos.putNextEntry(new ZipEntry(new File(aFile).getName()));
+ 
+                byte[] bytes = Files.readAllBytes(Paths.get(aFile));
+                zos.write(bytes, 0, bytes.length);
+                zos.closeEntry();
+            }
+ 
+            zos.close();
+ 
+        } catch (FileNotFoundException ex) {
+            System.err.println("A file does not exist: " + ex);
+        } catch (IOException ex) {
+            System.err.println("I/O error: " + ex);
+        }
+    }
 
 	public void makeSetupScreen() {
 		curSetup.loadDefaultDroneSettings();
