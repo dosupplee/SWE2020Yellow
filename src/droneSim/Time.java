@@ -341,4 +341,10 @@ public class Time {
 		this.startSecond = startSecond;
 	}
 
+	public void setShift(int shift) {
+		
+		this.shiftNum = shift;
+		
+	}
+
 }
