@@ -451,6 +451,14 @@ public class CurrentSetup {
 	public int getOrdersPerHour(int hour) {
 		return ordersPerHour[hour];
 	}
+	
+	/*
+	 * Sets the orders for the given hour
+	 */
+	public void setOrdersPerHour(int hour, int val)
+	{
+		ordersPerHour[hour] = val;
+	}
 
 	// --------------------------------------------
 	// DRONE STUFF
@@ -496,4 +504,7 @@ public class CurrentSetup {
 		allFoods.clear();
 		allMeals.clear();
 	}
+	
+
+
 }

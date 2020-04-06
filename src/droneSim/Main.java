@@ -160,6 +160,14 @@ public class Main {
 						/*
 						 * Here we would update time calcs for orders after TSP is done
 						 */
+						for(int i=0;i<packedOrders.size();i++)
+						{
+							Order order = packedOrders.get(i);
+							order.getDeliveryTime().setStartHour(hour);
+							order.getDeliveryTime().setStartMinute(min);
+							order.getDeliveryTime().incrementTimerSecond(secondsTaken);
+							order.getDeliveryTime().setShift(shift);
+						}
 
 						
 						//if have gotten the last few orders from that shift

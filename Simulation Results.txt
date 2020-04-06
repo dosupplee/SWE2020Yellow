@@ -1,0 +1,14 @@
+Simulation Results:
+----
+Sum Knapsack: 808009.0
+Fastest Time Knapsack: 342.0
+Slowest Time Knapsack: 180.0
+Average Time Knapsack: 234.2055072463768
+
+Sum FIFO: 808009.0
+Fastest Time FIFO: 342.0
+Slowest Time FIFO: 180.0
+Average Time FIFO: 234.2055072463768
+----
+Number of Orders: 3450
+Simulation Took: 6.203 seconds
