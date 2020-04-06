@@ -1,13 +1,21 @@
 package droneSim;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Scanner;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -17,14 +25,13 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.scene.control.*;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.*;
-import javafx.scene.layout.RowConstraints;
 import javafx.stage.Stage;
 
 /**
  * 
- * TODO
- * - Only let user add foods/meals within drone carrying capacity?
+ * TODO - Only let user add foods/meals within drone carrying capacity?
  *
  */
 public class MainScreenFX extends Application {
@@ -104,17 +111,17 @@ public class MainScreenFX extends Application {
 		Label avgTime = new Label("AVERAGE TIME:");
 		Label slowestTime = new Label("SLOWEST TIME:");
 		Label fastestTime = new Label("FASTEST TIME:");
-		
+
 		// Time textFields
 		TextField fastFifoTextField = new TextField();
 		TextField fastKnapTextField = new TextField();
-		
+
 		TextField slowFifoTextField = new TextField();
 		TextField slowKnapTextField = new TextField();
-		
+
 		TextField avgFifoTextField = new TextField();
 		TextField avgKnapTextField = new TextField();
-		
+
 		fastFifoTextField.setEditable(false);
 		fastKnapTextField.setEditable(false);
 		slowFifoTextField.setEditable(false);
@@ -152,11 +159,92 @@ public class MainScreenFX extends Application {
 		Button clearLogButton = new Button("CLEAR LOG");
 		Button selectFileButton = new Button("SELECT FILE");
 		
+
 		runSimulationButton.setOnAction(e -> {
-			StringBuilder sBuilder = runner.run();
-			outputLog.clear();
-			outputLog.appendText(sBuilder.toString());
-			//TODO Auto Scroll to bottom
+
+			if (!runner.isRunning()) {
+				// show an alert to let the user know the simulation is running
+				Alert alert = new Alert(AlertType.NONE, "Running " + curSetup.getNumShifts() + " Simulations...", ButtonType.CLOSE);
+				alert.setTitle("Simulation Info:");
+				alert.show();
+
+				//TODO display graphs
+				Tuple results = runner.run(); // run the simulation and get strings
+				StringBuilder displayString = (StringBuilder) results.getA(); // text to display
+				StringBuilder logStringBuilder = (StringBuilder) results.getB(); // text to save
+				outputLog.clear();
+				outputLog.appendText(displayString.toString()); // add to log screen
+				
+				
+				// graph
+				
+				// Show save file dialog
+				File csvFile = new File("Number of Orders vs Time_time graph.csv");
+
+				if (csvFile != null) {
+					try {
+						PrintWriter pWriter = new PrintWriter(csvFile);
+						pWriter.append(logStringBuilder.toString());
+						pWriter.flush();
+						pWriter.close();
+						
+						// graph result
+						TimeGraph timeGraph = new TimeGraph();
+						timeGraph.createDataSet(csvFile);
+						timeGraph.showGraph();
+			
+					} catch (FileNotFoundException e1) {
+						System.err.println(e1.getMessage());
+					}
+				}
+
+				if (alert.isShowing()) { // close the alert if still showing
+					alert.close();
+				}
+				
+				// Auto Scroll to bottom
+				outputLog.selectPositionCaret(outputLog.getLength()); 
+				outputLog.deselect();
+			}
+			
+		});
+
+		saveLogButton.setOnAction(e -> {
+			if (runner.getDisplayStringBuilder() != null && !runner.getDisplayStringBuilder().toString().equals("")) {
+				String logString = runner.getDisplayStringBuilder().toString();
+
+				FileChooser fileChooser = new FileChooser();
+
+				// Set extension filter
+				// FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("CSV
+				// files (*.csv)", "*.csv");
+				FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("ZIP files (*.zip)", "*.zip");
+				fileChooser.getExtensionFilters().add(extFilter);
+
+				// Show save file dialog
+				File zip = fileChooser.showSaveDialog(window);
+
+				// create the files to zip
+				if (zip != null) {
+					try {
+						//File csvFile = new File("Number of Orders vs Time_time graph.csv");
+						 //zipFiles(String[] filePaths, File zipFile) 
+						
+						// create stats file
+						File statsFile = new File("Simulation Results.txt");
+						PrintWriter pWriter = new PrintWriter(statsFile);
+						pWriter.append(logString);
+						pWriter.flush();
+						pWriter.close();
+						
+						// zip stats file with the graph file
+						String[] fileNames = {"Simulation Statisitcs.txt", "Number of Orders vs Time_time graph.csv"};
+						zipFiles(fileNames, zip);
+					} catch (FileNotFoundException e1) {
+						System.err.println(e1.getMessage());
+					}
+				}
+			}
 		});
 
 		// change the size of buttons
@@ -196,6 +284,28 @@ public class MainScreenFX extends Application {
 			File selectedSetupFile = selectSetupFile.showOpenDialog(window);
 		});
 	}
+	
+	private void zipFiles(String[] filePaths, File zipFile) {
+        try { 
+            FileOutputStream fos = new FileOutputStream(zipFile);
+            ZipOutputStream zos = new ZipOutputStream(fos);
+ 
+            for (String aFile : filePaths) {
+                zos.putNextEntry(new ZipEntry(new File(aFile).getName()));
+ 
+                byte[] bytes = Files.readAllBytes(Paths.get(aFile));
+                zos.write(bytes, 0, bytes.length);
+                zos.closeEntry();
+            }
+ 
+            zos.close();
+ 
+        } catch (FileNotFoundException ex) {
+            System.err.println("A file does not exist: " + ex);
+        } catch (IOException ex) {
+            System.err.println("I/O error: " + ex);
+        }
+    }
 
 	public void makeSetupScreen() {
 		curSetup.loadDefaultDroneSettings();
@@ -302,7 +412,8 @@ public class MainScreenFX extends Application {
 		{
 			String out = "";
 			for (Meal meal : curSetup.getAllMeals()) {
-				out += String.format("%-63s%.2f -> %.2f%%", meal.getName(), meal.getRawProbability(), (100 * meal.getScaledProbability()));
+				out += String.format("%-63s%.2f -> %.2f%%", meal.getName(), meal.getRawProbability(),
+						(100 * meal.getScaledProbability()));
 				out += "\n";
 				out += "\tContains: ";
 				for (Food food : meal.getFoodItems()) {
@@ -318,7 +429,7 @@ public class MainScreenFX extends Application {
 
 		TextArea mealCreaterTextArea = new TextArea();
 		mealCreaterTextArea.setMaxWidth(colW);
-//		mealCreaterTextArea.setMaxHeight(6 * rowH);
+		// mealCreaterTextArea.setMaxHeight(6 * rowH);
 		mealCreaterTextArea.setEditable(false);
 		mealCreaterTextArea.setPromptText("Your Custom Meal...");
 
@@ -359,6 +470,7 @@ public class MainScreenFX extends Application {
 			if (foodOptionsComboBox.getValue() != null && foodQuantityComboBox.getValue() != null) {
 				try {
 					String mealName = foodOptionsComboBox.getValue();
+					mealName = mealName.substring(0, mealName.lastIndexOf("-")); // get rid of weight
 					int mealQuantity = foodQuantityComboBox.getValue();
 					mealCreaterTextArea.appendText(mealQuantity + "x\t- " + mealName);
 					mealCreaterTextArea.appendText("\n\n");
@@ -373,8 +485,6 @@ public class MainScreenFX extends Application {
 		});
 		clearMealButton.setOnAction(e -> {
 			mealCreaterTextArea.setText("");
-			mealProbabilityTextField.setText("");
-			mealNameTextField.setText("");
 		});
 		addMealButton.setOnAction(e -> {
 			String inTXT = mealCreaterTextArea.getText();
@@ -392,7 +502,7 @@ public class MainScreenFX extends Application {
 					Meal newMeal = new Meal(mealName, rawProb);
 
 					for (String curS : lines) {
-						int quantity = Integer.parseInt(curS.substring(0, 1));
+						int quantity = Integer.parseInt(curS.substring(0, curS.indexOf("x")));
 						String name = curS.substring(curS.indexOf("-") + 2, curS.length()).trim();
 
 						// System.out.println(curSetup.getAllFoods());
@@ -407,26 +517,35 @@ public class MainScreenFX extends Application {
 
 					}
 
-					// System.out.println(newMeal);
-					// add meal
-					curSetup.addMeal(newMeal);
-					curSetup.adjustMealProbabilities();
-					{ // print
-						mealProbabilityTextField.clear();
-						String out = "";
-						for (Meal meal : curSetup.getAllMeals()) {
-							out += String.format("%-63s%.2f -> %.2f%%", meal.getName(), meal.getRawProbability(), (100 * meal.getScaledProbability()));
-							out += "\n";
-							out += "\tContains: ";
-							for (Food food : meal.getFoodItems()) {
-								out += food.getName() + ", ";
+					if (newMeal.getWeight() > curSetup.getDroneWeight()) { // if the meal weighs more than the drone can
+																			// carry
+						new createPopUp("ERROR:",
+								"Meal weight is greater than the Drone weight capacity.\n" + "\t- Meal Weight: "
+										+ newMeal.getWeight() + " (oz)\n" + "\t- Drone Capacity: "
+										+ curSetup.getDroneWeight() + " (oz)");
+					} else {
+						// System.out.println(newMeal);
+						// add meal
+						curSetup.addMeal(newMeal);
+						curSetup.adjustMealProbabilities();
+						{ // print
+							mealProbabilityTextField.clear();
+							String out = "";
+							for (Meal meal : curSetup.getAllMeals()) {
+								out += String.format("%-63s%.2f -> %.2f%%", meal.getName(), meal.getRawProbability(),
+										(100 * meal.getScaledProbability()));
+								out += "\n";
+								out += "\tContains: ";
+								for (Food food : meal.getFoodItems()) {
+									out += food.getName() + ", ";
+								}
+								out = out.substring(0, out.lastIndexOf(",")); // get rid of last ","
+								out += "\n";
+								out += "\tWeight: " + meal.getWeight() + " (oz)";
+								out += "\n\n";
 							}
-							out = out.substring(0, out.lastIndexOf(",")); // get rid of last ","
-							out += "\n";
-							out += "\tWeight: " + meal.getWeight() + " (oz)";
-							out += "\n\n";
+							mealProbTextArea.setText(out);
 						}
-						mealProbTextArea.setText(out);
 					}
 
 				}
@@ -557,7 +676,8 @@ public class MainScreenFX extends Application {
 				mealProbabilityTextField.clear();
 				String out = "";
 				for (Meal meal : curSetup.getAllMeals()) {
-					out += String.format("%-63s%.2f -> %.2f%%", meal.getName(), meal.getRawProbability(), (100 * meal.getScaledProbability()));
+					out += String.format("%-63s%.2f -> %.2f%%", meal.getName(), meal.getRawProbability(),
+							(100 * meal.getScaledProbability()));
 					out += "\n";
 					out += "\tContains: ";
 					for (Food food : meal.getFoodItems()) {
@@ -593,6 +713,24 @@ public class MainScreenFX extends Application {
 		VBox vBox = new VBox(mb, screenLayoutSetup);
 
 		setupScene = new Scene(vBox, screenW, screenH);
+	}
+
+	/**
+	 * Creates a custom pop up window with given text and title
+	 * @author LEHMANIT17
+	 *
+	 */
+	class createPopUp extends Stage {
+		createPopUp(String title, String msg) {
+			setTitle(title);
+			VBox y = new VBox();
+
+			y.getChildren().add(new MyLabel(msg));
+			y.setAlignment(Pos.CENTER);
+			setScene(new Scene(y, 300, 100));
+			show();
+
+		}
 	}
 
 }

@@ -59,10 +59,11 @@ public class Drone {
 	/**
 	 * Main function to run the algorithm and print the output
 	 * 
-	 * @return ArrayList<DeliveryPoint> containing the fastest path to take
+	 * @param ArrayList<DeliveryPoint> containing the fastest path to take
+	 * @return Tuple of time taken and string of best path
 	 */
-	public int runTSP(ArrayList<Order> orders) {
-		
+	public Tuple runTSP(ArrayList<Order> orders) {
+		String bestPathString = "";
 		orderLocations.clear();
 		bestLengthSoFar = Integer.MAX_VALUE;
 		
@@ -76,19 +77,22 @@ public class Drone {
 			recursiveFindPath(new ArrayList<DeliveryPoint>(), orderLocations);
 			
 			//Print the best path to take as text
-			System.out.print("\n\nFound Best path of distance: \nHome -> ");
+			bestPathString += "\n\nFound Best path of distance: " + bestLengthSoFar + " feet";
+			bestPathString += "\nHome -> ";
 			
 			for (int i = 0; i < bestPath.size(); i++) {
-				System.out.print(bestPath.get(i).getName() + " -> ");
+				bestPathString += bestPath.get(i).getName() + " -> ";
 			}
 			
-			System.out.print("Home \n\n");
+			bestPathString += "Home\n\n";
 		}
 		
 		int secondsTaken = ((bestLengthSoFar * 10) / this.speed) + (this.dropOffTime * orderLocations.size()) +
 				this.turnAroundTime;
 		
-		return secondsTaken;
+		
+		Tuple result = new Tuple(secondsTaken, bestPathString);
+		return result;
 	}
 	
 	
