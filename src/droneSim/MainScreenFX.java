@@ -623,7 +623,6 @@ public class MainScreenFX extends Application {
 								for (Food food : meal.getFoodItems()) {
 									out += food.getName() + ", ";
 								}
-								System.err.println(meal.getFoodItems().size());
 								out = out.substring(0, out.lastIndexOf(",")); // get rid of last ","
 								out += "\n";
 								out += "\tWeight: " + meal.getWeight() + " (oz)";
@@ -637,9 +636,6 @@ public class MainScreenFX extends Application {
 
 			} catch (Exception e3) {
 				System.err.println(e3.getMessage());
-				System.err.println(e3.toString());
-				System.err.println("I'm in line #" + 
-					    e3.getStackTrace()[0].getLineNumber());
 			}
 		});
 
