@@ -63,10 +63,10 @@ public class Runner {
 		 */
 		// create csv log headers
 		csvTextSB.append("Orders Over Time Chart\n");
-		csvTextSB.append("# Orders vs. Time for " +  currentSetup.getNumShifts() + " shifts\n");
+		csvTextSB.append("Cumulative # of Orders vs. Time for " +  currentSetup.getNumShifts() + " shifts\n");
 		csvTextSB.append("Time\n");
-		csvTextSB.append("# Orders\n");
-		csvTextSB.append("# Current Orders\n");
+		csvTextSB.append("Cumulative # of Orders\n");
+		csvTextSB.append("Cumulative # of Orders\n");
 		csvTextSB.append("########################\n");
 		
 		

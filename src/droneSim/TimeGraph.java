@@ -1,22 +1,21 @@
 package droneSim;
 
-import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.DateAxis;
-import org.jfree.chart.block.BlockBorder;
+import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
-import org.jfree.chart.title.TextTitle;
+import org.jfree.data.time.MovingAverage;
 import org.jfree.data.time.Second;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
+
 
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import java.awt.Color;
 import java.awt.EventQueue;
-import java.awt.Font;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.text.SimpleDateFormat;
@@ -29,7 +28,7 @@ public class TimeGraph extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private String tTitle, yTitle, chartTitle, frameTitle; // titles
 	private JFreeChart chart;  // the chart instance
-	private TimeSeriesCollection  dataset; // the data set to chart
+	private TimeSeriesCollection  dataset, avgDataSet; // the data set to chart
 	private ChartPanel chartPanel; // display panel
 
 
@@ -89,6 +88,7 @@ public class TimeGraph extends JFrame {
 		ArrayList<Second> seriesValsT = new ArrayList<>(); // t values
 		ArrayList<ArrayList<Integer>> seriesValsY = new ArrayList<>(); // y values
 		dataset = new TimeSeriesCollection (); // the data set of all the series
+		avgDataSet = new TimeSeriesCollection();
 		
 		try {
 			Scanner fileScn = new Scanner(csvFile);
@@ -150,7 +150,9 @@ public class TimeGraph extends JFrame {
 				for (int val = 0; val < seriesValsT.size(); val++) {
 					series.add(seriesValsT.get(val), seriesValsY.get(s).get(val)); // add (t,y)
 				}
+				TimeSeries movingAvg = MovingAverage.createMovingAverage(series, "Average", 1600, 0); // avg of cur series 
 				dataset.addSeries(series); // add to dataset
+				avgDataSet.addSeries(movingAvg); // add to dataset
 			}
 
 		} catch (FileNotFoundException e) {
@@ -196,53 +198,96 @@ public class TimeGraph extends JFrame {
 		 * orientation, and three flags indicating whether to show legend, tooltips, and
 		 * URLs.
 		 */
-		chart = ChartFactory.createScatterPlot(
-				chartTitle, // title
-				tTitle, // x axis
-				yTitle, // y axis
-				dataset);
+//		chart = ChartFactory.createScatterPlot(
+//				chartTitle, // title
+//				tTitle, // x axis
+//				yTitle, // y axis
+//				dataset);
 		
+		
+		NumberAxis rangeAxis = new NumberAxis();
+		// format time axis
+		DateAxis domainAxis = new DateAxis();
+		domainAxis.setDateFormatOverride(new SimpleDateFormat("hh:mm:ss a"));
+		domainAxis.setVerticalTickLabels(true);
+				
+		        
+	   
 
 		// Get a reference to the plot in order to customize it.
-		XYPlot plot = chart.getXYPlot();
+		XYPlot plot = new XYPlot();
+		plot.setDomainAxis(domainAxis);
+		plot.setRangeAxis(rangeAxis);
+		XYLineAndShapeRenderer rend0 = new XYLineAndShapeRenderer(true,false);
+		XYLineAndShapeRenderer rend1 = new XYLineAndShapeRenderer(false,true);
+		plot.setDataset(0, avgDataSet);
+		plot.setRenderer(0,rend0);
+		plot.setDataset(1,dataset);
+		plot.setRenderer(1,rend1);
 
-		/*
-		 * Set a stroke and a colour for the line of the chart. 
-		 * XYLineAndShapeRenderer is an object that connects data 
-		 * points with lines and/or draws shapes at each data point. 
-		 * The renderer is set with the setRenderer() method.
-		 * 
-		 * Can calulate on own though...
-		 */
-		//XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
-//		renderer.setSeriesPaint(0, Color.RED);
-//		renderer.setSeriesStroke(0, new BasicStroke(2.0f));
-		//plot.setRenderer(renderer);
 		
 		// Sets the background colour of the plot area.
 		plot.setBackgroundPaint(Color.white);
 
-		// Show the grid lines and paint them in black colour.
-		plot.setRangeGridlinesVisible(true);
-		plot.setRangeGridlinePaint(Color.BLACK);
-
-		plot.setDomainGridlinesVisible(true);
-		plot.setDomainGridlinePaint(Color.BLACK);
-		
-		// format time axis
-		DateAxis axis = new DateAxis();
-        axis.setDateFormatOverride(new SimpleDateFormat("hh:mm:ss a"));
-        axis.setVerticalTickLabels(true);
-        plot.setDomainAxis(axis);
-        
-        
-		// Remove the border around the legend.
-		chart.getLegend().setFrame(BlockBorder.NONE);
-
-		// Create a chart title with a new font.
-		chart.setTitle(new TextTitle(chartTitle, new Font("Serif", java.awt.Font.BOLD, 18)));
+		chart = new JFreeChart(chartTitle, JFreeChart.DEFAULT_TITLE_FONT, plot, true);
 
 	}
+	
+//	private void createChart() {
+//
+//		/*
+//		 * The ChartFactory.createXYLineChart() creates a new line chart. The parameters
+//		 * of the method are: chart title, X axis label, Y axis label, data, plot
+//		 * orientation, and three flags indicating whether to show legend, tooltips, and
+//		 * URLs.
+//		 */
+//		chart = ChartFactory.createScatterPlot(
+//				chartTitle, // title
+//				tTitle, // x axis
+//				yTitle, // y axis
+//				dataset);
+//		
+//
+//		// Get a reference to the plot in order to customize it.
+//		XYPlot plot = chart.getXYPlot();
+//
+//		/*
+//		 * Set a stroke and a colour for the line of the chart. 
+//		 * XYLineAndShapeRenderer is an object that connects data 
+//		 * points with lines and/or draws shapes at each data point. 
+//		 * The renderer is set with the setRenderer() method.
+//		 * 
+//		 * Can calulate on own though...
+//		 */
+//		//XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
+////		renderer.setSeriesPaint(0, Color.RED);
+////		renderer.setSeriesStroke(0, new BasicStroke(2.0f));
+//		//plot.setRenderer(renderer);
+//		
+//		// Sets the background colour of the plot area.
+//		plot.setBackgroundPaint(Color.white);
+//
+//		// Show the grid lines and paint them in black colour.
+//		plot.setRangeGridlinesVisible(true);
+//		plot.setRangeGridlinePaint(Color.BLACK);
+//
+//		plot.setDomainGridlinesVisible(true);
+//		plot.setDomainGridlinePaint(Color.BLACK);
+//		
+//		// format time axis
+//		DateAxis axis = new DateAxis();
+//        axis.setDateFormatOverride(new SimpleDateFormat("hh:mm:ss a"));
+//        axis.setVerticalTickLabels(true);
+//        plot.setDomainAxis(axis);
+//        
+//        
+//		// Remove the border around the legend.
+//		chart.getLegend().setFrame(BlockBorder.NONE);
+//
+//		// Create a chart title with a new font.
+//		chart.setTitle(new TextTitle(chartTitle, new Font("Serif", java.awt.Font.BOLD, 18)));
+//
+//	}
 	
 	
 	/**
