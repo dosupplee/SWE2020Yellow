@@ -478,7 +478,7 @@ public class MainScreenFX extends Application {
 		foodOptionsComboBox.setMaxWidth(150);
 
 		ObservableList<Integer> qoptions = FXCollections.observableArrayList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,
-				14, 15, 16, 17, 18, 19, 20);
+				14, 15);
 		ComboBox<Integer> foodQuantityComboBox = new ComboBox<>(qoptions);
 		foodQuantityComboBox.setPromptText("QUANTITY");
 		foodQuantityComboBox.setMaxWidth(150);
@@ -556,7 +556,7 @@ public class MainScreenFX extends Application {
 					mealCreaterTextArea.appendText("\n\n");
 
 					// TODO reset combobox
-
+					foodQuantityComboBox.setValue(1);
 				} catch (Exception e2) {
 					System.err.println(e2.getMessage());
 				}
@@ -575,10 +575,12 @@ public class MainScreenFX extends Application {
 					// parse out meals
 					String[] lines = inTXT.split("\n\n");
 
-					// get name
+					// get name and then clear input box
 					String mealName = mealNameTextField.getText();
-					// get probability
+					mealNameTextField.clear();
+					// get probability and then clear input box
 					double rawProb = Double.parseDouble(mealProbabilityTextField.getText());
+					mealProbabilityTextField.clear();
 					Meal newMeal = new Meal(mealName, rawProb);
 
 					for (String curS : lines) {
@@ -609,7 +611,6 @@ public class MainScreenFX extends Application {
 						curSetup.addMeal(newMeal);
 						curSetup.adjustMealProbabilities();
 						{ // print
-							mealProbabilityTextField.clear();
 							String out = "";
 							for (Meal meal : curSetup.getAllMeals()) {
 								out += String.format("%-63s%.2f -> %.2f%%", meal.getName(), meal.getRawProbability(),
@@ -633,6 +634,8 @@ public class MainScreenFX extends Application {
 			} catch (Exception e3) {
 				System.err.println(e3.getMessage());
 			}
+			//Clear entered area for last created meal
+			mealCreaterTextArea.setText("");
 		});
 
 		// ------------------
