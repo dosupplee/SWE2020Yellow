@@ -805,7 +805,7 @@ public class MainScreenFX extends Application {
 			setTitle(title);
 			VBox y = new VBox();
 
-			y.getChildren().add(new MyLabel(msg));
+			y.getChildren().add(new Label(msg));
 			y.setAlignment(Pos.CENTER);
 			setScene(new Scene(y, 300, 100));
 			show();
