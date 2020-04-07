@@ -285,13 +285,13 @@ public class MainScreenFX extends Application {
 
 				
 				String[] fileNames = new String[1 + graphFiles.size()];
-				fileNames[0] = "Simulation Statisitcs.txt";
+				fileNames[0] = "Simulation Results.txt";
 				for (int i = 0; i < graphFiles.size(); i++) {
 					fileNames[i + 1] = graphFiles.get(i);
 				}
 				
 				
-				String logString = runner.getDisplayStringBuilder().toString();
+				String logString = outputLog.getText();
 
 				FileChooser fileChooser = new FileChooser();
 
