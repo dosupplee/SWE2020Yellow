@@ -556,6 +556,10 @@ public class MainScreenFX extends Application {
 					mealCreaterTextArea.appendText("\n\n");
 
 					// TODO reset combobox
+					
+					// update combo box
+					ObservableList<String> foodOptions = FXCollections.observableArrayList(curSetup.getAllFoodNames());
+					foodOptionsComboBox.setItems(foodOptions);
 
 				} catch (Exception e2) {
 					System.err.println(e2.getMessage());
@@ -745,11 +749,28 @@ public class MainScreenFX extends Application {
 						curSetup.loadFoodSettings(selectedFile);
 
 					}
+					
+					curSetup.loadDefaultFoodSettings();
+					// update combo box
+					ObservableList<String> foodOptions = FXCollections.observableArrayList(curSetup.getAllFoodNames());
+					foodOptionsComboBox.setItems(foodOptions);
+					//reset built meal
+					mealCreaterTextArea.setText("");
 
 				} else if (selectedS.equals(defaultS)) {
 					curSetup.loadDefaultFoodSettings();
+					// update combo box
+					ObservableList<String> foodOptions = FXCollections.observableArrayList(curSetup.getAllFoodNames());
+					foodOptionsComboBox.setItems(foodOptions);
+					//reset built meal
+					mealCreaterTextArea.setText("");
 				} else if (selectedS.equals(clearS)) {
 					curSetup.clearFoodsAndMeals();
+					// update combo box
+					ObservableList<String> foodOptions = FXCollections.observableArrayList(curSetup.getAllFoodNames());
+					foodOptionsComboBox.setItems(foodOptions);
+					//reset built meal
+					mealCreaterTextArea.setText("");
 				}
 
 				// reload screen stuff
