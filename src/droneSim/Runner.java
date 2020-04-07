@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.TreeMap;
 
 
+
+
 public class Runner {
 
 	public Runner() {
@@ -41,7 +43,7 @@ public class Runner {
 		csvTextSB = new StringBuilder(); // text to save to log file
 		displayTextSB = new StringBuilder(); // text to display to log screen
 		// Hash map of (time -> numOrders)
-		HashMap<String, Integer> map = new HashMap<>();
+		HashMap<Time, Integer> map = new HashMap<>();
 		
 		
 		/*
@@ -63,10 +65,10 @@ public class Runner {
 		 */
 		// create csv log headers
 		csvTextSB.append("Orders Over Time Chart\n");
-		csvTextSB.append("Cumulative # of Orders vs. Time for " +  currentSetup.getNumShifts() + " shifts\n");
+		csvTextSB.append("# of Orders vs. Time for " +  currentSetup.getNumShifts() + " shifts\n");
 		csvTextSB.append("Time\n");
-		csvTextSB.append("Cumulative # of Orders\n");
-		csvTextSB.append("Cumulative # of Orders\n");
+		csvTextSB.append("# of Orders\n");
+		csvTextSB.append("# of Orders\n");
 		csvTextSB.append("########################\n");
 		
 		
@@ -97,6 +99,7 @@ public class Runner {
 
 		// keep track of current time
 		Time currentTime = new Time();
+		int counter = 0;
 
 		// Repeat whole simulation for each packager type (for now???)
 		for (int type = 0; type < 2; type++) {
@@ -124,17 +127,22 @@ public class Runner {
 						// Maintain count of orders processed (for statistical analysis)
 						numOrders += newOrders.size();
 						
-						// add to csv graph
-						if (type == 0 && newOrders.size() != 0) { // only do it once, and only show times where there are orders
-							Time timeObj = new Time(time);
-							int oldVal = map.getOrDefault(timeObj.toString(), 0);
-					
-							map.put(timeObj.toString(),  newOrders.size() + oldVal);
-						}
-						
 
 						// Append now-valid orders to the delivery backlog
 						orderBacklog.addAll(newOrders);
+
+						
+						// add to csv graph
+						if (type == 0 && orderBacklog.size() != 0) { // only do it once, and only show times where there are orders
+							Time timeObj = new Time(time);
+							int oldVal = map.getOrDefault(timeObj, 0);
+							if (oldVal != 0) {
+								System.out.println(oldVal);
+							}
+							counter++;
+							map.put(timeObj,  orderBacklog.size() + oldVal);
+						}
+						
 
 						// list new orders grabbed
 						for (int i = 0; i < newOrders.size(); i++) {
@@ -224,10 +232,11 @@ public class Runner {
 		
 		// print map to file
 		// TreeMap to store sorted values of HashMap 
-        TreeMap<String, Integer> sorted = new TreeMap<>(map); 
-		for (String t : sorted.keySet()) {
-			csvTextSB.append(t + ","+ sorted.get(t) +"\n");
+        TreeMap<Time, Integer> sorted = new TreeMap<>(map); 
+		for (Time t : sorted.keySet()) {
+			csvTextSB.append(t.toString() + ","+ sorted.get(t) +"\n");
 		}
+		
 		
 		
 		displayTextSB.append("Simulation Results:\n----");
@@ -254,7 +263,6 @@ public class Runner {
 		//sBuilder.append("\n<terminated>");
 
 		simRunning = false;
-		
 		Tuple results = new Tuple(displayTextSB, csvTextSB);
 		return results;
 	}

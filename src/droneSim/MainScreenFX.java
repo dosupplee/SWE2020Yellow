@@ -1,14 +1,21 @@
 package droneSim;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -55,6 +62,36 @@ public class MainScreenFX extends Application {
 		window.setScene(mainScene);
 		window.setTitle("Dromedary Drones");
 		window.show();
+	}
+	
+	// get rid of all the old graph files
+	@Override
+	public void stop(){
+	    try // get all the files in directory
+	    {
+	        String lscmd = "ls";
+	        Process p = Runtime.getRuntime().exec(new String[]{"bash", "-c", lscmd});
+	        p.waitFor();
+	        BufferedReader reader=new BufferedReader(new InputStreamReader(p.getInputStream()));
+	        String line=reader.readLine();
+	        while(line!=null)
+	        {
+	            if (line.endsWith("_time graph.csv")) { // if it's a graph file
+					File file = new File(line); // delete
+					if (file.exists()) {
+						file.delete();
+					}
+				}
+	            line=reader.readLine();
+	        }
+	    }
+	    catch(IOException e1) {
+	        System.err.println("Pblm found1.");
+	    }
+	    catch(InterruptedException e2) {
+	        System.err.println("Pblm found2.");
+	    }
+
 	}
 
 	public void makeMainScreen() {
@@ -156,6 +193,7 @@ public class MainScreenFX extends Application {
 		Button clearLogButton = new Button("CLEAR LOG");
 		Button selectFileButton = new Button("SELECT FILE");
 		
+		
 
 		runSimulationButton.setOnAction(e -> {
 
@@ -169,14 +207,23 @@ public class MainScreenFX extends Application {
 				Tuple results = runner.run(); // run the simulation and get strings
 				StringBuilder displayString = (StringBuilder) results.getA(); // text to display
 				StringBuilder logStringBuilder = (StringBuilder) results.getB(); // text to save
-				outputLog.clear();
+				//outputLog.clear();
+				
+				Date simTime = new Date();
+				outputLog.appendText("\n\n\n");
+				outputLog.appendText("-----------------------------------------------------------------\n");
+				outputLog.appendText("-----------------------------------------------------------------\n\n\n");
+				outputLog.appendText(simTime.toString());
+				outputLog.appendText("\n");
 				outputLog.appendText(displayString.toString()); // add to log screen
 				
 				
 				// graph
 				
 				// Show save file dialog
-				File csvFile = new File("Number of Orders vs Time_time graph.csv");
+				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd_hh;mm;ss");
+				String fName = "Number of Orders vs Time_ " + format.format(simTime) + "_time graph.csv";
+				File csvFile = new File(fName);
 
 				if (csvFile != null) {
 					try {
@@ -205,9 +252,45 @@ public class MainScreenFX extends Application {
 			}
 			
 		});
+		
+	
+		
 
 		saveLogButton.setOnAction(e -> {
 			if (runner.getDisplayStringBuilder() != null && !runner.getDisplayStringBuilder().toString().equals("")) {
+				
+				// zip stats file with the graph file
+				ArrayList<String> graphFiles = new ArrayList<>();
+				try // get all the files in directory
+			    {
+			        String lscmd = "ls";
+			        Process p = Runtime.getRuntime().exec(new String[]{"bash", "-c", lscmd});
+			        p.waitFor();
+			        BufferedReader reader=new BufferedReader(new InputStreamReader(p.getInputStream()));
+			        String line=reader.readLine();
+			        while(line!=null)
+			        {
+			            if (line.endsWith("_time graph.csv")) { // if it's a graph file
+							graphFiles.add(line); // save the file name
+						}
+			            line=reader.readLine();
+			        }
+			    }
+			    catch(IOException e1) {
+			        System.err.println("Pblm found1.");
+			    }
+			    catch(InterruptedException e2) {
+			        System.err.println("Pblm found2.");
+			    }
+
+				
+				String[] fileNames = new String[1 + graphFiles.size()];
+				fileNames[0] = "Simulation Statisitcs.txt";
+				for (int i = 0; i < graphFiles.size(); i++) {
+					fileNames[i + 1] = graphFiles.get(i);
+				}
+				
+				
 				String logString = runner.getDisplayStringBuilder().toString();
 
 				FileChooser fileChooser = new FileChooser();
@@ -234,8 +317,7 @@ public class MainScreenFX extends Application {
 						pWriter.flush();
 						pWriter.close();
 						
-						// zip stats file with the graph file
-						String[] fileNames = {"Simulation Statisitcs.txt", "Number of Orders vs Time_time graph.csv"};
+						
 						zipFiles(fileNames, zip);
 					} catch (FileNotFoundException e1) {
 						System.err.println(e1.getMessage());
@@ -283,6 +365,7 @@ public class MainScreenFX extends Application {
 	}
 	
 	private void zipFiles(String[] filePaths, File zipFile) {
+		//System.out.println(Arrays.toString(filePaths));
         try { 
             FileOutputStream fos = new FileOutputStream(zipFile);
             ZipOutputStream zos = new ZipOutputStream(fos);

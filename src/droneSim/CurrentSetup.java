@@ -8,7 +8,7 @@ import java.util.Scanner;
 
 public class CurrentSetup {
 	// TODO change to not final so the user can update these???
-	private final int numShifts = 50; // number of shifts to simulate
+	private final int numShifts = 10; // number of shifts to simulate
 	private final int numHours = 4; // how many hours there are in a shift
 	private final int[] ordersPerHour = { 15, 17, 22, 15 }; // must be the length of numHours
 

@@ -9,7 +9,7 @@ import java.util.Date;
  * @author LEHMANIT17
  *
  */
-public class Time {
+public class Time implements Comparable<Time>{
 	private int shiftNum; // current shift # (starts at 1)
 	private long seconds; // seconds since start time
 	private int startHour, startMinute, startSecond; // the starting time for this instance
@@ -130,6 +130,7 @@ public class Time {
 	 * @param otherTime
 	 * @return
 	 */
+	@Override
 	public int compareTo(Time otherTime) {
 		int pseudoTime = (startHour * 60) + startMinute;
 		int otherPseudoTime = (otherTime.startHour * 60) + otherTime.startMinute;
@@ -137,6 +138,27 @@ public class Time {
 		return pseudoTime - otherPseudoTime;
 	}
 
+	/**
+	 * overide equals method 
+	 */
+	@Override 
+	public boolean equals(Object o) {
+		if (this == o) { // if same object
+			return true;
+		}
+		if (!(o instanceof Time)) { // if other is not an instance of Meal
+			return false;
+		}
+		
+		Time other = (Time) o;
+		return (this.shiftNum == other.shiftNum // check if same contents
+				&& this.seconds == other.seconds
+				&& this.startHour == other.startHour
+				&& this.startMinute == other.startMinute 
+				&& this.startSecond == other.startSecond 
+				);
+	}
+	
 	// --------------------------------------------
 	// TIMER STUFF
 	// --------------------------------------------
