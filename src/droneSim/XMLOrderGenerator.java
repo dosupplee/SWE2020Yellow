@@ -183,13 +183,13 @@ public class XMLOrderGenerator {
 		
 		
 		
-		Element food;
+		Element foodTag;
 		ArrayList<Food> foodItems = meal.getFoodItems();
 		for (int i = 0; i < foodItems.size(); i++) // for each food item
 		{
-			food = document.createElement(foodItems.get(i).getName());
-			contents.appendChild(food);
-			// food.appendChild(document.createTextNode("1"));
+			foodTag = document.createElement("Food");
+			contents.appendChild(foodTag);
+			foodTag.appendChild(document.createTextNode(foodItems.get(i).getName()));
 		}
 	}
 
