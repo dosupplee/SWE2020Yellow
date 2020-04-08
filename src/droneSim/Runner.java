@@ -85,14 +85,14 @@ public class Runner {
 		// Create Knapsack packer
 		KnapsackPacker kp = new KnapsackPacker(currentSetup);
 		sumKnapsack = 0;
-		slowestTimeKnapsack = Double.MAX_VALUE;
-		fastestTimeKnapsack = 0.0;
+		slowestTimeKnapsack = 0.0;
+		fastestTimeKnapsack = Double.MAX_VALUE;
 
 		// Create FIFO packer
 		FIFOPacker fp = new FIFOPacker(currentSetup);
 		sumFIFO = 0;
-		slowestTimeFIFO = Double.MAX_VALUE;
-		fastestTimeFIFO = 0.0;
+		slowestTimeFIFO = 0.0;
+		fastestTimeFIFO = Double.MAX_VALUE;
 
 		// This Section Mimics how we will be occasionally refreshing our order backlog
 		// list at certain times
@@ -182,23 +182,25 @@ public class Runner {
 						 * batteries)
 						 */
 						Tuple tripResult = currentSetup.sendDrone(packedOrders);
-						int secondsTaken = (int) tripResult.getA();
+						int secondsTaken = (int) tripResult.getA(); // get the time the trip took
 						String pathTaken = (String) tripResult.getB(); //TODO save somewhere
 						//csvTextSB.append(pathTaken);
+						
+						// update the slowest and fastest times
 						if (packagerType == Packager.Knapsack) {
 							sumKnapsack += secondsTaken;
-							if (secondsTaken < slowestTimeKnapsack) {
+							if (secondsTaken > slowestTimeKnapsack) {
 								slowestTimeKnapsack = secondsTaken;
 							}
-							if (secondsTaken > fastestTimeKnapsack) {
+							if (secondsTaken < fastestTimeKnapsack) {
 								fastestTimeKnapsack = secondsTaken;
 							}
 						} else if (packagerType == Packager.FIFO) {
 							sumFIFO += secondsTaken;
-							if (secondsTaken < slowestTimeFIFO) {
+							if (secondsTaken > slowestTimeFIFO) {
 								slowestTimeFIFO = secondsTaken;
 							}
-							if (secondsTaken > fastestTimeFIFO) {
+							if (secondsTaken < fastestTimeFIFO) {
 								fastestTimeFIFO = secondsTaken;
 							}
 						}
@@ -238,21 +240,30 @@ public class Runner {
 		}
 		
 		
-		
+		// add results to string builder for output to screen
 		displayTextSB.append("Simulation Results:\n----");
-
+		displayTextSB.append("\nTRIP STATS:");
+		
 		if (sumKnapsack > 1) {
-			displayTextSB.append("\nSum Knapsack: " + sumKnapsack);
-			displayTextSB.append("\nFastest Time Knapsack: " + fastestTimeKnapsack);
-			displayTextSB.append("\nSlowest Time Knapsack: " + slowestTimeKnapsack);
-			displayTextSB.append("\nAverage Time Knapsack: " + (sumKnapsack / numOrders));
+			String fastestS = String.format("\nFastest Time Knapsack: %.3f seconds", fastestTimeKnapsack);
+			String slowestS = String.format("\nSlowest Time Knapsack: %.3f seconds", slowestTimeKnapsack);
+			String avgS = String.format("\nAverage Time Knapsack: %.3f seconds", (sumKnapsack / numOrders));
+			
+			//displayTextSB.append("\nSum Knapsack: " + sumKnapsack);
+			displayTextSB.append(fastestS);
+			displayTextSB.append(slowestS);
+			displayTextSB.append(avgS);
 		}
 
 		if (sumFIFO > 1) {
-			displayTextSB.append("\n\nSum FIFO: " + sumFIFO);
-			displayTextSB.append("\nFastest Time FIFO: " + fastestTimeFIFO);
-			displayTextSB.append("\nSlowest Time FIFO: " + slowestTimeFIFO);
-			displayTextSB.append("\nAverage Time FIFO: " + (sumFIFO / numOrders));
+			String fastestS = String.format("\n\nFastest Time FIFO: %.3f seconds", fastestTimeFIFO);
+			String slowestS = String.format("\nSlowest Time FIFO: %.3f seconds", slowestTimeFIFO);
+			String avgS = String.format("\nAverage Time FIFO: %.3f seconds", (sumFIFO / numOrders));
+			
+			//displayTextSB.append("\n\nSum FIFO: " + sumFIFO);
+			displayTextSB.append(fastestS);
+			displayTextSB.append(slowestS);
+			displayTextSB.append(avgS);
 		}
 
 		long stopTime = new Date().getTime();
