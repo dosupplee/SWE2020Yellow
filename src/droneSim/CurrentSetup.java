@@ -143,6 +143,22 @@ public class CurrentSetup {
 		setCurrentMap(new Map("mainMap", "C://MapLocation", getDeliveryPoints()));
 	}
 
+	/**
+	 * Load foods from a csv format 
+	 * all foods 
+	 * all meals 
+	 * -----------------------
+	 *  name, weight (oz) <pizza>,<5> 
+	 *  . 
+	 *  .
+	 *  . 
+	 *  name, rawProb, scaledProb, food names 
+	 *  <french fry delight>, <30>, <0.3>, <fry>, <fry>,<fry> 
+	 *  . 
+	 *  . 
+	 *  .
+	 * @param file
+	 */
 	public void loadFoodSettings(File file) {
 		File csvFile = file; // open file
 		if (!csvFile.exists()) { // if the file does not exist
@@ -236,9 +252,19 @@ public class CurrentSetup {
 	}
 
 	/**
-	 * Save food in a csv format all foods all meals ----------------------- name,
-	 * weight (oz) <pizza>,<5> . . . name, rawProb, scaledProb, food names <french
-	 * fry delight>, <30>, <0.3>, <fry>, <fry>,<fry> . . .
+	 * Save food in a csv format 
+	 * all foods 
+	 * all meals 
+	 * -----------------------
+	 *  name, weight (oz) <pizza>,<5> 
+	 *  . 
+	 *  .
+	 *  . 
+	 *  name, rawProb, scaledProb, food names 
+	 *  <french fry delight>, <30>, <0.3>, <fry>, <fry>,<fry> 
+	 *  . 
+	 *  . 
+	 *  .
 	 */
 	public void saveFoodSettings(File file) {
 		if (allFoods == null || allFoods.size() == 0) { // if no food to save
@@ -506,6 +532,10 @@ public class CurrentSetup {
 		return currentDrone.runTSP(orders);
 	}
 
+	/**
+	 * returns an array of the names of all the foods
+	 * @return
+	 */
 	public String[] getAllFoodNames() {
 		String[] names = new String[allFoods.size()];
 		for (int i = 0; i < names.length; i++) {
@@ -514,6 +544,9 @@ public class CurrentSetup {
 		return names;
 	}
 
+	/**
+	 * clears the foods and meals
+	 */
 	public void clearFoodsAndMeals() {
 		allFoods.clear();
 		allMeals.clear();

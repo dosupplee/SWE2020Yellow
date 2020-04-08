@@ -44,6 +44,10 @@ public class MainScreenFX extends Application {
 	public Scene mainScene, setupScene;
 	private Runner runner;
 	private CurrentSetup curSetup;
+	
+	private final int SCREEN_HEIGHT = 600;
+	private final int SCREEN_WIDTH = 800;
+	
 
 	public static void main(String[] args) {
 		launch(args);
@@ -64,22 +68,26 @@ public class MainScreenFX extends Application {
 		window.show();
 	}
 	
-	// get rid of all the old graph files
+	/**
+	 *  get rid of all the old graph files
+	 */
 	@Override
 	public void stop(){
 	    try // get all the files in directory
 	    {
-	        String lscmd = "ls";
-	        Process p = Runtime.getRuntime().exec(new String[]{"bash", "-c", lscmd});
+	        String lscmd = "ls"; // bash cmd to print the files in current dir
+	        Process p = Runtime.getRuntime().exec(new String[]{"bash", "-c", lscmd}); // execute the process
 	        p.waitFor();
 	        BufferedReader reader=new BufferedReader(new InputStreamReader(p.getInputStream()));
+	        
+	        // parse the output
 	        String line=reader.readLine();
 	        while(line!=null)
 	        {
 	            if (line.endsWith("_time graph.csv")) { // if it's a graph file
-					File file = new File(line); // delete
+					File file = new File(line); // file to delete
 					if (file.exists()) {
-						file.delete();
+						file.delete(); // delete it 
 					}
 				}
 	            line=reader.readLine();
@@ -104,8 +112,8 @@ public class MainScreenFX extends Application {
 		/*
 		 * Main page screen setup
 		 */
-		double screenW = 800;
-		double screenH = 600;
+		double screenW = SCREEN_WIDTH;
+		double screenH = SCREEN_HEIGHT;
 		int insets = 15;
 		int numColumns = 4;
 		int numRows = 14;
@@ -195,6 +203,9 @@ public class MainScreenFX extends Application {
 		
 		
 
+		//---------------------------------
+		// RUN SIMULATION BUTTON EVENT
+		//---------------------------------
 		runSimulationButton.setOnAction(e -> {
 
 			if (!runner.isRunning()) {
@@ -255,18 +266,22 @@ public class MainScreenFX extends Application {
 		
 	
 		
-
+		//---------------------------------
+		// SAVE LOG BUTTON EVENT
+		//---------------------------------
 		saveLogButton.setOnAction(e -> {
 			if (runner.getDisplayStringBuilder() != null && !runner.getDisplayStringBuilder().toString().equals("")) {
 				
 				// zip stats file with the graph file
-				ArrayList<String> graphFiles = new ArrayList<>();
+				ArrayList<String> graphFiles = new ArrayList<>(); // list of graph file names to save
 				try // get all the files in directory
 			    {
-			        String lscmd = "ls";
-			        Process p = Runtime.getRuntime().exec(new String[]{"bash", "-c", lscmd});
+			        String lscmd = "ls"; // bash cmd to get the names of the contents in the working directory
+			        Process p = Runtime.getRuntime().exec(new String[]{"bash", "-c", lscmd}); // execute the command
 			        p.waitFor();
 			        BufferedReader reader=new BufferedReader(new InputStreamReader(p.getInputStream()));
+			        
+			        // parse through the output
 			        String line=reader.readLine();
 			        while(line!=null)
 			        {
@@ -284,40 +299,38 @@ public class MainScreenFX extends Application {
 			    }
 
 				
+				// create an array of the file names to save
 				String[] fileNames = new String[1 + graphFiles.size()];
-				fileNames[0] = "Simulation Results.txt";
-				for (int i = 0; i < graphFiles.size(); i++) {
+				fileNames[0] = "Simulation Results.txt"; // add the result file name
+				for (int i = 0; i < graphFiles.size(); i++) { // add the graph file names
 					fileNames[i + 1] = graphFiles.get(i);
 				}
 				
 				
-				String logString = outputLog.getText();
+				
 
 				FileChooser fileChooser = new FileChooser();
 
-				// Set extension filter
-				// FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("CSV
-				// files (*.csv)", "*.csv");
+				// Set extension filter for popup file chooser dialog
 				FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("ZIP files (*.zip)", "*.zip");
 				fileChooser.getExtensionFilters().add(extFilter);
 
 				// Show save file dialog
 				File zip = fileChooser.showSaveDialog(window);
 
-				// create the files to zip
+				// create the result file to zip with the graph files, then zip them up
 				if (zip != null) {
 					try {
-						//File csvFile = new File("Number of Orders vs Time_time graph.csv");
-						 //zipFiles(String[] filePaths, File zipFile) 
 						
-						// create stats file
+						// create results file (log display text)
 						File statsFile = new File("Simulation Results.txt");
 						PrintWriter pWriter = new PrintWriter(statsFile);
+						String logString = outputLog.getText(); // text in display log
 						pWriter.append(logString);
 						pWriter.flush();
 						pWriter.close();
 						
-						
+						// zip them up
 						zipFiles(fileNames, zip);
 					} catch (FileNotFoundException e1) {
 						System.err.println(e1.getMessage());
@@ -364,6 +377,12 @@ public class MainScreenFX extends Application {
 		});
 	}
 	
+	/**
+	 * Zips up all the 'filePaths' files in in a given directory
+	 * and puts them into 'zipFile' 
+	 * @param filePaths
+	 * @param zipFile
+	 */
 	private void zipFiles(String[] filePaths, File zipFile) {
 		//System.out.println(Arrays.toString(filePaths));
         try { 
@@ -403,13 +422,13 @@ public class MainScreenFX extends Application {
 		Background applicationBackground = new Background(applicationColor);
 
 		//
-		double screenW = 800;
-		double screenH = 600;
-		int insets = 15;
-		int numColumns = 4;
-		int numRows = 15;
-		double colW = screenW / numColumns - 11;
-		double rowH = screenH / numRows - insets / numRows;
+		double screenW = SCREEN_WIDTH;
+		double screenH = SCREEN_HEIGHT;
+		int insets = 15; // PADDING FOR SCREEN
+		int numColumns = 4; // NUMBER OF COLUMNS FOR GRIDPANE
+		int numRows = 15; // NUMBER OF ROWS FOR GRIDPANE
+		double colW = screenW / numColumns - 11; // COL WIDTH
+		double rowH = screenH / numRows - insets / numRows; // ROW WIDTH
 
 		GridPane screenLayoutSetup = new GridPane(); // main layout
 		screenLayoutSetup.setMaxWidth(colW * numColumns - 2 * insets);
@@ -437,26 +456,26 @@ public class MainScreenFX extends Application {
 		// Screen Objects
 		// ------------------
 
-		// create some new buttons
+
+		//---------------------------------
+		// BUTTON'S SETUP
+		//---------------------------------
 		Button mainPageButton = new Button("BACK");
 		Button createFoodButton = new Button("CREATE FOOD");
 		Button addFoodButton = new Button("ADD FOOD");
 		Button addMealButton = new Button("ADD MEAL");
 		Button clearMealButton = new Button("CLEAR MEAL");
-		// Button saveButton = new Button("SAVE");
-		// Button loadButton = new Button("LOAD");
-		// Button defaultButton = new Button("DEFAULTS");
 
 		mainPageButton.setMaxSize(150, 50);
 		createFoodButton.setMaxSize(150, 50);
 		addFoodButton.setMaxSize(150, 50);
 		addMealButton.setMaxSize(150, 50);
 		clearMealButton.setMaxSize(150, 50);
-		// saveButton.setMaxSize(150, 50);
-		// loadButton.setMaxSize(150, 50);
-		// defaultButton.setMaxSize(150, 50);
 
-		// create new text fields
+
+		//---------------------------------
+		// TEXT FIELD'S SETUP
+		//---------------------------------
 		TextField foodNameTextField = new TextField();
 		TextField foodWeightTextField = new TextField();
 		TextField mealProbabilityTextField = new TextField();
@@ -470,19 +489,25 @@ public class MainScreenFX extends Application {
 		mealProbabilityTextField.setMaxWidth(150);
 		mealNameTextField.setMaxWidth(150);
 
-		// create new combo box
-		// TODO
+		//---------------------------------
+		// COMBO BOX SETUP (FOR MEAL CREATION)
+		//---------------------------------
+		// FOOD SELECTION
 		ObservableList<String> options = FXCollections.observableArrayList(curSetup.getAllFoodNames());
 		ComboBox<String> foodOptionsComboBox = new ComboBox<>(options);
 		foodOptionsComboBox.setPromptText("SELECT FOOD");
 		foodOptionsComboBox.setMaxWidth(150);
 
+		// FOOD QUANTITY
 		ObservableList<Integer> qoptions = FXCollections.observableArrayList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,
 				14, 15);
 		ComboBox<Integer> foodQuantityComboBox = new ComboBox<>(qoptions);
 		foodQuantityComboBox.setPromptText("QUANTITY");
 		foodQuantityComboBox.setMaxWidth(150);
 
+		//---------------------------------
+		// TEXT AREA'S SETUP
+		//---------------------------------
 		// create new text Area
 		TextArea mealProbTextArea = new TextArea();
 		mealProbTextArea.setMaxWidth(2 * colW);
@@ -513,7 +538,9 @@ public class MainScreenFX extends Application {
 		mealCreaterTextArea.setEditable(false);
 		mealCreaterTextArea.setPromptText("Your Custom Meal...");
 
-		// create new labels
+		//---------------------------------
+		// LABEL'S SETUP
+		//---------------------------------
 		Label mealLabel = new Label("MEAL");
 		Label probabilityLabel = new Label("PROBABILITY");
 		Label inMealLabel = new Label("CUSTOM MEAL");
@@ -526,8 +553,15 @@ public class MainScreenFX extends Application {
 		probabilityLabel.setTextFill(Color.WHITE);
 		inMealLabel.setTextFill(Color.WHITE);
 
-		// buttons action
+		// buttons action:
+		//---------------------------------
+		// MAIN PAGE BUTTON EVENT
+		//---------------------------------
 		mainPageButton.setOnAction(e -> window.setScene(mainScene)); // go back to main screen
+		
+		//---------------------------------
+		// CREATE FOOD BUTTON EVENT
+		//---------------------------------
 		createFoodButton.setOnAction(e -> {
 			try {
 				// parse new food
@@ -546,6 +580,10 @@ public class MainScreenFX extends Application {
 				foodWeightTextField.setText(""); // if not an integer placed
 			}
 		});
+		
+		//---------------------------------
+		// ADD FOOD BUTTON EVENT
+		//---------------------------------
 		addFoodButton.setOnAction(e -> {
 			if (foodOptionsComboBox.getValue() != null && foodQuantityComboBox.getValue() != null) {
 				try {
@@ -571,6 +609,10 @@ public class MainScreenFX extends Application {
 		clearMealButton.setOnAction(e -> {
 			mealCreaterTextArea.setText("");
 		});
+		
+		//---------------------------------
+		// ADD MEAL BUTTON EVENT
+		//---------------------------------
 		addMealButton.setOnAction(e -> {
 			String inTXT = mealCreaterTextArea.getText();
 			try {
@@ -611,7 +653,6 @@ public class MainScreenFX extends Application {
 										+ newMeal.getWeight() + " (oz)\n" + "\t- Drone Capacity: "
 										+ curSetup.getDroneWeight() + " (oz)");
 					} else {
-						// System.out.println(newMeal);
 						// add meal
 						curSetup.addMeal(newMeal);
 						curSetup.adjustMealProbabilities();
@@ -659,11 +700,6 @@ public class MainScreenFX extends Application {
 
 		// add back button
 		screenLayoutSetup.add(mainPageButton, 0, 11);
-
-		// file buttons
-		// screenLayoutSetup.add(saveButton, 1, 11);
-		// screenLayoutSetup.add(loadButton, 2, 11);
-		// screenLayoutSetup.add(defaultButton, 3, 11);
 
 		// ------------------
 		// right side

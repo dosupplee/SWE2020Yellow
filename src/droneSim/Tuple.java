@@ -1,7 +1,7 @@
 package droneSim;
 
 /**
- * Creates a tuple of two object types
+ * Creates a tuple of two object types (A, B)
  * @author LEHMANIT17
  *
  */
@@ -11,6 +11,11 @@ public class Tuple {
 	private Object a; 
 	private Object b;
 	
+	/**
+	 * Default constructor for (a of type A, b of type B)
+	 * @param a
+	 * @param b
+	 */
 	public Tuple(Object a, Object b) {
 		this.a = a;
 		this.b = b;
