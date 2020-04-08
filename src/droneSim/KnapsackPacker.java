@@ -36,7 +36,11 @@ public class KnapsackPacker
 	        	orderCountAdjust = skippedOrders.size()-1;
 	
 		//finds the number of orders that we are going to solve the packing algorithm with
-		int numOrders = findLastValidItem(orderCountAdjust+1,orderBacklog);
+		//findLastValidItem will give us the index of the last valid order than we can check
+		 //Then we subtract by the skipped order size so that we only iterate through the
+		 //valid non-skipped orders.  We find the most effecient packing based on these valid
+		 //non-skipped orders.
+		int numValidNonSkippedOrders = findLastValidItem(orderCountAdjust+1,orderBacklog) - skippedOrders.size();
 		 
 		//Need to account for the skipped orders that are fast-tracked
         int droneWeight = currentSetup.getDroneWeight() - getAllWeight(skippedOrders);     
@@ -44,12 +48,12 @@ public class KnapsackPacker
         // Create 2d array of possible solutions
         //Each possible weight has a row
         //Each possible item has a column
-        ArrayList<Order>[][] mat = new ArrayList[numOrders + 1][droneWeight + 1];
+        ArrayList<Order>[][] mat = new ArrayList[numValidNonSkippedOrders + 1][droneWeight + 1];
         
 
         // Main logic
         //For each order
-        for (int order = 1; order <= numOrders; order++) 
+        for (int order = 1; order <= numValidNonSkippedOrders; order++) 
         {
         	//for each capacity
             for (int capacity = 1; capacity <= droneWeight; capacity++) 
@@ -127,7 +131,7 @@ public class KnapsackPacker
 	        
 	        */
 	        
-        ArrayList<Order> ans = mat[numOrders][droneWeight];
+        ArrayList<Order> ans = mat[numValidNonSkippedOrders][droneWeight];
         
         //Add previously skipped orders to solution
         if(skippedOrders!=null && ans!=null)
@@ -162,7 +166,7 @@ public class KnapsackPacker
 	     //for each order that could have been chosen
         
          if(ans!=null)
-	     for(int i=0;i<numOrders;i++)
+	     for(int i=0;i<numValidNonSkippedOrders;i++)
 	     {
 	    	 boolean isInSolution = false;
 	    	 //find it packed in solution
@@ -179,7 +183,7 @@ public class KnapsackPacker
     		 {
     			 orderBacklog.remove(i);
     			 i --;
-    			 numOrders --;
+    			 numValidNonSkippedOrders --;
     		 }
     		 else //add it to skipped list
     		 {
