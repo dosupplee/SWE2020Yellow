@@ -750,11 +750,10 @@ public class MainScreenFX extends Application {
 					File selectedFile = fileChooser.showOpenDialog(window);
 
 					if (selectedFile != null) { // if a file was selected
-						curSetup.loadFoodSettings(selectedFile);
+						curSetup.loadFoodSettings(selectedFile); // load the file
 
 					}
 					
-					curSetup.loadDefaultFoodSettings();
 					// update combo box
 					ObservableList<String> foodOptions = FXCollections.observableArrayList(curSetup.getAllFoodNames());
 					foodOptionsComboBox.setItems(foodOptions);
