@@ -29,18 +29,18 @@ public class KnapsackPacker
 	 */
 	public ArrayList<Order> pack(ArrayList<Order> orderBacklog) 
 	{	
-		 int orderCountAdjust = -1; //Place on the backlog to start looking at new orders
+		 int orderCountAdjust = 0; //Place on the backlog to start looking at new orders
 		
 		 //If we already skipped orders last iteration we need to assume those are already in the solution
 		 if(skippedOrders!=null)
-	        	orderCountAdjust = skippedOrders.size()-1;
+	        	orderCountAdjust = skippedOrders.size();
 	
 		//finds the number of orders that we are going to solve the packing algorithm with
 		//findLastValidItem will give us the index of the last valid order than we can check
 		 //Then we subtract by the skipped order size so that we only iterate through the
 		 //valid non-skipped orders.  We find the most effecient packing based on these valid
 		 //non-skipped orders.
-		int numValidNonSkippedOrders = findLastValidItem(orderCountAdjust+1,orderBacklog) - skippedOrders.size();
+		int numValidNonSkippedOrders = findLastValidItem(orderCountAdjust,orderBacklog) - skippedOrders.size();
 		 
 		//Need to account for the skipped orders that are fast-tracked
         int droneWeight = currentSetup.getDroneWeight() - getAllWeight(skippedOrders);     
@@ -65,12 +65,12 @@ public class KnapsackPacker
                 previousOrder = mat[order -1][capacity];
                 
                 //weight of current order being added
-                int weightOfCurr = orderBacklog.get(order+ orderCountAdjust).getOrderWeight();
+                int weightOfCurr = orderBacklog.get(order+ orderCountAdjust-1).getOrderWeight();
                
                 //if can even fit current item
                 if (capacity >= weightOfCurr) 
                 {
-                	currentOrder.add(orderBacklog.get(order+ orderCountAdjust));
+                	currentOrder.add(orderBacklog.get(order+ orderCountAdjust-1));
                 	
                 	//find how much space left
                 	int remainingCapacity = capacity - weightOfCurr;
@@ -225,7 +225,7 @@ public class KnapsackPacker
 	public int findLastValidItem(int numStart,ArrayList<Order> arrayList)
 	{
 		//MaxThisCycle is the space that can be filled this cycle while still allowing the next cycle to fulfill any skipped orders
-		int maxThisCycle = (currentSetup.getDroneWeight() * 2) - getAllWeight(skippedOrders);
+		double maxThisCycle = ((double) currentSetup.getDroneWeight() * 1.5) - (double)getAllWeight(skippedOrders);
 		int sum = 0;
 		
 		for(int i=numStart;i<arrayList.size();i++)

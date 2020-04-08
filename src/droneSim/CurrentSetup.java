@@ -102,20 +102,34 @@ public class CurrentSetup {
 		// Create some basic food stuffs
 		addFood(new Food("Burger", 6));
 		addFood(new Food("Drink", 14));
-		addFood(new Food("FrenchFries", 4));
+		addFood(new Food("French Fries", 4));
 
 		// Create some basic meal stuffs ArrayList<Meal>
-		Meal comboMeal = new Meal("Combo Meal", 0.75);
+		Meal comboMeal = new Meal("Combo Meal", 0.55);
 		comboMeal.addFood(getFood(0));
 		comboMeal.addFood(getFood(1));
 		comboMeal.addFood(getFood(2));
 		addMeal(comboMeal);
 
-		Meal frenchFryDelight = new Meal("French Fry Delight", 0.25);
-		frenchFryDelight.addFood(getFood(2));
-		frenchFryDelight.addFood(getFood(2));
-		frenchFryDelight.addFood(getFood(2));
-		addMeal(frenchFryDelight);
+		Meal comboMealPlus = new Meal("Combo Meal Plus", 0.1);
+		comboMealPlus.addFood(getFood(0));
+		comboMealPlus.addFood(getFood(0));
+		comboMealPlus.addFood(getFood(1));
+		comboMealPlus.addFood(getFood(2));
+		addMeal(comboMealPlus);
+		
+		Meal comboMealDrinkless = new Meal("Combo Meal - No Drink", 0.2);
+		comboMealDrinkless.addFood(getFood(0));
+		comboMealDrinkless.addFood(getFood(2));
+		addMeal(comboMealDrinkless);
+		
+		Meal comboMealPlusDrinkless = new Meal("Combo Meal Plus - No Drink", 0.15);
+		comboMealPlusDrinkless.addFood(getFood(0));
+		comboMealPlusDrinkless.addFood(getFood(0));
+		comboMealPlusDrinkless.addFood(getFood(2));
+		addMeal(comboMealPlusDrinkless);
+		
+	
 
 		adjustMealProbabilities();
 
