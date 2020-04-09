@@ -202,74 +202,31 @@ public class MainScreenFX extends Application {
 		Button selectFileButton = new Button("SELECT FILE");
 		
 		
+		// MAIN PAGE MENU BAR (for selecting map file and saving log ouput)
+		
+		// create a menu
+		Menu mainPageMenu = new Menu("File");
 
-		//---------------------------------
-		// RUN SIMULATION BUTTON EVENT
-		//---------------------------------
-		runSimulationButton.setOnAction(e -> {
-
-			if (!runner.isRunning()) {
-				// show an alert to let the user know the simulation is running
-				Alert alert = new Alert(AlertType.NONE, "Running " + curSetup.getNumShifts() + " Simulations...", ButtonType.CLOSE);
-				alert.setTitle("Simulation Info:");
-				alert.show();
-
-				//TODO display graphs
-				Tuple results = runner.run(); // run the simulation and get strings
-				StringBuilder displayString = (StringBuilder) results.getA(); // text to display
-				StringBuilder logStringBuilder = (StringBuilder) results.getB(); // text to save
-				//outputLog.clear();
-				
-				Date simTime = new Date();
-				outputLog.appendText("\n\n\n");
-				outputLog.appendText("-----------------------------------------------------------------\n");
-				outputLog.appendText("-----------------------------------------------------------------\n\n\n");
-				outputLog.appendText(simTime.toString());
-				outputLog.appendText("\n");
-				outputLog.appendText(displayString.toString()); // add to log screen
-				
-				
-				// graph
-				
-				// Show save file dialog
-				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd_hh;mm;ss");
-				String fName = "Number of Orders vs Time_ " + format.format(simTime) + "_time graph.csv";
-				File csvFile = new File(fName);
-
-				if (csvFile != null) {
-					try {
-						PrintWriter pWriter = new PrintWriter(csvFile);
-						pWriter.append(logStringBuilder.toString());
-						pWriter.flush();
-						pWriter.close();
-						
-						// graph result
-						TimeGraph timeGraph = new TimeGraph();
-						timeGraph.createDataSet(csvFile);
-						timeGraph.showGraph();
-			
-					} catch (FileNotFoundException e1) {
-						System.err.println(e1.getMessage());
-					}
-				}
-
-				if (alert.isShowing()) { // close the alert if still showing
-					alert.close();
-				}
-				
-				// Auto Scroll to bottom
-				outputLog.selectPositionCaret(outputLog.getLength()); 
-				outputLog.deselect();
-			}
-			
+		// create menu items
+		String selectFileString = "Select Map File";
+		String saveLogString = "Save Log Output";
+		MenuItem mainScreenSelectFileMenuItem = new MenuItem(selectFileString);
+		MenuItem mainScreenSaveLogMenuItem = new MenuItem(saveLogString);
+		
+		//add menu item to menu
+		mainPageMenu.getItems().add(mainScreenSelectFileMenuItem); 
+		mainPageMenu.getItems().add(mainScreenSaveLogMenuItem); 
+		
+		MenuBar mainPageMenuBar = new MenuBar();
+		
+		mainPageMenuBar.getMenus().add(mainPageMenu);
+		
+		// Setup event handlers for menu items
+		mainScreenSelectFileMenuItem.setOnAction(e -> {
+			File selectedSetupFile = selectSetupFile.showOpenDialog(window);
 		});
 		
-	
-		
-		//---------------------------------
-		// SAVE LOG BUTTON EVENT
-		//---------------------------------
-		saveLogButton.setOnAction(e -> {
+		mainScreenSaveLogMenuItem.setOnAction(e -> {
 			if (runner.getDisplayStringBuilder() != null && !runner.getDisplayStringBuilder().toString().equals("")) {
 				
 				// zip stats file with the graph file
@@ -338,6 +295,78 @@ public class MainScreenFX extends Application {
 				}
 			}
 		});
+		
+		
+		//---------------------------------
+		// RUN SIMULATION BUTTON EVENT
+		//---------------------------------
+		runSimulationButton.setOnAction(e -> {
+
+			if (!runner.isRunning()) {
+				// show an alert to let the user know the simulation is running
+				Alert alert = new Alert(AlertType.NONE, "Running " + curSetup.getNumShifts() + " Simulations...", ButtonType.CLOSE);
+				alert.setTitle("Simulation Info:");
+				alert.show();
+
+				//TODO display graphs
+				Tuple results = runner.run(); // run the simulation and get strings
+				StringBuilder displayString = (StringBuilder) results.getA(); // text to display
+				StringBuilder logStringBuilder = (StringBuilder) results.getB(); // text to save
+				//outputLog.clear();
+				
+				Date simTime = new Date();
+				outputLog.appendText("\n\n\n");
+				outputLog.appendText("-----------------------------------------------------------------\n");
+				outputLog.appendText("-----------------------------------------------------------------\n\n\n");
+				outputLog.appendText(simTime.toString());
+				outputLog.appendText("\n");
+				outputLog.appendText(displayString.toString()); // add to log screen
+				
+				
+				// graph
+				
+				// Show save file dialog
+				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd_hh;mm;ss");
+				String fName = "Number of Orders vs Time_ " + format.format(simTime) + "_time graph.csv";
+				File csvFile = new File(fName);
+
+				if (csvFile != null) {
+					try {
+						PrintWriter pWriter = new PrintWriter(csvFile);
+						pWriter.append(logStringBuilder.toString());
+						pWriter.flush();
+						pWriter.close();
+						
+						// graph result
+						TimeGraph timeGraph = new TimeGraph();
+						timeGraph.createDataSet(csvFile);
+						timeGraph.showGraph();
+			
+					} catch (FileNotFoundException e1) {
+						System.err.println(e1.getMessage());
+					}
+				}
+
+				if (alert.isShowing()) { // close the alert if still showing
+					alert.close();
+				}
+				
+				// Auto Scroll to bottom
+				outputLog.selectPositionCaret(outputLog.getLength()); 
+				outputLog.deselect();
+			}
+			
+		});
+		
+		// change to the setup page
+		setupPageButton.setOnAction(e -> {
+			window.setScene(setupScene);
+		});
+
+		// select the file button
+		selectFileButton.setOnAction(e -> {
+			File selectedSetupFile = selectSetupFile.showOpenDialog(window);
+		});
 
 		// change the size of buttons
 		setupPageButton.setMaxSize(150, 50);
@@ -349,9 +378,9 @@ public class MainScreenFX extends Application {
 		// add buttons to the main screen
 		screenLayoutMain.add(setupPageButton, 1, 8, 1, 1);
 		screenLayoutMain.add(runSimulationButton, 0, 8, 1, 1);
-		screenLayoutMain.add(saveLogButton, 0, 9, 1, 1);
+		//screenLayoutMain.add(saveLogButton, 0, 9, 1, 1);
 		screenLayoutMain.add(clearLogButton, 1, 9, 1, 1);
-		screenLayoutMain.add(selectFileButton, 1, 7, 2, 1);
+		//screenLayoutMain.add(selectFileButton, 1, 7, 2, 1);
 		screenLayoutMain.add(fileName, 0, 7, 1, 1);
 
 		// add output blocks to the main screen
@@ -363,18 +392,12 @@ public class MainScreenFX extends Application {
 		screenLayoutMain.add(fastestTime, 2, 7, 1, 1);
 		screenLayoutMain.add(slowestTime, 2, 8, 1, 1);
 
+		// Create second level containers in page hierarchy
+		VBox mainPageVBox = new VBox(mainPageMenuBar, screenLayoutMain);
+		
 		// making the new main scene
-		mainScene = new Scene(screenLayoutMain, 800, 600);
+		mainScene = new Scene(mainPageVBox, 800, 600);
 
-		// change to the setup page
-		setupPageButton.setOnAction(e -> {
-			window.setScene(setupScene);
-		});
-
-		// select the file button
-		selectFileButton.setOnAction(e -> {
-			File selectedSetupFile = selectSetupFile.showOpenDialog(window);
-		});
 	}
 	
 	/**
