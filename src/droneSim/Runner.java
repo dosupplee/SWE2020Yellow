@@ -184,7 +184,6 @@ public class Runner {
 						Tuple tripResult = currentSetup.sendDrone(packedOrders);
 						int secondsTaken = (int) tripResult.getA(); // get the time the trip took
 						String pathTaken = (String) tripResult.getB(); //TODO save somewhere
-						//csvTextSB.append(pathTaken);
 						
 						// update the slowest and fastest times
 						if (packagerType == Packager.Knapsack) {
@@ -268,7 +267,7 @@ public class Runner {
 
 		long stopTime = new Date().getTime();
 		double runTime = (stopTime - startTime) / 1000.0;
-		displayTextSB.append("\n----\nNumber of Orders: " + numOrders);
+		displayTextSB.append("\n----\nNumber of Orders Simulated: " + numOrders);
 		displayTextSB.append("\nSimulation Took: ");
 		displayTextSB.append(runTime + " seconds");
 		//sBuilder.append("\n<terminated>");

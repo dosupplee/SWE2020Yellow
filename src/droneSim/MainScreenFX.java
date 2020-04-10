@@ -73,33 +73,7 @@ public class MainScreenFX extends Application {
 	 */
 	@Override
 	public void stop(){
-	    try // get all the files in directory
-	    {
-	        String lscmd = "ls"; // bash cmd to print the files in current dir
-	        Process p = Runtime.getRuntime().exec(new String[]{"bash", "-c", lscmd}); // execute the process
-	        p.waitFor();
-	        BufferedReader reader=new BufferedReader(new InputStreamReader(p.getInputStream()));
-	        
-	        // parse the output
-	        String line=reader.readLine();
-	        while(line!=null)
-	        {
-	            if (line.endsWith("_time graph.csv")) { // if it's a graph file
-					File file = new File(line); // file to delete
-					if (file.exists()) {
-						file.delete(); // delete it 
-					}
-				}
-	            line=reader.readLine();
-	        }
-	    }
-	    catch(IOException e1) {
-	        System.err.println("Pblm found1.");
-	    }
-	    catch(InterruptedException e2) {
-	        System.err.println("Pblm found2.");
-	    }
-
+	   deleteGraphFiles();
 	}
 
 	public void makeMainScreen() {
@@ -216,42 +190,15 @@ public class MainScreenFX extends Application {
 			if (runner.getDisplayStringBuilder() != null && !runner.getDisplayStringBuilder().toString().equals("")) {
 				
 				// zip stats file with the graph file
-				ArrayList<String> graphFiles = new ArrayList<>(); // list of graph file names to save
-				try // get all the files in directory
-			    {
-			        String lscmd = "ls"; // bash cmd to get the names of the contents in the working directory
-			        Process p = Runtime.getRuntime().exec(new String[]{"bash", "-c", lscmd}); // execute the command
-			        p.waitFor();
-			        BufferedReader reader=new BufferedReader(new InputStreamReader(p.getInputStream()));
-			        
-			        // parse through the output
-			        String line=reader.readLine();
-			        while(line!=null)
-			        {
-			            if (line.endsWith("_time graph.csv")) { // if it's a graph file
-							graphFiles.add(line); // save the file name
-						}
-			            line=reader.readLine();
-			        }
-			    }
-			    catch(IOException e1) {
-			        System.err.println("Pblm found1.");
-			    }
-			    catch(InterruptedException e2) {
-			        System.err.println("Pblm found2.");
-			    }
-
 				
-				// create an array of the file names to save
-				String[] fileNames = new String[1 + graphFiles.size()];
-				fileNames[0] = "Simulation Results.txt"; // add the result file name
-				for (int i = 0; i < graphFiles.size(); i++) { // add the graph file names
-					fileNames[i + 1] = graphFiles.get(i);
-				}
+				//------------------------------
+				// get the graph file names to save
+				//------------------------------
+				String[] fileNames = getGraphFileNames();
 				
-				
-				
-
+				//------------------------------
+				// Open File dialog for saving
+				//-----------------------------
 				FileChooser fileChooser = new FileChooser();
 
 				// Set extension filter for popup file chooser dialog
@@ -261,6 +208,9 @@ public class MainScreenFX extends Application {
 				// Show save file dialog
 				File zip = fileChooser.showSaveDialog(window);
 
+				//------------------------------
+				// create the results file and zip it with the graph files
+				//------------------------------
 				// create the result file to zip with the graph files, then zip them up
 				if (zip != null) {
 					try {
@@ -357,34 +307,8 @@ public class MainScreenFX extends Application {
 		// CLEAR LOG BUTTON EVENT
 		//---------------------------------
 		clearLogButton.setOnAction(e -> {
-			try // get all the files in directory
-		    {
-		        String lscmd = "ls"; // bash cmd to print the files in current dir
-		        Process p = Runtime.getRuntime().exec(new String[]{"bash", "-c", lscmd}); // execute the process
-		        p.waitFor();
-		        BufferedReader reader=new BufferedReader(new InputStreamReader(p.getInputStream()));
-		        
-		        // parse the output
-		        String line=reader.readLine();
-		        while(line!=null)
-		        {
-		            if (line.endsWith("_time graph.csv")) { // if it's a graph file
-						File file = new File(line); // file to delete
-						if (file.exists()) {
-							file.delete(); // delete it 
-						}
-					}
-		            line=reader.readLine();
-		        }
-		        
-		        outputLog.clear();
-		    }
-		    catch(IOException e1) {
-		        System.err.println("Pblm found1.");
-		    }
-		    catch(InterruptedException e2) {
-		        System.err.println("Pblm found2.");
-		    }
+			deleteGraphFiles();
+		    outputLog.clear();
 		});
 
 
@@ -410,60 +334,6 @@ public class MainScreenFX extends Application {
 
 	}
 	
-	/**
-	 * Zips up all the 'filePaths' files in in a given directory
-	 * and puts them into 'zipFile' 
-	 * @param filePaths
-	 * @param zipFile
-	 */
-	private void zipFiles(String[] filePaths, File zipFile) {
-		//System.out.println(Arrays.toString(filePaths));
-        try { 
-            FileOutputStream fos = new FileOutputStream(zipFile);
-            ZipOutputStream zos = new ZipOutputStream(fos);
- 
-            for (String aFile : filePaths) {
-                zos.putNextEntry(new ZipEntry(new File(aFile).getName()));
- 
-                byte[] bytes = Files.readAllBytes(Paths.get(aFile));
-                zos.write(bytes, 0, bytes.length);
-                zos.closeEntry();
-            }
- 
-            zos.close();
- 
-        } catch (FileNotFoundException ex) {
-            System.err.println("A file does not exist: " + ex);
-        } catch (IOException ex) {
-            System.err.println("I/O error: " + ex);
-        }
-    }
-	
-	private void GraphFilePicker(Stage stage) {
-		FileChooser fileChooser = new FileChooser();
-		FileChooser.ExtensionFilter fileExtensions = new FileChooser.ExtensionFilter("_time graph, _xy graph", "*.csv");
-		fileChooser.getExtensionFilters().add(fileExtensions);
-
-		File selectedFile = fileChooser.showOpenDialog(stage);
-
-		if (selectedFile != null) { // if a file was selected
-
-			// make sure valid file type
-			String fileName = selectedFile.getName();
-
-			if (fileName.toLowerCase().endsWith("_time graph.csv")) { // a time graph
-				TimeGraph tGraph = new TimeGraph();
-				tGraph.createDataSet(selectedFile);
-				tGraph.showGraph();
-			} else if (fileName.toLowerCase().endsWith("_xy graph.csv")) { // an xy graph
-				XYGraph xYGraph = new XYGraph();
-				xYGraph.createDataSet(selectedFile);
-				xYGraph.showGraph();
-			} else { // wrong file type
-				System.err.println("ERROR: Invalid File Name");
-			}
-		}
-	}
 
 	public void makeSetupScreen() {
 		curSetup.loadDefaultDroneSettings();
@@ -913,7 +783,10 @@ public class MainScreenFX extends Application {
 
 		setupScene = new Scene(vBox, screenW, screenH);
 	}
-
+	
+	//---------------------------------------------------------------------------------
+	// METHODS
+	//---------------------------------------------------------------------------------
 	/**
 	 * Creates a custom pop up window with given text and title
 	 * @author LEHMANIT17
@@ -929,6 +802,139 @@ public class MainScreenFX extends Application {
 			setScene(new Scene(y, 300, 100));
 			show();
 
+		}
+	}
+	
+	/**
+	 * Returns the names of the graph files in the current directory
+	 * @return
+	 */
+	private String[] getGraphFileNames() {
+		ArrayList<String> graphFiles = new ArrayList<>(); // list of graph file names to save
+		try // get all the files in directory
+		{
+		    String lscmd = "ls"; // bash cmd to get the names of the contents in the working directory
+		    Process p = Runtime.getRuntime().exec(new String[]{"bash", "-c", lscmd}); // execute the command
+		    p.waitFor();
+		    BufferedReader reader=new BufferedReader(new InputStreamReader(p.getInputStream()));
+		    
+		    // parse through the output
+		    String line=reader.readLine();
+		    while(line!=null)
+		    {
+		        if (line.endsWith("_time graph.csv")) { // if it's a graph file
+					graphFiles.add(line); // save the file name
+				}
+		        line=reader.readLine();
+		    }
+		}
+		catch(IOException e1) {
+		    System.err.println("Pblm found1.");
+		}
+		catch(InterruptedException e2) {
+		    System.err.println("Pblm found2.");
+		}
+
+		
+		// create an array of the file names to save
+		String[] fileNames = new String[1 + graphFiles.size()];
+		fileNames[0] = "Simulation Results.txt"; // add the result file name
+		for (int i = 0; i < graphFiles.size(); i++) { // add the graph file names
+			fileNames[i + 1] = graphFiles.get(i);
+		}
+		return fileNames;
+	}
+	
+	/**
+	 * Zips up all the 'filePaths' files in in a given directory
+	 * and puts them into 'zipFile' 
+	 * @param filePaths
+	 * @param zipFile
+	 */
+	private void zipFiles(String[] filePaths, File zipFile) {
+		//System.out.println(Arrays.toString(filePaths));
+        try { 
+            FileOutputStream fos = new FileOutputStream(zipFile);
+            ZipOutputStream zos = new ZipOutputStream(fos);
+ 
+            for (String aFile : filePaths) {
+                zos.putNextEntry(new ZipEntry(new File(aFile).getName()));
+ 
+                byte[] bytes = Files.readAllBytes(Paths.get(aFile));
+                zos.write(bytes, 0, bytes.length);
+                zos.closeEntry();
+            }
+ 
+            zos.close();
+ 
+        } catch (FileNotFoundException ex) {
+            System.err.println("A file does not exist: " + ex);
+        } catch (IOException ex) {
+            System.err.println("I/O error: " + ex);
+        }
+    }
+	
+	/**
+	 * Opens a file chooser dialog
+	 * Graphs either a time graph or a XY graph
+	 * @param stage
+	 */
+	private void GraphFilePicker(Stage stage) {
+		FileChooser fileChooser = new FileChooser();
+		FileChooser.ExtensionFilter fileExtensions = new FileChooser.ExtensionFilter("_time graph, _xy graph", "*.csv");
+		fileChooser.getExtensionFilters().add(fileExtensions);
+
+		File selectedFile = fileChooser.showOpenDialog(stage);
+
+		if (selectedFile != null) { // if a file was selected
+
+			// make sure valid file type
+			String fileName = selectedFile.getName();
+
+			if (fileName.toLowerCase().endsWith("_time graph.csv")) { // a time graph
+				TimeGraph tGraph = new TimeGraph();
+				tGraph.createDataSet(selectedFile);
+				tGraph.showGraph();
+			} else if (fileName.toLowerCase().endsWith("_xy graph.csv")) { // an xy graph
+				XYGraph xYGraph = new XYGraph();
+				xYGraph.createDataSet(selectedFile);
+				xYGraph.showGraph();
+			} else { // wrong file type
+				System.err.println("ERROR: Invalid File Name");
+			}
+		}
+	}
+	
+	/**
+	 * Deletes all the graph files in current directory
+	 * @param outputLog
+	 */
+	private void deleteGraphFiles() {
+		try // get all the files in directory
+		{
+		    String lscmd = "ls"; // bash cmd to print the files in current dir
+		    Process p = Runtime.getRuntime().exec(new String[]{"bash", "-c", lscmd}); // execute the process
+		    p.waitFor();
+		    BufferedReader reader=new BufferedReader(new InputStreamReader(p.getInputStream()));
+		    
+		    // parse the output
+		    String line=reader.readLine();
+		    while(line!=null)
+		    {
+		        if (line.endsWith("_time graph.csv") || line.endsWith("_xy graph.csv")) { // if it's a graph file
+					File file = new File(line); // file to delete
+					if (file.exists()) {
+						file.delete(); // delete it 
+					}
+				}
+		        line=reader.readLine();
+		    }
+		}
+		catch(IOException e1) {
+		    System.err.println("Pblm found1.");
+		}
+		catch(InterruptedException e2) {
+		    System.err.println("Pblm found2.");
 		}
 	}
 

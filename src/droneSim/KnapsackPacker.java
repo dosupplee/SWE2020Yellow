@@ -130,7 +130,8 @@ public class KnapsackPacker
 	        }
 	        
 	        */
-	        
+	       
+ 
         ArrayList<Order> ans = mat[numValidNonSkippedOrders][droneWeight];
         
         //Add previously skipped orders to solution
