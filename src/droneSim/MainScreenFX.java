@@ -143,18 +143,16 @@ public class MainScreenFX extends Application {
 			screenLayoutMain.getRowConstraints().add(row);
 		}
 
-		// file chooser for selecting a saved setup
-		FileChooser selectSetupFile = new FileChooser();
-		// title for the file chooser
-		selectSetupFile.setTitle("Select Saved Setup");
+		
 
 		// Main Page text
 		Label fileName = new Label("<FileName>");
-		Label avgTime = new Label("AVERAGE TIME:");
-		Label slowestTime = new Label("SLOWEST TIME:");
-		Label fastestTime = new Label("FASTEST TIME:");
+//		Label avgTime = new Label("AVERAGE TIME:");
+//		Label slowestTime = new Label("SLOWEST TIME:");
+//		Label fastestTime = new Label("FASTEST TIME:");
 
 		// Time textFields
+		/*
 		TextField fastFifoTextField = new TextField();
 		TextField fastKnapTextField = new TextField();
 
@@ -170,51 +168,59 @@ public class MainScreenFX extends Application {
 		slowKnapTextField.setEditable(false);
 		avgFifoTextField.setEditable(false);
 		avgKnapTextField.setEditable(false);
+		*/
 
 		// change the size and font of the label
 		fileName.setFont(new Font("Arial", 18));
-		avgTime.setFont(new Font("Arial", 18));
-		slowestTime.setFont(new Font("Arial", 18));
-		fastestTime.setFont(new Font("Arial", 18));
+//		avgTime.setFont(new Font("Arial", 18));
+//		slowestTime.setFont(new Font("Arial", 18));
+//		fastestTime.setFont(new Font("Arial", 18));
 
 		fileName.setTextFill(Color.WHITE);
-		avgTime.setTextFill(Color.WHITE);
-		slowestTime.setTextFill(Color.WHITE);
-		fastestTime.setTextFill(Color.WHITE);
+//		avgTime.setTextFill(Color.WHITE);
+//		slowestTime.setTextFill(Color.WHITE);
+//		fastestTime.setTextFill(Color.WHITE);
 
 		// create new text Area for the running log
 		TextArea outputLog = new TextArea();
 		outputLog.setMaxWidth(1.8 * colW);
-		outputLog.setMaxHeight(6 * rowH);
+		outputLog.setMaxHeight(10 * rowH);
 		outputLog.setEditable(false);
 
 		// create new text Area for the results
+		/*
 		TextArea outputResults = new TextArea();
 		outputResults.setMaxWidth(colW * .75);
 		outputResults.setMaxHeight(6 * rowH);
 		outputResults.setEditable(false);
+		*/
 
 		// Main page buttons
 		Button setupPageButton = new Button("SETUP");
 		Button runSimulationButton = new Button("RUN");
-		Button saveLogButton = new Button("SAVE LOG");
+
 		Button clearLogButton = new Button("CLEAR LOG");
-		Button selectFileButton = new Button("SELECT FILE");
 		
 		
+		//---------------------------------------------------------------
 		// MAIN PAGE MENU BAR (for selecting map file and saving log ouput)
+		//---------------------------------------------------------------
 		
 		// create a menu
 		Menu mainPageMenu = new Menu("File");
 
-		// create menu items
+		// create menu items 
 		String selectFileString = "Select Map File";
+		String openGraphFile = "Select Graph File";
 		String saveLogString = "Save Log Output";
+
 		MenuItem mainScreenSelectFileMenuItem = new MenuItem(selectFileString);
+		MenuItem mainScreenSelectGraphFile = new MenuItem(openGraphFile);
 		MenuItem mainScreenSaveLogMenuItem = new MenuItem(saveLogString);
 		
 		//add menu item to menu
 		mainPageMenu.getItems().add(mainScreenSelectFileMenuItem); 
+		mainPageMenu.getItems().add(mainScreenSelectGraphFile);
 		mainPageMenu.getItems().add(mainScreenSaveLogMenuItem); 
 		
 		MenuBar mainPageMenuBar = new MenuBar();
@@ -223,7 +229,18 @@ public class MainScreenFX extends Application {
 		
 		// Setup event handlers for menu items
 		mainScreenSelectFileMenuItem.setOnAction(e -> {
+			// file chooser for selecting a saved setup
+			FileChooser selectSetupFile = new FileChooser();
+			// title for the file chooser
+			selectSetupFile.setTitle("Select Saved Map");
 			File selectedSetupFile = selectSetupFile.showOpenDialog(window);
+			if (selectedSetupFile != null) {
+				fileName.setText(selectedSetupFile.getName());
+			}
+		});
+		
+		mainScreenSelectGraphFile.setOnAction(e -> {
+			GraphFilePicker(window);
 		});
 		
 		mainScreenSaveLogMenuItem.setOnAction(e -> {
@@ -358,39 +375,74 @@ public class MainScreenFX extends Application {
 			
 		});
 		
+		
+		//---------------------------------
+		// SETUP PAGE BUTTON EVENT
+		//---------------------------------
 		// change to the setup page
 		setupPageButton.setOnAction(e -> {
 			window.setScene(setupScene);
 		});
-
-		// select the file button
-		selectFileButton.setOnAction(e -> {
-			File selectedSetupFile = selectSetupFile.showOpenDialog(window);
+		
+		//---------------------------------
+		// CLEAR LOG BUTTON EVENT
+		//---------------------------------
+		clearLogButton.setOnAction(e -> {
+			try // get all the files in directory
+		    {
+		        String lscmd = "ls"; // bash cmd to print the files in current dir
+		        Process p = Runtime.getRuntime().exec(new String[]{"bash", "-c", lscmd}); // execute the process
+		        p.waitFor();
+		        BufferedReader reader=new BufferedReader(new InputStreamReader(p.getInputStream()));
+		        
+		        // parse the output
+		        String line=reader.readLine();
+		        while(line!=null)
+		        {
+		            if (line.endsWith("_time graph.csv")) { // if it's a graph file
+						File file = new File(line); // file to delete
+						if (file.exists()) {
+							file.delete(); // delete it 
+						}
+					}
+		            line=reader.readLine();
+		        }
+		        
+		        outputLog.clear();
+		    }
+		    catch(IOException e1) {
+		        System.err.println("Pblm found1.");
+		    }
+		    catch(InterruptedException e2) {
+		        System.err.println("Pblm found2.");
+		    }
 		});
+
 
 		// change the size of buttons
 		setupPageButton.setMaxSize(150, 50);
 		runSimulationButton.setMaxSize(150, 50);
-		saveLogButton.setMaxSize(150, 50);
 		clearLogButton.setMaxSize(150, 50);
-		selectFileButton.setMaxSize(150, 25);
 
 		// add buttons to the main screen
+//		screenLayoutMain.add(setupPageButton, 1, 8, 1, 1);
+//		screenLayoutMain.add(runSimulationButton, 0, 8, 1, 1);
+//		//screenLayoutMain.add(saveLogButton, 0, 9, 1, 1);
+//		screenLayoutMain.add(clearLogButton, 1, 9, 1, 1);
+//		//screenLayoutMain.add(selectFileButton, 1, 7, 2, 1);
+//		screenLayoutMain.add(fileName, 0, 6, 1, 1);
+		
 		screenLayoutMain.add(setupPageButton, 1, 8, 1, 1);
-		screenLayoutMain.add(runSimulationButton, 0, 8, 1, 1);
-		//screenLayoutMain.add(saveLogButton, 0, 9, 1, 1);
-		screenLayoutMain.add(clearLogButton, 1, 9, 1, 1);
-		//screenLayoutMain.add(selectFileButton, 1, 7, 2, 1);
-		screenLayoutMain.add(fileName, 0, 7, 1, 1);
+		screenLayoutMain.add(runSimulationButton, 0, 7, 1, 1);
+		screenLayoutMain.add(clearLogButton, 0, 8, 1, 1);
+		screenLayoutMain.add(fileName, 1, 7, 2, 1);
+		screenLayoutMain.add(outputLog, 2, 0, 2, 10);
 
-		// add output blocks to the main screen
-		screenLayoutMain.add(outputLog, 2, 0, 2, 5);
-		screenLayoutMain.add(outputResults, 3, 6, 1, 5);
 
 		// add results text to the screen
-		screenLayoutMain.add(avgTime, 2, 6, 1, 1);
-		screenLayoutMain.add(fastestTime, 2, 7, 1, 1);
-		screenLayoutMain.add(slowestTime, 2, 8, 1, 1);
+//		screenLayoutMain.add(avgTime, 2, 6, 1, 1);
+//		screenLayoutMain.add(fastestTime, 2, 7, 1, 1);
+//		screenLayoutMain.add(slowestTime, 2, 8, 1, 1);
 
 		// Create second level containers in page hierarchy
 		VBox mainPageVBox = new VBox(mainPageMenuBar, screenLayoutMain);
@@ -428,6 +480,32 @@ public class MainScreenFX extends Application {
             System.err.println("I/O error: " + ex);
         }
     }
+	
+	private void GraphFilePicker(Stage stage) {
+		FileChooser fileChooser = new FileChooser();
+		FileChooser.ExtensionFilter fileExtensions = new FileChooser.ExtensionFilter("_time graph, _xy graph", "*.csv");
+		fileChooser.getExtensionFilters().add(fileExtensions);
+
+		File selectedFile = fileChooser.showOpenDialog(stage);
+
+		if (selectedFile != null) { // if a file was selected
+
+			// make sure valid file type
+			String fileName = selectedFile.getName();
+
+			if (fileName.toLowerCase().endsWith("_time graph.csv")) { // a time graph
+				TimeGraph tGraph = new TimeGraph();
+				tGraph.createDataSet(selectedFile);
+				tGraph.showGraph();
+			} else if (fileName.toLowerCase().endsWith("_xy graph.csv")) { // an xy graph
+				XYGraph xYGraph = new XYGraph();
+				xYGraph.createDataSet(selectedFile);
+				xYGraph.showGraph();
+			} else { // wrong file type
+				System.err.println("ERROR: Invalid File Name");
+			}
+		}
+	}
 
 	public void makeSetupScreen() {
 		curSetup.loadDefaultDroneSettings();
