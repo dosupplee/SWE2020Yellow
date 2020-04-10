@@ -147,39 +147,14 @@ public class MainScreenFX extends Application {
 
 		// Main Page text
 		Label fileName = new Label("<FileName>");
-//		Label avgTime = new Label("AVERAGE TIME:");
-//		Label slowestTime = new Label("SLOWEST TIME:");
-//		Label fastestTime = new Label("FASTEST TIME:");
 
-		// Time textFields
-		/*
-		TextField fastFifoTextField = new TextField();
-		TextField fastKnapTextField = new TextField();
-
-		TextField slowFifoTextField = new TextField();
-		TextField slowKnapTextField = new TextField();
-
-		TextField avgFifoTextField = new TextField();
-		TextField avgKnapTextField = new TextField();
-
-		fastFifoTextField.setEditable(false);
-		fastKnapTextField.setEditable(false);
-		slowFifoTextField.setEditable(false);
-		slowKnapTextField.setEditable(false);
-		avgFifoTextField.setEditable(false);
-		avgKnapTextField.setEditable(false);
-		*/
 
 		// change the size and font of the label
 		fileName.setFont(new Font("Arial", 18));
-//		avgTime.setFont(new Font("Arial", 18));
-//		slowestTime.setFont(new Font("Arial", 18));
-//		fastestTime.setFont(new Font("Arial", 18));
+
 
 		fileName.setTextFill(Color.WHITE);
-//		avgTime.setTextFill(Color.WHITE);
-//		slowestTime.setTextFill(Color.WHITE);
-//		fastestTime.setTextFill(Color.WHITE);
+
 
 		// create new text Area for the running log
 		TextArea outputLog = new TextArea();
@@ -187,13 +162,6 @@ public class MainScreenFX extends Application {
 		outputLog.setMaxHeight(10 * rowH);
 		outputLog.setEditable(false);
 
-		// create new text Area for the results
-		/*
-		TextArea outputResults = new TextArea();
-		outputResults.setMaxWidth(colW * .75);
-		outputResults.setMaxHeight(6 * rowH);
-		outputResults.setEditable(false);
-		*/
 
 		// Main page buttons
 		Button setupPageButton = new Button("SETUP");
@@ -239,6 +207,7 @@ public class MainScreenFX extends Application {
 			}
 		});
 		
+		// graph the selected file
 		mainScreenSelectGraphFile.setOnAction(e -> {
 			GraphFilePicker(window);
 		});
@@ -424,14 +393,7 @@ public class MainScreenFX extends Application {
 		runSimulationButton.setMaxSize(150, 50);
 		clearLogButton.setMaxSize(150, 50);
 
-		// add buttons to the main screen
-//		screenLayoutMain.add(setupPageButton, 1, 8, 1, 1);
-//		screenLayoutMain.add(runSimulationButton, 0, 8, 1, 1);
-//		//screenLayoutMain.add(saveLogButton, 0, 9, 1, 1);
-//		screenLayoutMain.add(clearLogButton, 1, 9, 1, 1);
-//		//screenLayoutMain.add(selectFileButton, 1, 7, 2, 1);
-//		screenLayoutMain.add(fileName, 0, 6, 1, 1);
-		
+		// add buttons to screen
 		screenLayoutMain.add(setupPageButton, 1, 8, 1, 1);
 		screenLayoutMain.add(runSimulationButton, 0, 7, 1, 1);
 		screenLayoutMain.add(clearLogButton, 0, 8, 1, 1);
@@ -439,10 +401,6 @@ public class MainScreenFX extends Application {
 		screenLayoutMain.add(outputLog, 2, 0, 2, 10);
 
 
-		// add results text to the screen
-//		screenLayoutMain.add(avgTime, 2, 6, 1, 1);
-//		screenLayoutMain.add(fastestTime, 2, 7, 1, 1);
-//		screenLayoutMain.add(slowestTime, 2, 8, 1, 1);
 
 		// Create second level containers in page hierarchy
 		VBox mainPageVBox = new VBox(mainPageMenuBar, screenLayoutMain);
