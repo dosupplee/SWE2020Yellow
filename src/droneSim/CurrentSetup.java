@@ -57,7 +57,7 @@ public class CurrentSetup {
 	}
 	
 	/**
-	 * Load all delevery points from current map
+	 * Load all delivery points from current map
 	 * 
 	 */
 	public void loadAllDeliveryPoints() {
@@ -141,18 +141,13 @@ public class CurrentSetup {
 	
 
 		adjustMealProbabilities();
-
-		// Create some basic point stuffs
-
-		//addDeliveryPoint(new DeliveryPoint(0, 5, "HAL"));
-		//addDeliveryPoint(new DeliveryPoint(-2, -8, "STEM"));
-		//addDeliveryPoint(new DeliveryPoint(9, -15, "Lincoln"));
-		//addDeliveryPoint(new DeliveryPoint(9, -6, "Library"));
-
-		//setCurrentMap(new Map("mainMap", "C://MapLocation", getDeliveryPoints()));
-		setCurrentMap(new Map());
-		this.currentMap.loadMap("GroveCityMap", "C:\\Users\\Brittni\\OneDrive\\Documents\\GroveCityMap.csv");
 		
+		//setCurrentMap(new Map("mainMap", "C://MapLocation", getDeliveryPoints()));
+		
+		//Opens Default map and loads delivery points
+		setCurrentMap(new Map());
+		//This should be where our Default map is
+		this.currentMap.loadMap("GroveCityMap", "C:\\Users\\Brittni\\OneDrive\\Documents\\GroveCityMap.csv");
 		loadAllDeliveryPoints();
 		
 	}

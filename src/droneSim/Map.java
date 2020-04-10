@@ -33,7 +33,9 @@ public class Map {
 				this.fileAddress = fileAddress;
 				this.points = points;
 			}
-			
+			/**
+			 * Empty Constructor 
+			 */
 			public Map() {
 				this.mapName = "" ;		// name of map
 				this.fileAddress =""; // file address of current map
@@ -47,38 +49,59 @@ public class Map {
 				return mapName;
 			}
 			
-			//TODO
+			/**
+			 * Saves the map to file address
+			 */
 			public void saveMap() {
-				
+				File csvFile = new File(fileAddress); // open/create file
+				try {
+					PrintWriter fileWriter = new PrintWriter(csvFile); // create output stream
+					for(DeliveryPoint point: this.points) {
+						fileWriter.append(point.getName()+","+point.getX()+","+point.getY());
+					}
+				}
+				catch (FileNotFoundException e) {
+					System.err.println(e.getMessage());
+				}
 			}
+			
+			/**
+			 * Loads map 
+			 * @param mapName
+			 * @param fileAddress
+			 */
 			public void loadMap(String mapName, String fileAddress) {
 				// save current map
 				saveMap();
 				this.mapName = mapName;
 				this.fileAddress = fileAddress;
-				// TODO get file access and delivery points
+				
 				File csvMap = new File(fileAddress); // open file
-				if (!csvMap.exists()) { // if the file does not exist
+				
+				 // if the file does not exist
+				if (!csvMap.exists()) {
 					System.err.println("File not found");
 					return;
 				}
-								
+				//If file does exit try
 				try {
-					
+					//create scanner to read file
 					Scanner fileReader = new Scanner(csvMap);
 					
+					//while scanner sees next line loop
 					while (fileReader.hasNextLine()) {
 						
+						//comma separated file is read
 						String []data = fileReader.nextLine().split(",");;
 					    int x = Integer.parseInt(data[1].trim());
 					    int y = Integer.parseInt(data[2].trim());
 					    String name = data[0].trim();
 
-						
+						//New delivery point created and added to map
 					    DeliveryPoint point= new DeliveryPoint(x,y,name);	
-					 
 					    newPoint(point);
 						}
+					//close scanner 
 					fileReader.close();
 					
 				}
@@ -99,7 +122,18 @@ public class Map {
 			public void newPoint(DeliveryPoint point) {
 				this.points.add(point);
 			} 
-			public void deletePoint(DeliveryPoint point) {}
+			
+			/**
+			 * Removes delivery point
+			 * @param point: Delivery point to be removed from map
+			 */
+			public void deletePoint(DeliveryPoint point) {
+				for(int i =0; i < this.points.size();i++) {
+					if (point == this.points.get(i)) {
+						this.points.remove(i);
+					}
+				}
+			}
 			
 			
 			/*
