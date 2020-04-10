@@ -33,6 +33,8 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
+
+
 /**
  * 
  * TODO - Only let user add foods/meals within drone carrying capacity?
@@ -149,7 +151,7 @@ public class MainScreenFX extends Application {
 		selectSetupFile.setTitle("Select Saved Setup");
 
 		// Main Page text
-		Label fileName = new Label("<FileName>");
+		Label fileName = new Label(curSetup.getCurrentMap().getMapName());
 		Label avgTime = new Label("AVERAGE TIME:");
 		Label slowestTime = new Label("SLOWEST TIME:");
 		Label fastestTime = new Label("FASTEST TIME:");

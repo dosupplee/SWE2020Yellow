@@ -55,6 +55,15 @@ public class CurrentSetup {
 	public void addDeliveryPoint(DeliveryPoint point) {
 		points.add(point);
 	}
+	
+	/**
+	 * Load all delevery points from current map
+	 * 
+	 */
+	public void loadAllDeliveryPoints() {
+		this.points = this.currentMap.getPoints();
+
+	}
 
 	/**
 	 * remove point by index
@@ -135,12 +144,17 @@ public class CurrentSetup {
 
 		// Create some basic point stuffs
 
-		addDeliveryPoint(new DeliveryPoint(0, 5, "HAL"));
-		addDeliveryPoint(new DeliveryPoint(-2, -8, "STEM"));
-		addDeliveryPoint(new DeliveryPoint(9, -15, "Lincoln"));
-		addDeliveryPoint(new DeliveryPoint(9, -6, "Library"));
+		//addDeliveryPoint(new DeliveryPoint(0, 5, "HAL"));
+		//addDeliveryPoint(new DeliveryPoint(-2, -8, "STEM"));
+		//addDeliveryPoint(new DeliveryPoint(9, -15, "Lincoln"));
+		//addDeliveryPoint(new DeliveryPoint(9, -6, "Library"));
 
-		setCurrentMap(new Map("mainMap", "C://MapLocation", getDeliveryPoints()));
+		//setCurrentMap(new Map("mainMap", "C://MapLocation", getDeliveryPoints()));
+		setCurrentMap(new Map());
+		this.currentMap.loadMap("GroveCityMap", "C:\\Users\\Brittni\\OneDrive\\Documents\\GroveCityMap.csv");
+		
+		loadAllDeliveryPoints();
+		
 	}
 
 	/**
