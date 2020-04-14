@@ -3,7 +3,8 @@ package droneSim;
 import java.util.ArrayList;
 
 /**
- * Note: Time is stored in seconds
+ * Note: - Time is stored in seconds - Speed is in feet/second - Distance is in
+ * feet
  * 
  * @author LEHMANIT17
  *
@@ -15,17 +16,18 @@ public class Drone {
 	private int maxFlightTime; // the maximum flight time (seconds)
 	private int turnAroundTime; // time between flights (seconds)
 	private int dropOffTime; // time to unload the drone at a delivery point (seconds)
-	
-	private int bestLengthSoFar;	//Tracks the distance of the quickest route so far
-	private ArrayList<DeliveryPoint> bestPath;	//Holds the quickest route so far
-	private ArrayList<DeliveryPoint> orderLocations;	//Holds a list of the points in the route to visit
+
+	private int bestLengthSoFar; // Tracks the distance of the quickest route so far
+	private ArrayList<DeliveryPoint> bestPath; // Holds the quickest route so far
+	private ArrayList<DeliveryPoint> orderLocations; // Holds a list of the points in the route to visit
 
 	/**
 	 * Creates a custom Drone class
 	 * 
 	 * @param name
 	 * @param weightCapacity
-	 * @param speed (MPH, but stored in MPS)
+	 * @param speed
+	 *            (MPH, but stored in MPS)
 	 * @param maxFlightTime
 	 * @param turnAroundTime
 	 * @param dropOffTime
@@ -33,7 +35,7 @@ public class Drone {
 	public Drone(String name, int weightCapacityLB, int speedMPH, int maxFlightTimeSec, int turnAroundTimeSec,
 			int dropOffTimeSec) {
 		this.name = name;
-		this.weightCapacity = weightCapacity * 16; //Convert from lbs to oz
+		this.weightCapacity = weightCapacity * 16; // Convert from lbs to oz
 		this.speed = (int) (speed * 1.5);
 		this.maxFlightTime = maxFlightTimeSec;
 		this.turnAroundTime = turnAroundTimeSec;
@@ -54,72 +56,125 @@ public class Drone {
 		this.orderLocations = new ArrayList<DeliveryPoint>();
 	}
 
-	
-	
 	/**
 	 * Main function to run the algorithm and print the output
 	 * 
-	 * @param ArrayList<DeliveryPoint> containing the fastest path to take
+	 * @param ArrayList<DeliveryPoint>
+	 *            containing the fastest path to take
 	 * @return Tuple of time taken and string of best path
 	 */
 	public Tuple runTSP(ArrayList<Order> orders) {
 		String bestPathString = "";
 		orderLocations.clear();
 		bestLengthSoFar = Integer.MAX_VALUE;
-		
+
 		for (int i = 0; i < orders.size(); i++) {
 			orderLocations.add(orders.get(i).getDeliveryPoint());
 		}
-		
-		//Ensure that the print and recursion only run if there are valid points to visit
+
+		// Ensure that the print and recursion only run if there are valid points to
+		// visit
 		if (orderLocations.size() > 0) {
-			//Start the recursive algorithm using an empty ArrayList and the points to visit
+			// Start the recursive algorithm using an empty ArrayList and the points to
+			// visit
 			recursiveFindPath(new ArrayList<DeliveryPoint>(), orderLocations);
+
 			
-			//Print the best path to take as text
-			bestPathString += "\n\nFound Best path of distance: " + bestLengthSoFar + " feet";
-			bestPathString += "\nHome -> ";
-			
-			for (int i = 0; i < bestPath.size(); i++) {
-				bestPathString += bestPath.get(i).getName() + " -> ";
-			}
-			
-			bestPathString += "Home\n\n";
+			// Print the best path to take as text
+			// also get delivery time for each order
+//			bestPathString += "\n\nFound Best path of distance: " + bestLengthSoFar + " feet";
+//			bestPathString += "\nHome -> ";
+//
+//			for (int i = 0; i < bestPath.size(); i++) {
+//				bestPathString += bestPath.get(i).getName() + " -> ";
+//			}
+//
+//			bestPathString += "Home\n\n";
 		}
+
+		int secondsTaken = calculateTimePartialTrip(bestLengthSoFar, orderLocations.size());
+
+//		Tuple result = new Tuple(secondsTaken, bestPathString);
 		
-		int secondsTaken = ((bestLengthSoFar * 10) / this.speed) + (this.dropOffTime * orderLocations.size()) +
-				this.turnAroundTime;
-		
-		
-		Tuple result = new Tuple(secondsTaken, bestPathString);
+		// return the total trip time and a list of the individual list of delivery times
+		Tuple result = new Tuple(secondsTaken, getDeliveryTimes()); 
 		return result;
 	}
-	
-	
+
+	// ------------------------------------------------------------------------------------------
+	// ------------------------------------------------------------------------------------------
+	private ArrayList<Integer> getDeliveryTimes() {
+		ArrayList<Integer> deliveryTimes = new ArrayList<>();
+		if (bestPath == null || bestPath.size() == 0) {
+			return deliveryTimes;
+		}
+
+		int deliveryTime = 0; // delivery time in seconds
+		int numStops = 0; // number of stops so far
+		int distance = 0; // Hold distances calculated (multiply by 10 to get feet)
+
+		// Find distance between Home and first point
+		distance += findP2PDistance(new DeliveryPoint(0, 0, "Home"), bestPath.get(0));
+		numStops++;
+
+		deliveryTime = calculateTimePartialTrip(distance, numStops);
+		deliveryTimes.add(deliveryTime);
+
+		// Find distance between the 0th and first, first and second, second and third, etc.
+		for (int i = 1; i < bestPath.size(); i++) {
+			distance += findP2PDistance(bestPath.get(i - 1), bestPath.get(i));
+			numStops++;
+
+			deliveryTime = calculateTimePartialTrip(distance, numStops);
+			deliveryTimes.add(deliveryTime);
+
+		}
+
+		return deliveryTimes;
+
+	}
+
 	/**
-	 * Recursive brute force path finder with pruning capabilities to shorten the runtime
+	 * returns the number of seconds for a trip of a given distance (feet) and
+	 * number of stops on trip
 	 * 
-	 * @param travelledPath: the path travelled so far in this recursion branch
-	 * @param remaining: holds the points not visited yet in this recursion branch
+	 * @param distance
+	 * @return
+	 */
+	private int calculateTimePartialTrip(int distance, int numStops) {
+		return ((distance * 10) / this.speed) + (this.dropOffTime * numStops) + this.turnAroundTime;
+	}
+
+	// ------------------------------------------------------------------------------------------
+	// ------------------------------------------------------------------------------------------
+
+	/**
+	 * Recursive brute force path finder with pruning capabilities to shorten the
+	 * runtime
+	 * 
+	 * @param travelledPath:
+	 *            the path travelled so far in this recursion branch
+	 * @param remaining:
+	 *            holds the points not visited yet in this recursion branch
 	 */
 	private void recursiveFindPath(ArrayList<DeliveryPoint> travelledPath, ArrayList<DeliveryPoint> remaining) {
-		//Only continue with recursion if the current branch has not reached the end
+		// Only continue with recursion if the current branch has not reached the end
 		if (!remaining.isEmpty()) {
-			//Continue on with branches for each child node (unvisited delivery point)
+			// Continue on with branches for each child node (unvisited delivery point)
 			for (int i = 0; i < remaining.size(); i++) {
-				//TODO comment
+				// TODO comment
 				DeliveryPoint current = new DeliveryPoint(remaining.remove(0));
 				ArrayList<DeliveryPoint> newPath = (ArrayList<DeliveryPoint>) travelledPath.clone();
 				newPath.add(current);
-				
+
 				if (findTotalDistance(newPath) < bestLengthSoFar) {
 					recursiveFindPath(newPath, remaining);
 				}
 				remaining.add(current);
 			}
-		//Check if this completed branch is the quickest so far
+			// Check if this completed branch is the quickest so far
 		} else {
-			//TODO comment
+			// TODO comment
 			int length = findTotalDistance(travelledPath);
 			if (length < bestLengthSoFar) {
 				bestPath = travelledPath;
@@ -127,39 +182,43 @@ public class Drone {
 			}
 		}
 	}
-	
+
 	/**
 	 * Finds the distance between two DeliveryPoints
-	 * @param a first delivery point
-	 * @param b second delivery point
+	 * 
+	 * @param a
+	 *            first delivery point
+	 * @param b
+	 *            second delivery point
 	 * @return int of calculated distance
 	 */
 	private int findP2PDistance(DeliveryPoint a, DeliveryPoint b) {
-		//Use basic 2D distance formula and cast into integer
-		return (int) Math.sqrt( Math.pow(a.getY() - b.getY(), 2) 
-				+ Math.pow(a.getX() - b.getX(), 2) );
+		// Use basic 2D distance formula and cast into integer
+		return (int) Math.sqrt(Math.pow(a.getY() - b.getY(), 2) + Math.pow(a.getX() - b.getX(), 2));
 	}
-	
+
 	/**
-	 * Finds the total distance of a given path based on the order of the passed ArrayList
-	 * @param path ArrayList<DeliveryPoint> to find total distance
+	 * Finds the total distance of a given path based on the order of the passed
+	 * ArrayList
+	 * 
+	 * @param path
+	 *            ArrayList<DeliveryPoint> to find total distance
 	 * @return int of sum calculated distance
 	 */
 	private int findTotalDistance(ArrayList<DeliveryPoint> path) {
-		int length = 0; //Hold sum of distances calculated
-		//Find distance between Home and first point
-		length += findP2PDistance(new DeliveryPoint(0,0,"Home"), path.get(0));
-		//Find distance between the first and second, second and third, etc.
+		int length = 0; // Hold sum of distances calculated
+		// Find distance between Home and first point
+		length += findP2PDistance(new DeliveryPoint(0, 0, "Home"), path.get(0));
+		// Find distance between the first and second, second and third, etc.
 		for (int i = 0; i < path.size() - 2; i++) {
 			length += findP2PDistance(path.get(i), path.get(i + 1));
 		}
-		//Find distance between the last point and Home
-		length += findP2PDistance(new DeliveryPoint(0,0,"Home"), path.get(path.size() - 1));
-		
+		// Find distance between the last point and Home
+		length += findP2PDistance(new DeliveryPoint(0, 0, "Home"), path.get(path.size() - 1));
+
 		return length;
 	}
-	
-	
+
 	/**
 	 * get time between flights
 	 * 
@@ -272,7 +331,7 @@ public class Drone {
 	public int convertStoM(int seconds) {
 		return seconds / 60;
 	}
-	
+
 	/**
 	 * Converts Minutes to Seconds
 	 * 
@@ -297,8 +356,7 @@ public class Drone {
 
 		Drone other = (Drone) o;
 		return (this.name.equals(other.name) // check if same contents
-				&& this.weightCapacity == other.getWeightCapacity() 
-				&& this.speed == other.getSpeedMPH()
+				&& this.weightCapacity == other.getWeightCapacity() && this.speed == other.getSpeedMPH()
 				&& this.maxFlightTime == other.getMaxFlightTime());
 	}
 }

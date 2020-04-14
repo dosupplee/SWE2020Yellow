@@ -224,6 +224,8 @@ public class TimeGraph extends JFrame {
 		plot.setRenderer(0,rend0);
 		plot.setDataset(1,dataset);
 		plot.setRenderer(1,rend1);
+		plot.getDomainAxis().setLabel(tTitle);
+		plot.getRangeAxis().setLabel(yTitle);
 
 		
 		// Sets the background colour of the plot area.
@@ -232,62 +234,7 @@ public class TimeGraph extends JFrame {
 		chart = new JFreeChart(chartTitle, JFreeChart.DEFAULT_TITLE_FONT, plot, true);
 
 	}
-	
-//	private void createChart() {
-//
-//		/*
-//		 * The ChartFactory.createXYLineChart() creates a new line chart. The parameters
-//		 * of the method are: chart title, X axis label, Y axis label, data, plot
-//		 * orientation, and three flags indicating whether to show legend, tooltips, and
-//		 * URLs.
-//		 */
-//		chart = ChartFactory.createScatterPlot(
-//				chartTitle, // title
-//				tTitle, // x axis
-//				yTitle, // y axis
-//				dataset);
-//		
-//
-//		// Get a reference to the plot in order to customize it.
-//		XYPlot plot = chart.getXYPlot();
-//
-//		/*
-//		 * Set a stroke and a colour for the line of the chart. 
-//		 * XYLineAndShapeRenderer is an object that connects data 
-//		 * points with lines and/or draws shapes at each data point. 
-//		 * The renderer is set with the setRenderer() method.
-//		 * 
-//		 * Can calulate on own though...
-//		 */
-//		//XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
-////		renderer.setSeriesPaint(0, Color.RED);
-////		renderer.setSeriesStroke(0, new BasicStroke(2.0f));
-//		//plot.setRenderer(renderer);
-//		
-//		// Sets the background colour of the plot area.
-//		plot.setBackgroundPaint(Color.white);
-//
-//		// Show the grid lines and paint them in black colour.
-//		plot.setRangeGridlinesVisible(true);
-//		plot.setRangeGridlinePaint(Color.BLACK);
-//
-//		plot.setDomainGridlinesVisible(true);
-//		plot.setDomainGridlinePaint(Color.BLACK);
-//		
-//		// format time axis
-//		DateAxis axis = new DateAxis();
-//        axis.setDateFormatOverride(new SimpleDateFormat("hh:mm:ss a"));
-//        axis.setVerticalTickLabels(true);
-//        plot.setDomainAxis(axis);
-//        
-//        
-//		// Remove the border around the legend.
-//		chart.getLegend().setFrame(BlockBorder.NONE);
-//
-//		// Create a chart title with a new font.
-//		chart.setTitle(new TextTitle(chartTitle, new Font("Serif", java.awt.Font.BOLD, 18)));
-//
-//	}
+
 	
 	
 	/**

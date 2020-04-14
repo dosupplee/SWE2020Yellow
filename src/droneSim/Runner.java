@@ -1,6 +1,7 @@
 package droneSim;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.TreeMap;
@@ -29,6 +30,11 @@ public class Runner {
 	private double fastestTimeKnapsack;
 	private double sumKnapsack;
 	
+	
+	private ArrayList<Integer> deliveryTimesFifo;
+	private ArrayList<Integer> deliveryTimesKnapsack;
+	
+	
 	private boolean simRunning = false;
 	private StringBuilder csvTextSB;
 	private StringBuilder displayTextSB;
@@ -39,6 +45,8 @@ public class Runner {
 	 */
 	public Tuple run() {
 		simRunning = true;
+		
+		
 		long startTime = new Date().getTime();
 		csvTextSB = new StringBuilder(); // text to save to log file
 		displayTextSB = new StringBuilder(); // text to display to log screen
@@ -87,12 +95,14 @@ public class Runner {
 		sumKnapsack = 0;
 		slowestTimeKnapsack = 0.0;
 		fastestTimeKnapsack = Double.MAX_VALUE;
+		deliveryTimesKnapsack = new ArrayList<>();
 
 		// Create FIFO packer
 		FIFOPacker fp = new FIFOPacker(currentSetup);
 		sumFIFO = 0;
 		slowestTimeFIFO = 0.0;
 		fastestTimeFIFO = Double.MAX_VALUE;
+		deliveryTimesFifo = new ArrayList<>();
 
 		// This Section Mimics how we will be occasionally refreshing our order backlog
 		// list at certain times
@@ -183,9 +193,10 @@ public class Runner {
 						 */
 						Tuple tripResult = currentSetup.sendDrone(packedOrders);
 						int secondsTaken = (int) tripResult.getA(); // get the time the trip took
-						String pathTaken = (String) tripResult.getB(); //TODO save somewhere
+						//String pathTaken = (String) tripResult.getB(); //TODO save somewhere
+						ArrayList<Integer> curDeliveryTimes = (ArrayList<Integer>) tripResult.getB(); // list of delivery times in seconds
 						
-						// update the slowest and fastest times
+						// update the slowest and fastest times + add delivery times
 						if (packagerType == Packager.Knapsack) {
 							sumKnapsack += secondsTaken;
 							if (secondsTaken > slowestTimeKnapsack) {
@@ -194,6 +205,9 @@ public class Runner {
 							if (secondsTaken < fastestTimeKnapsack) {
 								fastestTimeKnapsack = secondsTaken;
 							}
+							
+							// add delivery times
+							deliveryTimesKnapsack.addAll(curDeliveryTimes);
 						} else if (packagerType == Packager.FIFO) {
 							sumFIFO += secondsTaken;
 							if (secondsTaken > slowestTimeFIFO) {
@@ -202,6 +216,9 @@ public class Runner {
 							if (secondsTaken < fastestTimeFIFO) {
 								fastestTimeFIFO = secondsTaken;
 							}
+							
+							// add delivery times
+							deliveryTimesFifo.addAll(curDeliveryTimes);
 						}
 
 						/*
@@ -237,6 +254,17 @@ public class Runner {
 		for (Time t : sorted.keySet()) {
 			csvTextSB.append(t.toString() + ","+ sorted.get(t) +"\n");
 		}
+		
+		// sort the delivery times largest to smallest
+		//Collections.sort(deliveryTimesFifo, Collections.reverseOrder()); 
+		//Collections.sort(deliveryTimesKnapsack, Collections.reverseOrder());
+		
+		
+		
+		// create xy chart
+		XYGraph xyGraph = new XYGraph("", "Delivery Time (Seconds)", "Delivery Times for FIFO & Knapsack", "Chart of Delivery Times");
+		xyGraph.createDataSet(new String[] {"FIFO","Knapsack"}, deliveryTimesFifo, deliveryTimesKnapsack);
+		xyGraph.showGraph();
 		
 		
 		// add results to string builder for output to screen
