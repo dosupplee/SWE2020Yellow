@@ -71,6 +71,7 @@ public class Drone {
 		for (int i = 0; i < orders.size(); i++) {
 			orderLocations.add(orders.get(i).getDeliveryPoint());
 		}
+		ArrayList<Integer> times = new ArrayList<>();
 
 		// Ensure that the print and recursion only run if there are valid points to
 		// visit
@@ -90,14 +91,16 @@ public class Drone {
 //			}
 //
 //			bestPathString += "Home\n\n";
+			times.addAll(getDeliveryTimes());
 		}
 
 		int secondsTaken = calculateTimePartialTrip(bestLengthSoFar, orderLocations.size());
 
 //		Tuple result = new Tuple(secondsTaken, bestPathString);
 		
+		
 		// return the total trip time and a list of the individual list of delivery times
-		Tuple result = new Tuple(secondsTaken, getDeliveryTimes()); 
+		Tuple result = new Tuple(secondsTaken, times); 
 		return result;
 	}
 

@@ -1,26 +1,18 @@
 package droneSim;
 
-import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.block.BlockBorder;
-import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
-import org.jfree.chart.title.TextTitle;
 import org.jfree.data.time.MovingAverage;
-import org.jfree.data.time.TimeSeries;
-import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
-import org.jfree.util.ShapeUtilities;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import java.awt.Color;
 import java.awt.EventQueue;
-import java.awt.Font;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -84,24 +76,24 @@ public class XYGraph extends JFrame {
 	 * <Chart Title>
 	 * <xAxis Title>
 	 * <yAxis Title>
-	 * <s1 name>,<s2 name>,...,<sn name>
+	 * <s1 name>,<s2 name>
 	 * ###################################
-	 * <x,y>,<x,y>,...,<x,y>
-	 * <x,y>,<x,y>,...,<x,y>
+	 * <y>,<y>
+	 * <y>,<y>
 	 * .
 	 * .
 	 * .
-	 * <x,y>,<x,y>,...,<x,y>
+	 * <y>,<y>
 	 * -----------------------------------
 	 * 
 	 * 
 	 * @return
 	 */
 	public void createDataSet(File csvFile) {
+		
 		String[] seriesNames; // names of xy sets
-		ArrayList<ArrayList<Integer>> seriesValsX = new ArrayList<>(); // x values
-		ArrayList<ArrayList<Integer>> seriesValsY = new ArrayList<>(); // y values
-		dataset = new XYSeriesCollection(); // the data set of all the series
+		ArrayList<Integer> fifoVals = new ArrayList<>();
+		ArrayList<Integer> knapsackVals = new ArrayList<>();
 		
 		try {
 			Scanner fileScn = new Scanner(csvFile);
@@ -116,54 +108,103 @@ public class XYGraph extends JFrame {
 			seriesNames = fileScn.nextLine().trim().split(","); // series names
 			fileScn.nextLine(); // skip the blank line
 
-			// -------------------------
-			// intialise the x,y series
-			// -------------------------
-			for (int i = 0; i < seriesNames.length; i++) {
-				seriesValsX.add(new ArrayList<Integer>());
-				seriesValsY.add(new ArrayList<Integer>());
-			}
 			
 			// -------------------------
-			// extract the x,y series
+			// extract the x series
 			// -------------------------			
 			while (fileScn.hasNextLine()) {
 				// get line and seperate values
 				String curLine = fileScn.nextLine();
 				String[] line = curLine.split(",", -1); 
 				
-				for (int i = 0; i < line.length - 1; i+=2) {
-					if (!line[i].trim().equals("") && !line[i+1].trim().equals("")) {  // if not empty
-						// parse values
-						Integer x1 = Integer.parseInt(line[i].trim());
-						Integer y1 = Integer.parseInt(line[i+1].trim());
-						
-						// add to series
-						seriesValsX.get(i/2).add(x1);	
-						seriesValsY.get(i/2).add(y1);
-					}
+				// parse fifo
+				if (line[0] != null && !line[0].trim().equals("")) { // if not null and not empty
+					Integer xVal = Integer.parseInt(line[0].trim());
+					fifoVals.add(xVal);
+				}
+				
+				// parse knapsack
+				if (line[1] != null && !line[1].trim().equals("")) { // if not null and not empty
+					Integer xVal = Integer.parseInt(line[1].trim());
+					knapsackVals.add(xVal);
 				}
 			}
 			
 			fileScn.close();
 			
-			// -------------------------
-			// add the x,y series to dataset
-			// -------------------------
-			for (int s = 0; s < seriesNames.length; s++) {
-				String curSeries = seriesNames[s]; // get the name
-				XYSeries series = new XYSeries(curSeries); // create the series
-				
-				for (int val = 0; val < seriesValsX.get(s).size(); val++) {
-					series.add(seriesValsX.get(s).get(val), seriesValsY.get(s).get(val));
-				}
-				dataset.addSeries(series); // add to dataset
-			}
 
+			// create the dataSet
+			createDataSet(seriesNames, fifoVals, knapsackVals);
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+//		String[] seriesNames; // names of xy sets
+//		ArrayList<ArrayList<Integer>> seriesValsX = new ArrayList<>(); // x values
+//		ArrayList<ArrayList<Integer>> seriesValsY = new ArrayList<>(); // y values
+//		dataset = new XYSeriesCollection(); // the data set of all the series
+//		
+//		try {
+//			Scanner fileScn = new Scanner(csvFile);
+//			
+//			// -------------------------
+//			// get title and headers
+//			// -------------------------
+//			frameTitle = fileScn.nextLine().trim(); // frame title
+//			chartTitle = fileScn.nextLine().trim(); // chart title
+//			xTitle     = fileScn.nextLine().trim(); // x axis title
+//			yTitle     = fileScn.nextLine().trim(); // y axis title
+//			seriesNames = fileScn.nextLine().trim().split(","); // series names
+//			fileScn.nextLine(); // skip the blank line
+//
+//			// -------------------------
+//			// intialise the x,y series
+//			// -------------------------
+//			for (int i = 0; i < seriesNames.length; i++) {
+//				seriesValsX.add(new ArrayList<Integer>());
+//				seriesValsY.add(new ArrayList<Integer>());
+//			}
+//			
+//			// -------------------------
+//			// extract the x,y series
+//			// -------------------------			
+//			while (fileScn.hasNextLine()) {
+//				// get line and seperate values
+//				String curLine = fileScn.nextLine();
+//				String[] line = curLine.split(",", -1); 
+//				
+//				for (int i = 0; i < line.length - 1; i+=2) {
+//					if (!line[i].trim().equals("") && !line[i+1].trim().equals("")) {  // if not empty
+//						// parse values
+//						Integer x1 = Integer.parseInt(line[i].trim());
+//						Integer y1 = Integer.parseInt(line[i+1].trim());
+//						
+//						// add to series
+//						seriesValsX.get(i/2).add(x1);	
+//						seriesValsY.get(i/2).add(y1);
+//					}
+//				}
+//			}
+//			
+//			fileScn.close();
+//			
+//			// -------------------------
+//			// add the x,y series to dataset
+//			// -------------------------
+//			for (int s = 0; s < seriesNames.length; s++) {
+//				String curSeries = seriesNames[s]; // get the name
+//				XYSeries series = new XYSeries(curSeries); // create the series
+//				
+//				for (int val = 0; val < seriesValsX.get(s).size(); val++) {
+//					series.add(seriesValsX.get(s).get(val), seriesValsY.get(s).get(val));
+//				}
+//				dataset.addSeries(series); // add to dataset
+//			}
+//
+//		} catch (FileNotFoundException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 	}
 
 	
@@ -261,7 +302,7 @@ public class XYGraph extends JFrame {
 		
 		// set line/dot colors
 		dotRenderer.setSeriesPaint(0, Color.GRAY);
-		dotRenderer.setSeriesPaint(1, Color.GREEN);
+		dotRenderer.setSeriesPaint(1, new Color(63, 173, 50));
 		lineRenderer.setSeriesPaint(0, Color.RED);
 		lineRenderer.setSeriesPaint(1, Color.BLUE);
 		

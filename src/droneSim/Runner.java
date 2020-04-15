@@ -260,9 +260,8 @@ public class Runner {
 		//Collections.sort(deliveryTimesKnapsack, Collections.reverseOrder());
 		
 		
-		
 		// create xy chart
-		XYGraph xyGraph = new XYGraph("", "Delivery Time (Seconds)", "Delivery Times for FIFO & Knapsack", "Chart of Delivery Times");
+		XYGraph xyGraph = new XYGraph("Order #", "Delivery Time (Seconds)", "Delivery Times for FIFO & Knapsack", "Chart of Delivery Times");
 		xyGraph.createDataSet(new String[] {"FIFO","Knapsack"}, deliveryTimesFifo, deliveryTimesKnapsack);
 		xyGraph.showGraph();
 		
