@@ -1,7 +1,11 @@
 package ui;
 
+import java.io.FileNotFoundException;
+
+import javafx.animation.PauseTransition;
 import javafx.application.Application;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 /**
  * 
@@ -21,6 +25,13 @@ public class MainScreenFX extends Application {
 	public void start(Stage stage) {
 		ui_Setup = new UI_Setup();
 		
+		SplashScreen splashScreen = new SplashScreen(ui_Setup);		
+		try {
+			splashScreen.makeSpashScreen();
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 
 		MainScreen mainScreen = new MainScreen(ui_Setup);
 		mainScreen.makeMainScreen();
@@ -30,9 +41,18 @@ public class MainScreenFX extends Application {
 
 		ui_Setup.window = stage;
 
-		ui_Setup.window.setScene(ui_Setup.mainScene);
+		ui_Setup.window.setScene(ui_Setup.splashScene);		
 		ui_Setup.window.setTitle("Dromedary Drones");
 		ui_Setup.window.show();
+		
+		
+		PauseTransition pause = new PauseTransition(Duration.seconds(1.5));
+		pause.setOnFinished(event -> {
+		        ui_Setup.window.setScene(ui_Setup.mainScene);
+		});
+		pause.play();
+		
+		
 	}
 
 	/**
