@@ -26,11 +26,10 @@ public class MainScreenFX extends Application {
 		ui_Setup = new UI_Setup();
 		
 		SplashScreen splashScreen = new SplashScreen(ui_Setup);		
-		try {
+		try { // try catch for loading image
 			splashScreen.makeSpashScreen();
 		} catch (FileNotFoundException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			System.err.println("ERROR: Splash screen image not found");
 		}
 
 		MainScreen mainScreen = new MainScreen(ui_Setup);
@@ -45,8 +44,9 @@ public class MainScreenFX extends Application {
 		ui_Setup.window.setTitle("Dromedary Drones");
 		ui_Setup.window.show();
 		
-		
-		PauseTransition pause = new PauseTransition(Duration.seconds(1.5));
+		// make a delay for the splash Screen
+		double delaySeconds = 1.5;
+		PauseTransition pause = new PauseTransition(Duration.seconds(delaySeconds));
 		pause.setOnFinished(event -> {
 		        ui_Setup.window.setScene(ui_Setup.mainScene);
 		});

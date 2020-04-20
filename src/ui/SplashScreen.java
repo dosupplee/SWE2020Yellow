@@ -10,6 +10,12 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+/**
+ * Creates a splash screen with an image
+ * 
+ * @author LEHMANIT17
+ *
+ */
 public class SplashScreen extends Stage {
 
 	private UI_Setup ui_Setup;
@@ -33,7 +39,7 @@ public class SplashScreen extends Stage {
 		// Setting the preserve ratio of the image view
 		//imageView.setPreserveRatio(true);
 		
-
+		// add image to layout
 		VBox picture = new VBox(imageView);
 		VBox.setVgrow(imageView, Priority.ALWAYS);
 

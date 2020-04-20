@@ -14,6 +14,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Menu;
@@ -21,6 +22,9 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.input.ContextMenuEvent;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.ColumnConstraints;
@@ -33,6 +37,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
+import javafx.stage.WindowEvent;
 
 public class SetupScreen {
 
@@ -298,32 +303,51 @@ public class SetupScreen {
 		});
 		
 		// ---------------------------------
-		// REMOVE MEAL BUTTON EVENT
-		// ---------------------------------
-		// remove the selcted meal and adjust probabilities
-		removeSelectedMealButton.setOnAction(e -> {
-    		Meal removedMeal = mealListView.removeSelected();
-    		if (removedMeal != null) { // if a meal was selected
-				ui_Setup.curSetup.deleteMeal(removedMeal);
-				ui_Setup.curSetup.adjustMealProbabilities();
-				refreshMealListView();
-			}
-    		
-		});
-		
-		// ---------------------------------
-		// EDIT MEAL BUTTON EVENT
-		// ---------------------------------
+		// EDIT/REMOVE ContextMenu EVENT
+		// ---------------------------------		
+        // Create ContextMenu
 		EditMealScreen editMealScreen = new EditMealScreen(ui_Setup);
-		editSelectedButton.setOnAction(e -> {;
-			System.out.println("Edit Pressed");
-			Meal selectedMeal = mealListView.getSelected();
-    		if (selectedMeal != null) { // if a meal was selected
-    			editMealScreen.makeScreen(selectedMeal);
-				refreshMealListView();
-			}
-			
-		});
+        ContextMenu contextMenu = new ContextMenu();
+ 
+        MenuItem item1 = new MenuItem("Edit");
+        item1.setOnAction(new EventHandler<ActionEvent>() {
+ 
+            @Override
+            public void handle(ActionEvent event) {
+            	Meal selectedMeal = mealListView.getSelected();
+        		if (selectedMeal != null) { // if a meal was selected
+        			editMealScreen.makeScreen(selectedMeal);
+    				refreshMealListView();
+    			}
+            }
+        });
+        MenuItem item2 = new MenuItem("Delete");
+        item2.setOnAction(new EventHandler<ActionEvent>() {
+ 
+            @Override
+            public void handle(ActionEvent event) {
+            	Meal removedMeal = mealListView.removeSelected();
+        		if (removedMeal != null) { // if a meal was selected
+    				ui_Setup.curSetup.deleteMeal(removedMeal);
+    				ui_Setup.curSetup.adjustMealProbabilities();
+    				refreshMealListView();
+    			}
+            }
+        });
+ 
+        // Add MenuItem to ContextMenu
+        contextMenu.getItems().addAll(item1, item2);
+ 
+        // When user right-click on List View of meals
+        listView.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
+ 
+            @Override
+            public void handle(ContextMenuEvent event) {
+ 
+                contextMenu.show(ui_Setup.window, event.getScreenX(), event.getScreenY());
+            }
+        });
+        
 
 		// ------------------
 		// left area
