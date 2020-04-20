@@ -146,6 +146,20 @@ public class Meal {
 		return foodItems;
 	}
 	
+	/**
+	 * retruns the names of all the foods, space seperated
+	 * @return
+	 */
+	public String getFoodNames() {
+		String names = "";
+		
+		for (Food food : foodItems) {
+			names += food.getName() + " ";
+		}
+		
+		return names;
+	}
+	
 	@Override
 	public String toString() {
 		String out = name + ",";

@@ -1,4 +1,4 @@
-package droneSim;
+package ui;
 
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -277,10 +277,10 @@ public class XYGraph extends JFrame {
 		avgDataset.addSeries(movingAvgF); // add to dataset
 		
 		//createMovingAverage(XYDataset source, int series, String name, double period, double skip)
-		XYSeriesCollection knapAvg = new XYSeriesCollection();
-		knapAvg.addSeries(seriesKnapsack);
+		XYSeriesCollection knapAvg = new XYSeriesCollection(); // create the data set used for the knapsack average
+		knapAvg.addSeries(seriesKnapsack); // add data to the dataset
 		XYSeries movingAvgK = MovingAverage.createMovingAverage(knapAvg, 0, "Knapsack Average", 250.0, 0.0); // avg of cur series 
-		avgDataset.addSeries(movingAvgK); // add to dataset
+		avgDataset.addSeries(movingAvgK); // add moving average to dataset
 		
 	}
 	

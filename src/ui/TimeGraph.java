@@ -1,4 +1,4 @@
-package droneSim;
+package ui;
 
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -11,6 +11,7 @@ import org.jfree.data.time.Second;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 
+import droneSim.Time;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
