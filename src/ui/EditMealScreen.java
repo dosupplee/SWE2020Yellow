@@ -29,6 +29,8 @@ public class EditMealScreen extends Stage {
 	private TextField editNameTF, editProbabilityTF;
 	private TableView<Food> possibleFoodsTable, selectedFoodsTable;
 	private Button add, remove;
+	private Label weightLabel, scaledProbabilityLabel, arrowLabel;
+	private HBox probabilityHBox;
 
 	public EditMealScreen(UI_Setup ui_Setup) {
 		this.ui_Setup = ui_Setup;
@@ -38,63 +40,184 @@ public class EditMealScreen extends Stage {
 		this.selectedMeal = selectedMeal;
 		setTitle(editMealTitle);
 
-		editNameTF = new TextField();
-		editNameTF.setText(selectedMeal.getName());
-		editNameTF.setMaxWidth(300);
-
-		editProbabilityTF = new TextField();
-		editProbabilityTF.setText(selectedMeal.getRawProbability() + "");
-		editProbabilityTF.setMaxWidth(300);
-
 		/*
-		 * Vbox{ name raw prob -> scaled prob weight
+		 * Vbox
+		 * { 
+		 * 	name 
+		 * 	raw prob -> scaled prob 
+		 * 	weight
 		 * 
-		 * Hbox {
+		 * 	Hbox 
+		 * 	{
 		 * 
-		 * meal contents, Selection's, Possible Foods
+		 * 		meal contents, Selection's, Possible Foods
 		 * 
-		 * } 
+		 * 	} 
 		 * }
 		 */
+		
+		makeNameTextField(selectedMeal);
+
+		makeEditProbabilityTextField(selectedMeal);
+		arrowLabel = new Label(" → ");
+		arrowLabel.setMaxWidth(20);
+		arrowLabel.setPrefWidth(20);
+		scaledProbabilityLabel = new Label(selectedMeal.getScaledProbability()*100.0 + "%");
+		scaledProbabilityLabel.setMaxWidth(140);
+		scaledProbabilityLabel.setPrefWidth(140);
+		probabilityHBox = new HBox(editProbabilityTF, arrowLabel, scaledProbabilityLabel);
+		probabilityHBox.setAlignment(Pos.CENTER);
+		
+		makeWeightLabel();
+		
 
 		// possible foods
-		possibleFoodsTable = makeTable(ui_Setup.curSetup.getAllFoods());
-		VBox possibleVBox = new VBox(new Label("Possible Foods"), possibleFoodsTable);
-		possibleVBox.setAlignment(Pos.CENTER);
+		VBox possibleVBox = makePossibleVBoxAndTable();
 
 		// selected foods
+		VBox selectedVBox = makeSelectedVBoxAndTable(selectedMeal);
+
+		// add/remove buttons
+		makeAddRemoveButtons();
+		VBox selectionButtons = makeAddRemoveVBox();
+		
+		// put the bottom parts together into a HBox
+		HBox selectionHBox = makeSelectionHBox(possibleVBox, selectedVBox, selectionButtons);
+
+		// put it all together
+		VBox screenBox = makeScreenVBox(selectionHBox);
+
+		screenBox.setAlignment(Pos.CENTER);
+		setScene(new Scene(screenBox, 600, 400));
+		show();
+	}
+
+	/**
+	 * @param selectionHBox
+	 * @return
+	 */
+	private VBox makeScreenVBox(HBox selectionHBox) {
+		VBox screenBox = new VBox(editNameTF, probabilityHBox, weightLabel, selectionHBox);
+		screenBox.setSpacing(5);
+		screenBox.setPadding(new Insets(5));
+		updateWeightLabel();
+		return screenBox;
+	}
+
+	/**
+	 *  create and update the weight label
+	 */
+	private void makeWeightLabel() {
+		weightLabel = new Label();
+		weightLabel.setMaxWidth(300);
+	}
+
+	public void updateWeightLabel() {
+		ObservableList<Food> foods = selectedFoodsTable.getItems();
+		int weight = 0;
+		if (foods != null) {
+			for (Food food : foods) {
+				weight += food.getWeight();
+			}
+		}
+		
+		weightLabel.setText("Weight: " + weight + " (oz)");
+	}
+	
+	/**
+	 * put the bottom parts together into a HBox
+	 * @param possibleVBox
+	 * @param selectedVBox
+	 * @param selectionButtons
+	 * @return
+	 */
+	private HBox makeSelectionHBox(VBox possibleVBox, VBox selectedVBox, VBox selectionButtons) {
+		HBox selectionHBox = new HBox(selectedVBox, selectionButtons, possibleVBox);
+		selectionHBox.setSpacing(5);
+		selectionHBox.setAlignment(Pos.CENTER);
+		HBox.setHgrow(selectedVBox, Priority.ALWAYS);
+		HBox.setHgrow(possibleVBox, Priority.ALWAYS);
+		return selectionHBox;
+	}
+
+	/**
+	 * @return
+	 */
+	private VBox makeAddRemoveVBox() {
+		VBox selectionButtons = new VBox(new Label(""),add, remove);
+		selectionButtons.setAlignment(Pos.CENTER);
+		selectionButtons.setSpacing(5);
+		return selectionButtons;
+	}
+
+	/**
+	 * @param selectedMeal
+	 * @return
+	 */
+	private VBox makeSelectedVBoxAndTable(Meal selectedMeal) {
 		selectedFoodsTable = makeTable(selectedMeal.getFoodItems());
 		VBox selectedVBox = new VBox(new Label("Selected Foods"), selectedFoodsTable);
 		selectedVBox.setAlignment(Pos.CENTER);
+		return selectedVBox;
+	}
 
-		// add/remove buttons
+	/**
+	 * @return
+	 */
+	private VBox makePossibleVBoxAndTable() {
+		possibleFoodsTable = makeTable(ui_Setup.curSetup.getAllFoods());
+		VBox possibleVBox = new VBox(new Label("Possible Foods"), possibleFoodsTable);
+		possibleVBox.setAlignment(Pos.CENTER);
+		return possibleVBox;
+	}
+
+	/**
+	 * create the add and remove buttons
+	 */
+	private void makeAddRemoveButtons() {
 		double sizeH = 10;
 		double sizeW = 25;
 		add = new Button("<");
 		remove = new Button(">");
 		add.setPrefSize(sizeW, sizeH);
 		remove.setPrefSize(sizeW, sizeH);
-		VBox selectionButtons = new VBox(new Label(""),add, remove);
-		selectionButtons.setAlignment(Pos.CENTER);
-		selectionButtons.setSpacing(5);
 		
-		// put the bottom parts together
-		HBox selectionHBox = new HBox(selectedVBox, selectionButtons, possibleVBox);
-		selectionHBox.setSpacing(5);
-		selectionHBox.setAlignment(Pos.CENTER);
-		HBox.setHgrow(selectedVBox, Priority.ALWAYS);
-		HBox.setHgrow(possibleVBox, Priority.ALWAYS);
+		// what happens when add is clicked
+		add.setOnAction(clickedItem -> {
+			Food foodToAdd = possibleFoodsTable.getSelectionModel().getSelectedItem();
+			if (possibleFoodsTable.getItems().size() > 0 && foodToAdd != null) {
+				selectedFoodsTable.getItems().add(foodToAdd);
+				updateWeightLabel();
+			}
+		});
 		
-		
+		// what happens when remove is clicked
+		remove.setOnAction(clickedItem -> {
+			int selectedIndex = selectedFoodsTable.getSelectionModel().getSelectedIndex();
+			if (selectedFoodsTable.getItems().size() > 0 && selectedIndex >= 0) {
+				selectedFoodsTable.getItems().remove(selectedIndex);
+				updateWeightLabel();
+			}
+		});
+	}
 
-		// put it all together
-		VBox y = new VBox(editNameTF, editProbabilityTF, selectionHBox);
-		y.setSpacing(5);
-		y.setPadding(new Insets(5));
+	/**
+	 * @param selectedMeal
+	 */
+	private void makeEditProbabilityTextField(Meal selectedMeal) {
+		editProbabilityTF = new TextField();
+		editProbabilityTF.setText(selectedMeal.getRawProbability() + "");
+		editProbabilityTF.setMaxWidth(140);
+		editProbabilityTF.setPrefWidth(140);
+	}
 
-		y.setAlignment(Pos.CENTER);
-		setScene(new Scene(y, 600, 400));
-		show();
+	/**
+	 * @param selectedMeal
+	 */
+	private void makeNameTextField(Meal selectedMeal) {
+		editNameTF = new TextField();
+		editNameTF.setText(selectedMeal.getName());
+		editNameTF.setMaxWidth(300);
 	}
 	
 	/**

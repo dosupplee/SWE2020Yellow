@@ -72,7 +72,7 @@ public class CustomMealListCell extends ListCell<Meal> {
             name.setText(meal.getName());
             
             weight.setText(String.format("%-11s %d (oz)", "Weight:",meal.getWeight()));
-            probability.setText(String.format("%-11s  %.2f -> %.2f%%", "Probibilty:", meal.getRawProbability(), (meal.getScaledProbability()*100)));
+            probability.setText(String.format("%-11s  %.2f → %.2f%%", "Probibilty:", meal.getRawProbability(), (meal.getScaledProbability()*100)));
             mealContents.setText(String.format("%-11s %s", "Contents:", meal.getFoodNames()));
 
             setGraphic(content);
