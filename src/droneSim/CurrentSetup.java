@@ -464,6 +464,28 @@ public class CurrentSetup {
 			meal.setScaledProbability(newProb);
 		}
 	}
+	
+	/**
+	 * Rescales the probabilie so it adds up to 100
+	 * 
+	 * Run whenever you change the probabilites or add new meals.
+	 * 
+	 * !!!!Doesn't actually change the value!!!!
+	 */
+	public double adjustMealProbabilities(double prob) {
+		if (allMeals.isEmpty()) { // if there are no meals
+			return 0.0;
+		}
+
+		// get sum of all probabilities
+		double probSum = 0;
+		for (Meal meal : allMeals) {
+			probSum += meal.getRawProbability();
+		}
+
+		// set new scaled probabilities (multiply by 100 for % output)
+		return prob / probSum;
+	}
 
 	// --------------------------------------------
 	// RUNNING STUFF

@@ -82,6 +82,13 @@ public class Meal {
 	}
 	
 	/**
+	 * clears all the foods from the meal
+	 */
+	public void clearFoods() {
+		foodItems.clear();
+	}
+	
+	/**
 	 * @return the name
 	 */
 	public String getName() {
