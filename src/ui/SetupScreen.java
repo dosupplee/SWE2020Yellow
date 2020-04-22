@@ -527,6 +527,9 @@ public class SetupScreen {
 		VBox.setVgrow(screenLayoutSetup, Priority.ALWAYS);
 
 		ui_Setup.setupScene = new Scene(vBox, screenW, screenH);
+		
+		ui_Setup.setupScene.getStylesheets().add("SetupPage.css");
+
 	}
 	
 	public void refreshMealListView() {
