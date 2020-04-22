@@ -6,6 +6,15 @@ import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import com.lynden.gmapsfx.GoogleMapView;
+import com.lynden.gmapsfx.MapComponentInitializedListener;
+import com.lynden.gmapsfx.javascript.object.GoogleMap;
+import com.lynden.gmapsfx.javascript.object.LatLong;
+import com.lynden.gmapsfx.javascript.object.MapOptions;
+import com.lynden.gmapsfx.javascript.object.MapTypeIdEnum;
+import com.lynden.gmapsfx.javascript.object.Marker;
+import com.lynden.gmapsfx.javascript.object.MarkerOptions;
+
 import droneSim.Tuple;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -31,9 +40,11 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 
-public class MainScreen {
+public class MainScreen implements MapComponentInitializedListener {
 
 	private UI_Setup ui_Setup;
+	private GoogleMapView mapView;
+	private GoogleMap map;
 
 	public MainScreen(UI_Setup ui_Setup) {
 		this.ui_Setup = ui_Setup;
@@ -261,6 +272,12 @@ public class MainScreen {
 			ui_Setup.graphingTools.deleteGraphFiles();
 			outputLog.clear();
 		});
+		
+		// ---------------------------------
+		// GOOGLE MAPS VIEW
+		// ---------------------------------
+		mapView = new GoogleMapView();
+	    mapView.addMapInializedListener(this);
 
 		// change the size of buttons
 		setupPageButton.setPrefSize(150, 50);
@@ -278,6 +295,7 @@ public class MainScreen {
 		screenLayoutMain.add(clearLogButton, 0, 11, 1, 1);
 		screenLayoutMain.add(fileName, 1, 10, 1, 1);
 		screenLayoutMain.add(outputLog, 2, 0, 2, 13);
+		screenLayoutMain.add(mapView, 0, 0, 2, 9);
 
 		// Create second level containers in page hierarchy
 		VBox mainPageVBox = new VBox(mainPageMenuBar, screenLayoutMain);
@@ -289,6 +307,48 @@ public class MainScreen {
 		
 		ui_Setup.mainScene.getStylesheets().add("MainPage.css");
 		
+	}
+
+	@Override
+	public void mapInitialized() {
+	    //Set the initial properties of the map.
+	    MapOptions mapOptions = new MapOptions();
+	
+	    mapOptions.center(new LatLong(41.1558, -80.0785))
+        .mapType(MapTypeIdEnum.SATELLITE)
+        .overviewMapControl(false)
+        .mapTypeControl(false)
+        .panControl(false)
+        .rotateControl(false)
+        .scaleControl(false)
+        .streetViewControl(false)
+        .zoomControl(false)
+        .zoom(17);
+
+		map = mapView.createMap(mapOptions);
+		
+		//Add a marker to the map
+		MarkerOptions sacMarkerOption = new MarkerOptions();
+		MarkerOptions halMarkerOption = new MarkerOptions();
+		MarkerOptions stemMarkerOption = new MarkerOptions();
+		
+		sacMarkerOption.position( new LatLong(41.1548, -80.0778) )
+		        .visible(Boolean.TRUE)
+		        .title("SAC");
+		halMarkerOption.position( new LatLong(41.1546, -80.0773) )
+				.visible(Boolean.TRUE)
+				.title("HAL");
+		stemMarkerOption.position( new LatLong(41.1553, -80.0789) )
+				.visible(Boolean.TRUE)
+				.title("STEM");
+		
+		Marker sacMarker = new Marker( sacMarkerOption );
+		Marker halMarker = new Marker( halMarkerOption );
+		Marker stemMarker = new Marker( stemMarkerOption );
+		
+		map.addMarker(sacMarker);
+		map.addMarker(halMarker);
+		map.addMarker(stemMarker);
 	}
 
 }
