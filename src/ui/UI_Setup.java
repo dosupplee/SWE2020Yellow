@@ -18,6 +18,8 @@ public class UI_Setup {
 	public final String SPLASH_SCREEN_TITLE = "Dromitary Drone Delivery Simulation";
 	
 	public UI_Setup() {
+		
+		
 		runner = new Runner();
 		curSetup = runner.getCurrentSetup();
 		graphingTools = new GraphingTools();
