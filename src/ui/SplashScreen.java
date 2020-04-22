@@ -44,5 +44,7 @@ public class SplashScreen extends Stage {
 		VBox.setVgrow(imageView, Priority.ALWAYS);
 
 		ui_Setup.splashScene = new Scene(picture, ui_Setup.SCREEN_WIDTH, ui_Setup.SCREEN_HEIGHT);
+		
+		ui_Setup.splashScene.getStylesheets().add("SplashPage.css");
 	}
 }

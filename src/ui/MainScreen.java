@@ -286,7 +286,9 @@ public class MainScreen {
 
 		// making the new main scene
 		ui_Setup.mainScene = new Scene(mainPageVBox, ui_Setup.SCREEN_WIDTH, ui_Setup.SCREEN_HEIGHT);
-
+		
+		ui_Setup.mainScene.getStylesheets().add("MainPage.css");
+		
 	}
 
 }

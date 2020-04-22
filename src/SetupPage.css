@@ -1,0 +1,40 @@
+.root {
+	-fx-background-color: #DF7861;
+}
+
+
+
+
+.button {
+	-fx-background-color: #ECDFC8;
+}
+
+.button:hover {
+	-fx-background-color: #FCF8E8;
+}
+
+.button:pressed {
+	-fx-background-color: #ECB390;
+}
+
+.list-cell {
+	-fx-background-color: #ECDFC8;
+}
+
+.list-cell:odd {
+	-fx-background-color: #ECB390;
+}
+
+.list-cell:even {
+	-fx-background-color: #ECB390;
+}
+
+.list-cell:odd:hover {
+	-fx-background-color: #FCF8E8;
+	-fx-text-fill: #FFFFFF;
+}
+
+.list-cell:even:hover {
+	-fx-background-color: #FCF8E8;
+	-fx-text-fill: #FFFFFF;
+}
