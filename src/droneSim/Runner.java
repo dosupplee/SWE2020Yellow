@@ -1,5 +1,6 @@
 package droneSim;
 
+import java.awt.Component;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -112,6 +113,7 @@ public class Runner {
 		// keep track of current time
 		Time currentTime = new Time();
 		int counter = 0;
+	
 
 		// Repeat whole simulation for each packager type (for now???)
 		for (int type = 0; type < 2; type++) {
@@ -123,6 +125,10 @@ public class Runner {
 
 			for (int shift = 0; shift < currentSetup.getNumShifts(); shift++) // for each shift
 			{
+				int created =0;
+				int packed = 0;
+				
+				
 				boolean canStopLastHour = false; // if we can stop our final hour overRun
 				for (int hour = 0; hour < 4; hour++) // for each hour
 				{
@@ -161,6 +167,8 @@ public class Runner {
 							Order order = newOrders.get(i);
 						}
 						
+						created += newOrders.size();
+						
 
 						for (int i = 0; i < orderBacklog.size(); i++) {
 							Order order = orderBacklog.get(i);
@@ -171,6 +179,12 @@ public class Runner {
 						} else {
 							packedOrders = fp.pack(orderBacklog);
 						}
+						
+						
+
+						packed += packedOrders.size();
+
+
 
 						// list new orders grabbed
 						if (packedOrders != null) {
@@ -185,6 +199,9 @@ public class Runner {
 								Order order = kp.skippedOrders.get(i);
 							}
 						}
+						
+						
+
 
 						/*
 						 * Here we would take the packed orders and add them to drones list As well as
@@ -193,34 +210,44 @@ public class Runner {
 						 * Increment currentTime accordingly (how long the trip took + recharge of
 						 * batteries)
 						 */
+						
+
 						Tuple tripResult = currentSetup.sendDrone(packedOrders);
 						int secondsTaken = (int) tripResult.getA(); // get the time the trip took
 						//String pathTaken = (String) tripResult.getB(); //TODO save somewhere
 						ArrayList<Integer> curDeliveryTimes = (ArrayList<Integer>) tripResult.getB(); // list of delivery times in seconds
 						
-						// update the slowest and fastest times + add delivery times
-						if (packagerType == Packager.Knapsack) {
-							sumKnapsack += secondsTaken;
-							if (secondsTaken > slowestTimeKnapsack) {
-								slowestTimeKnapsack = secondsTaken;
+						
+												
+						//if no delivery made, dont update stats
+						if(secondsTaken!=0)
+						{
+							// update the slowest and fastest times + add delivery times
+							if (packagerType == Packager.Knapsack) 
+							{
+								sumKnapsack += secondsTaken;
+								if (secondsTaken > slowestTimeKnapsack) {
+									slowestTimeKnapsack = secondsTaken;
+								}
+								if (secondsTaken < fastestTimeKnapsack) {
+									fastestTimeKnapsack = secondsTaken;
+								}
+								
+								// add delivery times
+								deliveryTimesKnapsack.addAll(curDeliveryTimes);
+							} 
+							else if (packagerType == Packager.FIFO) {
+								sumFIFO += secondsTaken;
+								if (secondsTaken > slowestTimeFIFO) {
+									slowestTimeFIFO = secondsTaken;
+								}
+								if (secondsTaken < fastestTimeFIFO) {
+									fastestTimeFIFO = secondsTaken;
+								}
+								
+								// add delivery times
+								deliveryTimesFifo.addAll(curDeliveryTimes);
 							}
-							if (secondsTaken < fastestTimeKnapsack) {
-								fastestTimeKnapsack = secondsTaken;
-							}
-							
-							// add delivery times
-							deliveryTimesKnapsack.addAll(curDeliveryTimes);
-						} else if (packagerType == Packager.FIFO) {
-							sumFIFO += secondsTaken;
-							if (secondsTaken > slowestTimeFIFO) {
-								slowestTimeFIFO = secondsTaken;
-							}
-							if (secondsTaken < fastestTimeFIFO) {
-								fastestTimeFIFO = secondsTaken;
-							}
-							
-							// add delivery times
-							deliveryTimesFifo.addAll(curDeliveryTimes);
 						}
 
 						/*
@@ -228,20 +255,31 @@ public class Runner {
 						 */
 
 						// if have gotten the last few orders from that shift
-						if (hour == 3 && min >= 60 && newOrders.size() == 0)
+						if (hour == 3 && min >= 60 && packedOrders.size() == 0)
 							canStopLastHour = true;
 
+						int incrementMin = 1;
+						
+						if(secondsTaken!=0)
+						{
+							incrementMin = Math.round(secondsTaken / 60);
+						}
 						// increment timer
-						min += Math.round(secondsTaken / 60);
-						currentTime.incrementTimerMinute(Math.round(secondsTaken / 60));
+						min += incrementMin;
+						currentTime.incrementTimerMinute(incrementMin);
 					}
 				}
 
+				System.out.println(created);
+				System.out.println(packed);
+					
 				// Increment the shift and reset the timer
 				currentTime.incrementShift();
 				currentTime.resetTimer();
 			}
 
+			
+			
 			// Switch between the two packager types
 			if (packagerType == Packager.Knapsack) {
 				packagerType = Packager.FIFO;
@@ -249,6 +287,9 @@ public class Runner {
 				packagerType = Packager.Knapsack;
 			}
 		}
+		
+		kp.printNumSkipped();
+
 		
 		// print map to file
 		// TreeMap to store sorted values of HashMap 
