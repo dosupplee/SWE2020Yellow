@@ -119,13 +119,12 @@ public class KnapsackPacker
         if(skippedOrders!=null && ans!=null)
         	ans.addAll(skippedOrders);
         
+
         
         //Reset Skipped Orders
         skippedOrders.clear();
        
 	       
-        int lastSkippedOrder = 0;
-        
         ArrayList<Order> ordersToDelete = new ArrayList<>();
         
         //orders overlooked, but not sure if skipped or just at the end of the backlog
@@ -138,6 +137,7 @@ public class KnapsackPacker
         	 boolean isInSolution = false;
 	    	 
 	    	 //find it packed in solution
+        	 if(ans!=null && ans.size()>0)
 	    	 for(int j=0;j<ans.size();j++)
 	    	 {
 	    		 if(ans.get(j) == orderBacklog.get(i))
@@ -149,30 +149,21 @@ public class KnapsackPacker
 	    	 if(isInSolution==true)
 	    	 {
 	    		 ordersToDelete.add(orderBacklog.get(i));
+	    		 
+	    		 //signify that the orders that previously were overlooked 
+    			 //were actually skipped rather than just at the end of the backlog
+    			 skippedOrders.addAll(purgatoryOrders);
+    			 
+    			 //clear out waiting overlooked orders
+    			 purgatoryOrders.clear();
+    			
 	    	 }
 	    	 else
 	    	 {
-	    		 //if the last order was overlooked
-	    		 if(lastSkippedOrder + 1 == i)
-	    		 {
 	    			 //purgatory orders are orders that are overlooked (not present in solution), 
 	    			 //but unsure if actually skipped or at the end of the backlog
 	    			 purgatoryOrders.add(orderBacklog.get(i));
-	    		 }
-	    		 else //if last order was put in the solution
-	    		 {
-	    			 //signify that the orders that previously were overlooked 
-	    			 //were actually skipped rather than just at the end of the backlog
-	    			 skippedOrders.addAll(purgatoryOrders);
-	    			 
-	    			 //clear out waiting overlooked orders
-	    			 purgatoryOrders.clear();
-	    			 
-	    			 //add 
-	    			 purgatoryOrders.add(orderBacklog.get(i));
-	    		 }
-	    		 
-	    		 lastSkippedOrder = i;
+
 	    	 }
         }
         //clear out overlooked orders
