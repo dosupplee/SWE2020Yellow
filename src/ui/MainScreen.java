@@ -215,12 +215,13 @@ public class MainScreen implements MapComponentInitializedListener {
 				// outputLog.clear();
 
 				Date simTime = new Date();
-				outputLog.appendText("\n\n\n");
-				outputLog.appendText("-----------------------------------------------------------------\n");
-				outputLog.appendText("-----------------------------------------------------------------\n\n\n");
+				
 				outputLog.appendText(simTime.toString());
 				outputLog.appendText("\n");
 				outputLog.appendText(displayString.toString()); // add to log screen
+				outputLog.appendText("\n\n\n");
+				outputLog.appendText("---------------------------------------------------------------------------------------\n");
+				outputLog.appendText("---------------------------------------------------------------------------------------\n\n\n");
 
 				// graph
 

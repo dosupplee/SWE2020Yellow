@@ -31,9 +31,11 @@ public class EditMealScreen extends Stage {
 	private Button add, remove, applyButton, cancelButton;
 	private Label weightLabel, scaledProbabilityLabel, arrowLabel;
 	private HBox probabilityHBox, bottomActionsHBox;
+	private CustomMealListView mealListView;
 
-	public EditMealScreen(UI_Setup ui_Setup) {
+	public EditMealScreen(UI_Setup ui_Setup, CustomMealListView mealListView) {
 		this.ui_Setup = ui_Setup;
+		this.mealListView = mealListView;
 	}
 
 	public void makeScreen(Meal selectedMeal) {
@@ -111,9 +113,9 @@ public class EditMealScreen extends Stage {
 		applyButton.setOnAction(clicked -> {
 			
 			if (editNameTF.getText() == null || editNameTF.getText().equals("")) {
-				PopUp msgPopup = new PopUp("Empty Name Error", "Please enter a name for your meal.");
+				new PopUp("Empty Name Error", "Please enter a name for your meal.");
 			} else if (editProbabilityTF.getText() == null || editProbabilityTF.getText().equals("")) {
-				PopUp msgPopup = new PopUp("Empty Probability Error", "Please enter a raw probibility for your meal.");
+				new PopUp("Empty Probability Error", "Please enter a raw probibility for your meal.");
 			} else {
 				
 				Double probability = -1.0;
@@ -125,7 +127,9 @@ public class EditMealScreen extends Stage {
 				}
 				
 				if (probability <= 0.0) {
-					PopUp msgPopup = new PopUp("Invalid Probability Error", "Please enter a valid number for your raw probibility. (# > 0)");
+					new PopUp("Invalid Probability Error", "Please enter a valid number for your raw probibility. (# > 0)");
+				} else if(selectedFoodsTable.getItems().size() <= 0) {
+					new PopUp("Empty Meal Error", "Please add at least one food item to your meal.");
 				} else {
 					selectedMeal.setName(editNameTF.getText());
 					selectedMeal.setRawProbability(probability);
@@ -141,9 +145,10 @@ public class EditMealScreen extends Stage {
 						}
 						
 						ui_Setup.curSetup.adjustMealProbabilities(); // adjust for the new probability
+						refreshMealListView(); // update the list view
 						close(); // close the window
 					} else {
-						PopUp msgPopup = new PopUp("Empty Meal Error", "Please add at least one food to your meal.");
+						new PopUp("Empty Meal Error", "Please add at least one food to your meal.");
 					}
 				}
 			} 
@@ -157,6 +162,15 @@ public class EditMealScreen extends Stage {
 		cancelButton.setOnAction(clicked -> {
 			close(); // close the window. Do no changes
 		});
+	}
+	
+	
+	/**
+	 * refresh the meal list view with new content
+	 */
+	public void refreshMealListView() {
+		mealListView.clearListView();
+		mealListView.addMeal(ui_Setup.curSetup.getAllMeals());
 	}
 	
 	
@@ -299,6 +313,8 @@ public class EditMealScreen extends Stage {
 			}
 		});
 	}
+	
+	String oldval; // for the edit probability to check if it actually changes
 
 	/**
 	 * @param selectedMeal
@@ -308,10 +324,12 @@ public class EditMealScreen extends Stage {
 		editProbabilityTF.setText(selectedMeal.getRawProbability() + "");
 		editProbabilityTF.setMaxWidth(140);
 		editProbabilityTF.setPrefWidth(140);
+		oldval = editProbabilityTF.getText();
 		
-		// TODO fix keep poping up
+		
 		editProbabilityTF.focusedProperty().addListener((observable, oldValue, newValue) -> {
-			if (oldValue != newValue) {
+			if (oldValue != newValue && !oldval.equals(editProbabilityTF.getText())) { // if the current text is not what was the last time selected
+				System.out.println(oldval);
 				 Double probability = -1.0;
 					try {
 						probability = Double.parseDouble(editProbabilityTF.getText());
@@ -320,12 +338,13 @@ public class EditMealScreen extends Stage {
 					}
 					
 					if (probability <= 0.0) { // make sure propability is greater than 0
-						PopUp msgPopup = new PopUp("Invalid Probability Error", "Please enter a valid number for your raw probibility. (# > 0)");
+						new PopUp("Invalid Probability Error", "Please enter a valid number for your raw probibility. (# > 0)");
 					} else {
 						double scaledProbability = ui_Setup.curSetup.adjustMealProbabilities(probability);
 						scaledProbability *=100;
 						scaledProbabilityLabel.setText(String.format("%.2f%%", scaledProbability));
 					}
+					oldval = editProbabilityTF.getText();
 			}
 		   
 		});

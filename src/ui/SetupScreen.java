@@ -302,33 +302,25 @@ public class SetupScreen {
 		// EDIT/REMOVE ContextMenu EVENT
 		// ---------------------------------		
         // Create ContextMenu
-		EditMealScreen editMealScreen = new EditMealScreen(ui_Setup);
+		EditMealScreen editMealScreen = new EditMealScreen(ui_Setup, mealListView);
         ContextMenu contextMenu = new ContextMenu();
  
         MenuItem item1 = new MenuItem("Edit");
-        item1.setOnAction(new EventHandler<ActionEvent>() {
- 
-            @Override
-            public void handle(ActionEvent event) {
-            	Meal selectedMeal = mealListView.getSelected();
-        		if (selectedMeal != null) { // if a meal was selected
-        			editMealScreen.makeScreen(selectedMeal);
-    				refreshMealListView(); // TODO refresh right on close of edit screen
-    			}
-            }
+        item1.setOnAction(clicked -> {
+        	Meal selectedMeal = mealListView.getSelected();
+    		if (selectedMeal != null) { // if a meal was selected
+    			editMealScreen.makeScreen(selectedMeal);
+			}
         });
+        
         MenuItem item2 = new MenuItem("Delete");
-        item2.setOnAction(new EventHandler<ActionEvent>() {
- 
-            @Override
-            public void handle(ActionEvent event) {
-            	Meal removedMeal = mealListView.removeSelected();
-        		if (removedMeal != null) { // if a meal was selected
-    				ui_Setup.curSetup.deleteMeal(removedMeal);
-    				ui_Setup.curSetup.adjustMealProbabilities();
-    				refreshMealListView();
-    			}
-            }
+        item2.setOnAction(clicked -> {
+        	Meal removedMeal = mealListView.removeSelected();
+    		if (removedMeal != null) { // if a meal was selected
+				ui_Setup.curSetup.deleteMeal(removedMeal);
+				ui_Setup.curSetup.adjustMealProbabilities();
+				refreshMealListView();
+			}
         });
  
         // Add MenuItem to ContextMenu

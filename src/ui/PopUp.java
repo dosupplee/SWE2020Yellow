@@ -19,7 +19,7 @@ public class PopUp extends Stage {
 
 		y.getChildren().add(new Label(msg));
 		y.setAlignment(Pos.CENTER);
-		setScene(new Scene(y, 300, 100));
+		setScene(new Scene(y, 400, 100));
 		show();
 
 	}
