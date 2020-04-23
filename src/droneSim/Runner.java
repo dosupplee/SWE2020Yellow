@@ -270,8 +270,8 @@ public class Runner {
 					}
 				}
 
-				System.out.println(created);
-				System.out.println(packed);
+				//System.out.println(created);
+				//System.out.println(packed);
 					
 				// Increment the shift and reset the timer
 				currentTime.incrementShift();
@@ -289,6 +289,23 @@ public class Runner {
 		}
 		
 		kp.printNumSkipped();
+		
+		int avg = 0;
+		for(int timeVal : deliveryTimesFifo)
+		{
+			avg +=timeVal;
+		}
+		avg = (avg / numOrders);
+		System.out.println("FIFO:" + avg);
+		
+		avg = 0;
+		for(int timeVal : deliveryTimesKnapsack)
+		{
+			avg +=timeVal;
+		}
+		avg = (avg / numOrders);
+		System.out.println("Knapsack:" + avg);
+		
 
 		
 		// print map to file
