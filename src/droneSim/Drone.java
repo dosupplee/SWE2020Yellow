@@ -144,8 +144,16 @@ public class Drone {
 	 * @param distance
 	 * @return
 	 */
-	private int calculateTimePartialTrip(int distance, int numStops) {
-		return ((distance * 10) / this.speed) + (this.dropOffTime * numStops) + this.turnAroundTime;
+	private int calculateTimePartialTrip(int distance, int numStops) 
+	{
+		if(numStops == 0)
+		{
+			return 0;
+		}
+		else
+		{
+			return ((distance * 10) / this.speed) + (this.dropOffTime * numStops) + this.turnAroundTime;
+		}
 	}
 
 	// ------------------------------------------------------------------------------------------

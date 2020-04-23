@@ -139,27 +139,34 @@ public class Main {
 						 * Increment currentTime accordingly (how long the trip took + recharge of batteries)
 						 */
 						int secondsTaken = (int)currentSetup.sendDrone(packedOrders).getA();
-						if (packagerType == Packager.Knapsack) {
-							sumKnapsack += secondsTaken;
-							if (secondsTaken < slowestTimeKnapsack) {
-								slowestTimeKnapsack = secondsTaken;
-							}
-							if (secondsTaken > fastestTimeKnapsack) {
-								fastestTimeKnapsack = secondsTaken;
-							}
-						} else if (packagerType == Packager.FIFO) {
-							sumFIFO += secondsTaken;
-							if (secondsTaken < slowestTimeFIFO) {
-								slowestTimeFIFO = secondsTaken;
-							}
-							if (secondsTaken > fastestTimeFIFO) {
-								fastestTimeFIFO = secondsTaken;
+						
+						//if orders were actually delievered
+						if(secondsTaken !=0)
+						{
+							if (packagerType == Packager.Knapsack) {
+								sumKnapsack += secondsTaken;
+								if (secondsTaken < slowestTimeKnapsack) {
+									slowestTimeKnapsack = secondsTaken;
+								}
+								if (secondsTaken > fastestTimeKnapsack) {
+									fastestTimeKnapsack = secondsTaken;
+								}
+							} else if (packagerType == Packager.FIFO) {
+								sumFIFO += secondsTaken;
+								if (secondsTaken < slowestTimeFIFO) {
+									slowestTimeFIFO = secondsTaken;
+								}
+								if (secondsTaken > fastestTimeFIFO) {
+									fastestTimeFIFO = secondsTaken;
+								}
 							}
 						}
+						
 						
 						/*
 						 * Here we would update time calcs for orders after TSP is done
 						 */
+						/*
 						for(int i=0;i<packedOrders.size();i++)
 						{
 							Order order = packedOrders.get(i);
@@ -168,22 +175,34 @@ public class Main {
 							order.getDeliveryTime().incrementTimerSecond(secondsTaken);
 							order.getDeliveryTime().setShift(shift);
 						}
+						*/
 
 						
 						//if have gotten the last few orders from that shift
 						if(hour==3 && min>=60 && newOrders.size()==0)
 							canStopLastHour = true;
 						
+						int incrementAmount = 1;
+						
 						// increment timer
-						min += Math.round(secondsTaken / 60);
-						currentTime.incrementTimerMinute(Math.round(secondsTaken / 60));
+						if(secondsTaken !=0)
+						{
+							incrementAmount = Math.round(secondsTaken / 60);
+						}
+						
+						min += incrementAmount;
+						currentTime.incrementTimerMinute(incrementAmount);
 					}
 				}
+				
+				System.out.println(currentTime);
 				
 				// Increment the shift and reset the timer
 				currentTime.incrementShift();
 				currentTime.resetTimer();
 			}
+			
+			
 			
 			//Switch between the two packager types
 			if (packagerType == Packager.Knapsack) {

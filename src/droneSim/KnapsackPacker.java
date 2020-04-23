@@ -13,11 +13,13 @@ public class KnapsackPacker
 	
 	public ArrayList<Order> skippedOrders; 
 	private CurrentSetup currentSetup;
+	private int numSkipped;
 	
 	public KnapsackPacker(CurrentSetup currentSetup)
 	{
 		this.currentSetup = currentSetup;
 		skippedOrders = new ArrayList<Order>();
+		numSkipped = 0;
 	}
 	
 	
@@ -43,7 +45,7 @@ public class KnapsackPacker
 		int numValidNonSkippedOrders = findLastValidItem(orderCountAdjust,orderBacklog) - skippedOrders.size();
 		 
 		//Need to account for the skipped orders that are fast-tracked
-        int droneWeight = currentSetup.getDroneWeight() - getAllWeight(skippedOrders);     
+        int droneWeight = currentSetup.getDroneWeight() - getAllWeight(skippedOrders);
 
         // Create 2d array of possible solutions
         //Each possible weight has a row
@@ -109,28 +111,7 @@ public class KnapsackPacker
         }
 	        
 	       
-	       /* 
-	        // Print out array for debugging
-	        System.out.print("\n");
-	        for(int i=0;i<numOrders+1;i++)
-	        {
-	        	System.out.print("\n");
-	        	for(int j=0;j<droneWeight+1;j++)
-	        	{
-	        		if(mat[i][j]!=null)
-	        		{
-	        			System.out.print(mat[i][j].size() + " , ");
-	        		}
-	        		else
-	        		{
-	        			System.out.print("N" + " , ");
-	        		}
-	        		
-	        	}
-	        }
-	        
-	        */
-	       
+
  
         ArrayList<Order> ans = mat[numValidNonSkippedOrders][droneWeight];
         
@@ -138,38 +119,24 @@ public class KnapsackPacker
         if(skippedOrders!=null && ans!=null)
         	ans.addAll(skippedOrders);
         
-        /*
-        //Remove skipped Orders from orderBacklog
-        if(skippedOrders!=null)
-        for(int i=0;i<skippedOrders.size();i++)
-        {
-        	 for(int j=0;j<skippedOrders.size();j++)
-        	 {
-        		 if(skippedOrders.get(i)==orderBacklog.get(j))
-        		 {
-        			 orderBacklog.remove(j);
-        			 j --;
-        		 }
-        	 }
-        }
-        */
+        
         //Reset Skipped Orders
         skippedOrders.clear();
+       
+	       
+        int lastSkippedOrder = 0;
         
-        /*
-        if(ans!=null)
-        for(int i=0;i<ans.size();i++)
+        ArrayList<Order> ordersToDelete = new ArrayList<>();
+        
+        //orders overlooked, but not sure if skipped or just at the end of the backlog
+        ArrayList<Order> purgatoryOrders = new ArrayList<>();
+        
+        
+        //for each order that could have been chosen
+        for(int i=0;i<numValidNonSkippedOrders + orderCountAdjust;i++)
         {
-        	System.out.println(ans.get(i).getMeal().getName());
-        }
-        */
-	        
-	     //for each order that could have been chosen
-        
-         if(ans!=null)
-	     for(int i=0;i<numValidNonSkippedOrders;i++)
-	     {
-	    	 boolean isInSolution = false;
+        	 boolean isInSolution = false;
+	    	 
 	    	 //find it packed in solution
 	    	 for(int j=0;j<ans.size();j++)
 	    	 {
@@ -179,22 +146,50 @@ public class KnapsackPacker
 	    		 }
 	    	 }
 	    	 
-	    	 //if packed remove it from main
-	    	 if(isInSolution == true)
-    		 {
-    			 orderBacklog.remove(i);
-    			 i --;
-    			 numValidNonSkippedOrders --;
-    		 }
-    		 else //add it to skipped list
-    		 {
-    			 skippedOrders.add(orderBacklog.get(i));
-    		 }
-	     }
+	    	 if(isInSolution==true)
+	    	 {
+	    		 ordersToDelete.add(orderBacklog.get(i));
+	    	 }
+	    	 else
+	    	 {
+	    		 //if the last order was overlooked
+	    		 if(lastSkippedOrder + 1 == i)
+	    		 {
+	    			 //purgatory orders are orders that are overlooked (not present in solution), 
+	    			 //but unsure if actually skipped or at the end of the backlog
+	    			 purgatoryOrders.add(orderBacklog.get(i));
+	    		 }
+	    		 else //if last order was put in the solution
+	    		 {
+	    			 //signify that the orders that previously were overlooked 
+	    			 //were actually skipped rather than just at the end of the backlog
+	    			 skippedOrders.addAll(purgatoryOrders);
+	    			 
+	    			 //clear out waiting overlooked orders
+	    			 purgatoryOrders.clear();
+	    			 
+	    			 //add 
+	    			 purgatoryOrders.add(orderBacklog.get(i));
+	    		 }
+	    		 
+	    		 lastSkippedOrder = i;
+	    	 }
+        }
+        //clear out overlooked orders
+        purgatoryOrders.clear();
+        
+        //remove packed orders from backlog
+       	orderBacklog.removeAll(ordersToDelete);
+        
+      
          
          if(ans==null)
         	 ans = new ArrayList<Order>();
 	        
+         
+         numSkipped += skippedOrders.size();
+         
+         
 	     return ans;
 	}
 	
@@ -233,7 +228,7 @@ public class KnapsackPacker
 		{
 			if(sum+arrayList.get(i).getOrderWeight()>maxThisCycle)
 			{
-				return i - 1;
+				return i;
 			}
 			else
 			{
@@ -241,6 +236,12 @@ public class KnapsackPacker
 			}
 		}
 		return arrayList.size();
+	}
+	
+	public void printNumSkipped()
+	{
+		System.out.println(numSkipped);
+		
 	}
 }
 
