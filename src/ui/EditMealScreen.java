@@ -112,43 +112,68 @@ public class EditMealScreen extends Stage {
 		applyButton.setPrefSize(sizeW, sizeH);
 		applyButton.setOnAction(clicked -> {
 			
-			if (editNameTF.getText() == null || editNameTF.getText().equals("")) {
+			if (isMealNameEntered()) 
+			{
 				new PopUp("Empty Name Error", "Please enter a name for your meal.");
-			} else if (editProbabilityTF.getText() == null || editProbabilityTF.getText().equals("")) {
+			} 
+			else if (isProbabilityEnetered()) 
+			{
 				new PopUp("Empty Probability Error", "Please enter a raw probibility for your meal.");
-			} else {
+			} 
+			else 
+			{
 				
-				Double probability = -1.0;
-				
-				try {
-					probability = Double.parseDouble(editProbabilityTF.getText());
-				} catch (Exception e) {
-					// if number was malformed
-				}
-				
-				if (probability <= 0.0) {
+				// check if probabilty is correct
+				Double probability = getProbability();
+				if (isValidProbabiltiy(probability)) 
+				{
 					new PopUp("Invalid Probability Error", "Please enter a valid number for your raw probibility. (# > 0)");
-				} else if(selectedFoodsTable.getItems().size() <= 0) {
-					new PopUp("Empty Meal Error", "Please add at least one food item to your meal.");
-				} else {
-					selectedMeal.setName(editNameTF.getText());
-					selectedMeal.setRawProbability(probability);
+				}  
+				
+				else if (isMealEmpty()) 
+				{
+					new PopUp("Empty Meal Error", "Please add at least one food to your meal.");
+				} 
+				
+				else 
+				{ 
 					
-					int numItems = selectedFoodsTable.getItems().size();
-					System.out.println(numItems);
-					if(numItems > 0 && editNameTF.getText() != null && editProbabilityTF.getText() != null) { // if there are foods in meal and input's are valid
+					//
+					// makes sure new meal weight does not exceed the drones weight capacity
+					//
+					Meal newMeal = new Meal();
+					for (Food food : selectedFoodsTable.getItems()) { 
+						newMeal.addFood(food); // add all the new foods into meal
+					}
+					if (exceedsDroneWeightCapacity(newMeal)) 
+					{ // if the meal weighs more than the drone can carry
+						new PopUp("ERROR:",
+										"Meal weight is greater than the Drone weight capacity.\n" + "\t- Meal Weight: "
+										+ newMeal.getWeight() + " (oz)\n" + "\t- Drone Capacity: "
+										+ ui_Setup.curSetup.getDroneWeight() + " (oz)");
+					} 
+					
+					//
+					// - update the actual meal item with name, probability, and foods
+					// - adjust the probabilities
+					// - refresh the listview
+					// - close the popup
+					//
+					else 
+					{
+						selectedMeal.setName(editNameTF.getText());
+						selectedMeal.setRawProbability(probability);
 						
+						// add the foods to meal
 						selectedMeal.clearFoods(); // remove all foods
-						ObservableList<Food> foods = selectedFoodsTable.getItems();
-						for (Food food : foods) { // add all the new foods back into meal
+						for (Food food : selectedFoodsTable.getItems()) {
 							selectedMeal.addFood(food);
 						}
+						
 						
 						ui_Setup.curSetup.adjustMealProbabilities(); // adjust for the new probability
 						refreshMealListView(); // update the list view
 						close(); // close the window
-					} else {
-						new PopUp("Empty Meal Error", "Please add at least one food to your meal.");
 					}
 				}
 			} 
@@ -162,6 +187,58 @@ public class EditMealScreen extends Stage {
 		cancelButton.setOnAction(clicked -> {
 			close(); // close the window. Do no changes
 		});
+	}
+
+	/**
+	 * @param newMeal
+	 * @return
+	 */
+	private boolean exceedsDroneWeightCapacity(Meal newMeal) {
+		return newMeal.getWeight() > ui_Setup.curSetup.getDroneWeight();
+	}
+
+	/**
+	 * @param probability
+	 * @return
+	 */
+	private boolean isValidProbabiltiy(Double probability) {
+		return probability <= 0.0;
+	}
+
+	/**
+	 * @return
+	 */
+	private boolean isMealEmpty() {
+		return selectedFoodsTable.getItems().size() <= 0;
+	}
+
+	/**
+	 * returns -1 if malformed, else the given value
+	 * @return
+	 */
+	private Double getProbability() {
+		Double probability = -1.0;
+		
+		try {
+			probability = Double.parseDouble(editProbabilityTF.getText());
+		} catch (Exception e) {
+			// if number was malformed
+		}
+		return probability;
+	}
+
+	/**
+	 * @return
+	 */
+	private boolean isProbabilityEnetered() {
+		return editProbabilityTF.getText() == null || editProbabilityTF.getText().equals("");
+	}
+
+	/**
+	 * @return
+	 */
+	private boolean isMealNameEntered() {
+		return editNameTF.getText() == null || editNameTF.getText().equals("");
 	}
 	
 	
@@ -337,7 +414,7 @@ public class EditMealScreen extends Stage {
 						// if number was malformed
 					}
 					
-					if (probability <= 0.0) { // make sure propability is greater than 0
+					if (isValidProbabiltiy(probability)) { // make sure propability is greater than 0
 						new PopUp("Invalid Probability Error", "Please enter a valid number for your raw probibility. (# > 0)");
 					} else {
 						double scaledProbability = ui_Setup.curSetup.adjustMealProbabilities(probability);
