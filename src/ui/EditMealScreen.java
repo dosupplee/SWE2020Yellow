@@ -32,6 +32,7 @@ public class EditMealScreen extends Stage {
 	private Label weightLabel, scaledProbabilityLabel, arrowLabel;
 	private HBox probabilityHBox, bottomActionsHBox;
 	private CustomMealListView mealListView;
+	private PopUp customPopup;
 
 	public EditMealScreen(UI_Setup ui_Setup, CustomMealListView mealListView) {
 		this.ui_Setup = ui_Setup;
@@ -43,27 +44,20 @@ public class EditMealScreen extends Stage {
 		setTitle(editMealTitle);
 
 		/*
-		 * Vbox
-		 * { 
-		 * 	name 
-		 * 	raw prob -> scaled prob 
-		 * 	weight
+		 * Vbox { name raw prob -> scaled prob weight
 		 * 
-		 * 	Hbox 
-		 * 	{
+		 * Hbox {
 		 * 
-		 * 		meal contents, Selection's, Possible Foods
+		 * meal contents, Selection's, Possible Foods
 		 * 
-		 * 	} 
-		 * }
+		 * } }
 		 */
-		
+
 		makeNameTextField(selectedMeal);
 
 		makeProbabilityHBox(selectedMeal);
-		
+
 		makeWeightLabel();
-		
 
 		// possible foods
 		VBox possibleVBox = makePossibleVBoxAndTable();
@@ -74,14 +68,13 @@ public class EditMealScreen extends Stage {
 		// add/remove buttons
 		makeAddRemoveButtons();
 		VBox selectionButtons = makeAddRemoveVBox();
-		
+
 		// put the bottom parts together into a HBox
 		HBox selectionHBox = makeSelectionHBox(possibleVBox, selectedVBox, selectionButtons);
-		
+
 		// apply and cancel buttons
 		makeApplyCancelButtons();
 		makeBottomActinoHBox();
-		
 
 		// put it all together
 		VBox screenBox = makeScreenVBox(selectionHBox);
@@ -106,81 +99,61 @@ public class EditMealScreen extends Stage {
 	private void makeApplyCancelButtons() {
 		double sizeH = 10; // height of button
 		double sizeW = 75; // width of button
-		
+
 		// apply button
 		applyButton = new Button("APPLY");
 		applyButton.setPrefSize(sizeW, sizeH);
 		applyButton.setOnAction(clicked -> {
-			
-			if (isMealNameEntered()) 
-			{
-				new PopUp("Empty Name Error", "Please enter a name for your meal.");
-			} 
-			else if (isProbabilityEnetered()) 
-			{
-				new PopUp("Empty Probability Error", "Please enter a raw probibility for your meal.");
-			} 
-			else 
-			{
-				
-				// check if probabilty is correct
-				Double probability = getProbability();
-				if (isValidProbabiltiy(probability)) 
-				{
-					new PopUp("Invalid Probability Error", "Please enter a valid number for your raw probibility. (# > 0)");
-				}  
-				
-				else if (isMealEmpty()) 
-				{
-					new PopUp("Empty Meal Error", "Please add at least one food to your meal.");
-				} 
-				
-				else 
-				{ 
-					
+
+			Double probability = getProbability();
+			if (isMealNameEntered()) {
+				makePopup("Empty Name Error", "Please enter a name for your meal.");
+			} else if (isProbabilityEnetered() || isValidProbabiltiy(probability)) {
+				makePopup("Invalid Probability Error", "Please enter a valid number for your raw probibility. (# > 0)");
+			} else {
+
+				if (isMealEmpty()) {
+					makePopup("Empty Meal Error", "Please add at least one food to your meal.");
+				} else {
+
 					//
 					// makes sure new meal weight does not exceed the drones weight capacity
 					//
-					Meal newMeal = new Meal();
-					for (Food food : selectedFoodsTable.getItems()) { 
-						newMeal.addFood(food); // add all the new foods into meal
+					int weight = 0;
+					for (Food food : selectedFoodsTable.getItems()) {
+						weight += food.getWeight(); // add all the new foods into meal
 					}
-					if (exceedsDroneWeightCapacity(newMeal)) 
-					{ // if the meal weighs more than the drone can carry
-						new PopUp("ERROR:",
-										"Meal weight is greater than the Drone weight capacity.\n" + "\t- Meal Weight: "
-										+ newMeal.getWeight() + " (oz)\n" + "\t- Drone Capacity: "
+					if (exceedsDroneWeightCapacity(weight)) { // if the meal weighs more than the drone can carry
+						makePopup("ERROR:",
+								"Meal weight is greater than the Drone weight capacity.\n" + "\t- Meal Weight: "
+										+ weight + " (oz)\n" + "\t- Drone Capacity: "
 										+ ui_Setup.curSetup.getDroneWeight() + " (oz)");
-					} 
-					
+					}
+
 					//
 					// - update the actual meal item with name, probability, and foods
 					// - adjust the probabilities
 					// - refresh the listview
 					// - close the popup
 					//
-					else 
-					{
+					else {
 						selectedMeal.setName(editNameTF.getText());
 						selectedMeal.setRawProbability(probability);
-						
+
 						// add the foods to meal
 						selectedMeal.clearFoods(); // remove all foods
 						for (Food food : selectedFoodsTable.getItems()) {
 							selectedMeal.addFood(food);
 						}
-						
-						
+
 						ui_Setup.curSetup.adjustMealProbabilities(); // adjust for the new probability
 						refreshMealListView(); // update the list view
 						close(); // close the window
 					}
 				}
-			} 
+			}
 		});
-		
-		
-		
+
 		// cancel button
 		cancelButton = new Button("CANCEL");
 		cancelButton.setPrefSize(sizeW, sizeH);
@@ -189,12 +162,19 @@ public class EditMealScreen extends Stage {
 		});
 	}
 
+	private void makePopup(String title, String msg) {
+		if (customPopup != null && customPopup.isShowing()) {
+			customPopup.close();
+		}
+		customPopup = new PopUp(title, msg);
+	}
+
 	/**
-	 * @param newMeal
+	 * @param weight
 	 * @return
 	 */
-	private boolean exceedsDroneWeightCapacity(Meal newMeal) {
-		return newMeal.getWeight() > ui_Setup.curSetup.getDroneWeight();
+	private boolean exceedsDroneWeightCapacity(int weight) {
+		return weight > ui_Setup.curSetup.getDroneWeight();
 	}
 
 	/**
@@ -202,7 +182,7 @@ public class EditMealScreen extends Stage {
 	 * @return
 	 */
 	private boolean isValidProbabiltiy(Double probability) {
-		return probability <= 0.0;
+		return probability < 0.0;
 	}
 
 	/**
@@ -214,11 +194,12 @@ public class EditMealScreen extends Stage {
 
 	/**
 	 * returns -1 if malformed, else the given value
+	 * 
 	 * @return
 	 */
 	private Double getProbability() {
 		Double probability = -1.0;
-		
+
 		try {
 			probability = Double.parseDouble(editProbabilityTF.getText());
 		} catch (Exception e) {
@@ -240,8 +221,7 @@ public class EditMealScreen extends Stage {
 	private boolean isMealNameEntered() {
 		return editNameTF.getText() == null || editNameTF.getText().equals("");
 	}
-	
-	
+
 	/**
 	 * refresh the meal list view with new content
 	 */
@@ -249,9 +229,6 @@ public class EditMealScreen extends Stage {
 		mealListView.clearListView();
 		mealListView.addMeal(ui_Setup.curSetup.getAllMeals());
 	}
-	
-	
-	
 
 	/**
 	 * @param selectedMeal
@@ -268,7 +245,7 @@ public class EditMealScreen extends Stage {
 	 * @param selectedMeal
 	 */
 	private void maleScaledProbabilityLabel(Meal selectedMeal) {
-		scaledProbabilityLabel = new Label(selectedMeal.getScaledProbability()*100.0 + "%");
+		scaledProbabilityLabel = new Label(selectedMeal.getScaledProbability() * 100.0 + "%");
 		scaledProbabilityLabel.setMaxWidth(140);
 		scaledProbabilityLabel.setPrefWidth(140);
 	}
@@ -295,7 +272,7 @@ public class EditMealScreen extends Stage {
 	}
 
 	/**
-	 *  create and update the weight label
+	 * create and update the weight label
 	 */
 	private void makeWeightLabel() {
 		weightLabel = new Label();
@@ -310,12 +287,13 @@ public class EditMealScreen extends Stage {
 				weight += food.getWeight();
 			}
 		}
-		
+
 		weightLabel.setText("Weight: " + weight + " (oz)");
 	}
-	
+
 	/**
 	 * put the bottom parts together into a HBox
+	 * 
 	 * @param possibleVBox
 	 * @param selectedVBox
 	 * @param selectionButtons
@@ -334,7 +312,7 @@ public class EditMealScreen extends Stage {
 	 * @return
 	 */
 	private VBox makeAddRemoveVBox() {
-		VBox selectionButtons = new VBox(new Label(""),add, remove);
+		VBox selectionButtons = new VBox(new Label(""), add, remove);
 		selectionButtons.setAlignment(Pos.CENTER);
 		selectionButtons.setSpacing(5);
 		return selectionButtons;
@@ -371,7 +349,7 @@ public class EditMealScreen extends Stage {
 		remove = new Button(">");
 		add.setPrefSize(sizeW, sizeH);
 		remove.setPrefSize(sizeW, sizeH);
-		
+
 		// what happens when add is clicked
 		add.setOnAction(clickedItem -> {
 			Food foodToAdd = possibleFoodsTable.getSelectionModel().getSelectedItem();
@@ -380,7 +358,7 @@ public class EditMealScreen extends Stage {
 				updateWeightLabel();
 			}
 		});
-		
+
 		// what happens when remove is clicked
 		remove.setOnAction(clickedItem -> {
 			int selectedIndex = selectedFoodsTable.getSelectionModel().getSelectedIndex();
@@ -390,7 +368,7 @@ public class EditMealScreen extends Stage {
 			}
 		});
 	}
-	
+
 	String oldval; // for the edit probability to check if it actually changes
 
 	/**
@@ -402,30 +380,31 @@ public class EditMealScreen extends Stage {
 		editProbabilityTF.setMaxWidth(140);
 		editProbabilityTF.setPrefWidth(140);
 		oldval = editProbabilityTF.getText();
-		
-		
+
 		editProbabilityTF.focusedProperty().addListener((observable, oldValue, newValue) -> {
-			if (oldValue != newValue && !oldval.equals(editProbabilityTF.getText())) { // if the current text is not what was the last time selected
+			if (oldValue != newValue && !oldval.equals(editProbabilityTF.getText())) { // if the current text is not
+																						// what was the last time
+																						// selected
 				System.out.println(oldval);
-				 Double probability = -1.0;
-					try {
-						probability = Double.parseDouble(editProbabilityTF.getText());
-					} catch (Exception e) {
-						// if number was malformed
-					}
-					
-					if (isValidProbabiltiy(probability)) { // make sure propability is greater than 0
-						new PopUp("Invalid Probability Error", "Please enter a valid number for your raw probibility. (# > 0)");
-					} else {
-						double scaledProbability = ui_Setup.curSetup.adjustMealProbabilities(probability);
-						scaledProbability *=100;
-						scaledProbabilityLabel.setText(String.format("%.2f%%", scaledProbability));
-					}
-					oldval = editProbabilityTF.getText();
+				Double probability = -1.0;
+				try {
+					probability = Double.parseDouble(editProbabilityTF.getText());
+				} catch (Exception e) {
+					// if number was malformed
+				}
+
+				if (isValidProbabiltiy(probability)) { // make sure propability is greater than 0
+					makePopup("Invalid Probability Error",
+							"Please enter a valid number for your raw probibility. (# > 0)");
+				} else {
+					double scaledProbability = ui_Setup.curSetup.adjustMealProbabilities(probability);
+					scaledProbability *= 100;
+					scaledProbabilityLabel.setText(String.format("%.2f%%", scaledProbability));
+				}
+				oldval = editProbabilityTF.getText();
 			}
-		   
+
 		});
-		
 
 	}
 
@@ -437,14 +416,15 @@ public class EditMealScreen extends Stage {
 		editNameTF.setText(selectedMeal.getName());
 		editNameTF.setMaxWidth(300);
 	}
-	
+
 	/**
 	 * returns a table with two columns (name, weight)
+	 * 
 	 * @param foods
 	 * @return
 	 */
 	public TableView<Food> makeTable(ArrayList<Food> foods) {
-		
+
 		// create the table with it's foods
 		ObservableList<Food> foodsList = FXCollections.observableArrayList(foods);
 		TableView<Food> foodsTable = new TableView<Food>(foodsList);
@@ -471,11 +451,10 @@ public class EditMealScreen extends Stage {
 		// add columns to table
 		foodsTable.getColumns().add(NameCol);
 		foodsTable.getColumns().add(WeightCol);
-		
+
 		// set table constraints
 		foodsTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-		
-		
+
 		return foodsTable;
 	}
 }
