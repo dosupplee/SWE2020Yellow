@@ -22,6 +22,7 @@ public class KnapsackPacker
 		numSkipped = 0;
 	}
 	
+
 	
 	/*
 	 * Uses Knapsack packing algorithm to find most efficient packing of orderBacklog
@@ -31,6 +32,8 @@ public class KnapsackPacker
 	 */
 	public ArrayList<Order> pack(ArrayList<Order> orderBacklog) 
 	{	
+
+		
 		 int orderCountAdjust = 0; //Place on the backlog to start looking at new orders
 		
 		 //If we already skipped orders last iteration we need to assume those are already in the solution
@@ -118,6 +121,9 @@ public class KnapsackPacker
         //Add previously skipped orders to solution
         if(skippedOrders!=null && ans!=null)
         	ans.addAll(skippedOrders);
+        
+        if(ans==null && skippedOrders == null)
+        	ans = (ArrayList<Order>) skippedOrders.clone();
         
 
         
