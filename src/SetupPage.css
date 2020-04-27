@@ -1,24 +1,33 @@
 .root {
-	-fx-background-color: #DF7861;
+	-fx-background-color: #ECDFC8;
 }
 
-
-
+.label {
+	-fx-text-fill: #000000;
+}
 
 .button {
-	-fx-background-color: #ECDFC8;
+	-fx-background-color: #DF7861;
+	-fx-font-weight: bold;
+	-fx-background-radius: 50em;
 }
 
 .button:hover {
-	-fx-background-color: #FCF8E8;
-}
-
-.button:pressed {
 	-fx-background-color: #ECB390;
 }
 
+.button:pressed {
+	-fx-background-color: #FCF8E8;
+}
+
+
+
 .list-cell {
-	-fx-background-color: #ECDFC8;
+	-fx-background-color: #DF7861;
+}
+
+.list-cell:filled:selected {
+	-fx-background-color: #DF7861;
 }
 
 .list-cell:odd {
@@ -30,11 +39,9 @@
 }
 
 .list-cell:odd:hover {
-	-fx-background-color: #FCF8E8;
-	-fx-text-fill: #FFFFFF;
+	-fx-background-color: #DF7861;
 }
 
 .list-cell:even:hover {
-	-fx-background-color: #FCF8E8;
-	-fx-text-fill: #FFFFFF;
+	-fx-background-color: #DF7861;
 }
