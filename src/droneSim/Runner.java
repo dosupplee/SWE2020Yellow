@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.TreeMap;
 
+import ui.BarChartScreen;
 import ui.XYGraph;
 
 
@@ -125,6 +126,7 @@ public class Runner {
 
 			for (int shift = 0; shift < currentSetup.getNumShifts(); shift++) // for each shift
 			{
+				System.out.println("Shift " + shift + " starting, type: " + type);
 				int created =0;
 				int packed = 0;
 				
@@ -155,7 +157,7 @@ public class Runner {
 							Time timeObj = new Time(time);
 							int oldVal = map.getOrDefault(timeObj, 0);
 							if (oldVal != 0) {
-								System.out.println(oldVal);
+								System.out.println("oldval: " + oldVal);
 							}
 							counter++;
 							map.put(timeObj,  orderBacklog.size() + oldVal);
@@ -212,7 +214,7 @@ public class Runner {
 						 */
 						
 
-						Tuple tripResult = currentSetup.sendDrone(packedOrders);
+						Tuple tripResult = currentSetup.sendDrone(packedOrders,time);
 						int secondsTaken = (int) tripResult.getA(); // get the time the trip took
 						//String pathTaken = (String) tripResult.getB(); //TODO save somewhere
 						ArrayList<Integer> curDeliveryTimes = (ArrayList<Integer>) tripResult.getB(); // list of delivery times in seconds
@@ -296,7 +298,9 @@ public class Runner {
 			avg +=timeVal;
 		}
 		avg = (avg / numOrders);
-		System.out.println("FIFO:" + avg);
+		System.out.println("FIFO avg: " + avg);
+		System.out.println("FIFO max: " + Collections.max(deliveryTimesFifo));
+		System.out.println("FIFO min: " + Collections.min(deliveryTimesFifo));
 		
 		avg = 0;
 		for(int timeVal : deliveryTimesKnapsack)
@@ -304,7 +308,9 @@ public class Runner {
 			avg +=timeVal;
 		}
 		avg = (avg / numOrders);
-		System.out.println("Knapsack:" + avg);
+		System.out.println("Knapsack avg: " + avg);
+		System.out.println("Knapsack max: " + Collections.max(deliveryTimesKnapsack));
+		System.out.println("Knapsack min: " + Collections.min(deliveryTimesKnapsack));
 		
 
 		
@@ -324,6 +330,10 @@ public class Runner {
 		XYGraph xyGraph = new XYGraph("Order #", "Delivery Time (Seconds)", "Delivery Times for FIFO & Knapsack", "Chart of Delivery Times");
 		xyGraph.createDataSet(new String[] {"FIFO","Knapsack"}, deliveryTimesFifo, deliveryTimesKnapsack);
 		xyGraph.showGraph();
+		
+		// create bar chart
+		BarChartScreen barChartScreen = new BarChartScreen(currentSetup);
+		barChartScreen.init(deliveryTimesFifo, deliveryTimesKnapsack);
 		
 		
 		// add results to string builder for output to screen

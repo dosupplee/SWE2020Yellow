@@ -5,10 +5,12 @@ public class Order {
 	
 	private Meal meal;					 // meal ordered
 	private DeliveryPoint deliveryPoint; // location order is delivered too
-	private Time orderTime;			 	// time ordered
-	private Time deliveryTime;		 // time delivered
+	private Time orderTime;			 	 // time ordered
+	private Time deliveryTime;		     // time delivered
+	private int waitTime;				 // time waited in seconds
 	
-	
+
+
 	/**
 	 * Creates an Order
 	 * @param meal
@@ -35,6 +37,20 @@ public class Order {
 		this.deliveryTime = new Time();
 	}
 	
+	
+	/**
+	 * @return the waitTime
+	 */
+	public int getWaitTime() {
+		return waitTime;
+	}
+
+	/**
+	 * @param waitTime the waitTime to set
+	 */
+	public void setWaitTime(int waitTime) {
+		this.waitTime = waitTime;
+	}
 	
 	/**
 	 * @return the meal

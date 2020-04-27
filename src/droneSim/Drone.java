@@ -57,13 +57,17 @@ public class Drone {
 	}
 
 	/**
+	 * TODO adjust for time orderes
+	 *
 	 * Main function to run the algorithm and print the output
+	 * @param time 
 	 * 
 	 * @param ArrayList<DeliveryPoint>
 	 *            containing the fastest path to take
 	 * @return Tuple of time taken and string of best path
 	 */
-	public Tuple runTSP(ArrayList<Order> orders) {
+	public Tuple runTSP(ArrayList<Order> orders, String time) {
+		Time sendTime = new Time(time);
 		String bestPathString = "";
 		orderLocations.clear();
 		bestLengthSoFar = Integer.MAX_VALUE;
@@ -91,7 +95,7 @@ public class Drone {
 //			}
 //
 //			bestPathString += "Home\n\n";
-			times.addAll(getDeliveryTimes());
+			times.addAll(getDeliveryTimes(orders, sendTime));
 		}
 
 		int secondsTaken = calculateTimePartialTrip(bestLengthSoFar, orderLocations.size());
@@ -106,7 +110,7 @@ public class Drone {
 
 	// ------------------------------------------------------------------------------------------
 	// ------------------------------------------------------------------------------------------
-	private ArrayList<Integer> getDeliveryTimes() {
+	private ArrayList<Integer> getDeliveryTimes(ArrayList<Order> orders, Time sendTime) {
 		ArrayList<Integer> deliveryTimes = new ArrayList<>();
 		if (bestPath == null || bestPath.size() == 0) {
 			return deliveryTimes;
@@ -131,6 +135,25 @@ public class Drone {
 			deliveryTime = calculateTimePartialTrip(distance, numStops);
 			deliveryTimes.add(deliveryTime);
 
+		}
+		
+		// adjust for wait time
+		int index = 0;
+		for (DeliveryPoint location : bestPath) {
+			for (Order order : orders) {
+				if (order.getDeliveryPoint().equals(location)) {
+					Time orderTime = order.getOrderTime();
+					Time waitTime = sendTime.subtractTime(orderTime);
+					int waitTimeSeconds = waitTime.getNumberOfSeconds();
+					deliveryTimes.set(index, deliveryTimes.get(index) + waitTimeSeconds);
+					
+					if (waitTimeSeconds < 0) {
+						System.out.println("index: " + index + ", seconds: " + waitTimeSeconds + ", deliv: " + deliveryTimes.get(index) + ", order time: " + order.getOrderTime() + ", sendTime: " + sendTime + ", Order: " + order);
+
+					}
+				}
+			}
+			index++;
 		}
 
 		return deliveryTimes;

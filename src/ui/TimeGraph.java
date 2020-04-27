@@ -10,6 +10,7 @@ import org.jfree.data.time.MovingAverage;
 import org.jfree.data.time.Second;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
+import org.jfree.ui.RefineryUtilities;
 
 import droneSim.Time;
 

@@ -313,6 +313,11 @@ public class Time implements Comparable<Time>{
 		// calculte seconds
 		return (int) ((seconds + startSecond) % 60);
 	}
+	
+	// returns the time amount in seconds
+	public int getNumberOfSeconds() {
+		return startHour*3600 + startMinute*60 + startSecond + (int)seconds;
+	}
 
 	// -------------------
 	// START TIME

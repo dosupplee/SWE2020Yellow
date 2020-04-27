@@ -8,6 +8,7 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.time.MovingAverage;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
+import org.jfree.ui.RefineryUtilities;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
@@ -273,13 +274,13 @@ public class XYGraph extends JFrame {
 		//createMovingAverage(XYDataset source, int series, String name, double period, double skip)
 		XYSeriesCollection fifoAvg = new XYSeriesCollection();
 		fifoAvg.addSeries(seriesFIFO);
-		XYSeries movingAvgF = MovingAverage.createMovingAverage(fifoAvg, 0, "Fifo Average", 250.0, 0.0); // avg of cur series 
+		XYSeries movingAvgF = MovingAverage.createMovingAverage(fifoAvg, 0, "Fifo Average", 500.0, 0.0); // avg of cur series 
 		avgDataset.addSeries(movingAvgF); // add to dataset
 		
 		//createMovingAverage(XYDataset source, int series, String name, double period, double skip)
 		XYSeriesCollection knapAvg = new XYSeriesCollection(); // create the data set used for the knapsack average
 		knapAvg.addSeries(seriesKnapsack); // add data to the dataset
-		XYSeries movingAvgK = MovingAverage.createMovingAverage(knapAvg, 0, "Knapsack Average", 250.0, 0.0); // avg of cur series 
+		XYSeries movingAvgK = MovingAverage.createMovingAverage(knapAvg, 0, "Knapsack Average", 500.0, 0.0); // avg of cur series 
 		avgDataset.addSeries(movingAvgK); // add moving average to dataset
 		
 	}
@@ -318,58 +319,6 @@ public class XYGraph extends JFrame {
 		
 		// create the chart
 		chart = new JFreeChart(chartTitle, JFreeChart.DEFAULT_TITLE_FONT, plot, true);
-
-
-//		/*
-//		 * The ChartFactory.createXYLineChart() creates a new line chart. The parameters
-//		 * of the method are: chart title, X axis label, Y axis label, data, plot
-//		 * orientation, and three flags indicating whether to show legend, tooltips, and
-//		 * URLs.
-//		 */
-//		chart = ChartFactory.createXYLineChart(chartTitle, // title
-//				xTitle, // x axis
-//				yTitle, // y axis
-//				dataset, 
-//				PlotOrientation.VERTICAL, 
-//				true, true, false);
-//		
-//
-//		// Get a reference to the plot in order to customize it.
-//		XYPlot plot = chart.getXYPlot();
-//
-//		/*
-//		 * Set a stroke and a colour for the line of the chart. 
-//		 * XYLineAndShapeRenderer is an object that connects data 
-//		 * points with lines and/or draws shapes at each data point. 
-//		 * The renderer is set with the setRenderer() method.
-//		 * 
-//		 * Can calulate on own though...
-//		 */
-//		XYLineAndShapeRenderer dotRenderer = new XYLineAndShapeRenderer(false, true);
-//		XYLineAndShapeRenderer lineRenderer = new XYLineAndShapeRenderer(true, false);
-////		renderer.setSeriesPaint(0, Color.RED);
-////		renderer.setSeriesStroke(0, new BasicStroke(2.0f));
-//		//plot.setRenderer(dotRenderer);
-//		plot.setRenderer(0, dotRenderer);
-//		plot.setRenderer(1, dotRenderer);
-//		plot.setRenderer(2, lineRenderer);
-//		plot.setRenderer(3, lineRenderer);
-//		
-//		// Sets the background colour of the plot area.
-//		plot.setBackgroundPaint(Color.white);
-//
-//		// Show the grid lines and paint them in black colour.
-//		plot.setRangeGridlinesVisible(true);
-//		plot.setRangeGridlinePaint(Color.BLACK);
-//
-//		plot.setDomainGridlinesVisible(true);
-//		plot.setDomainGridlinePaint(Color.BLACK);
-//
-//		// Remove the border around the legend.
-//		chart.getLegend().setFrame(BlockBorder.NONE);
-//
-//		// Create a chart title with a new font.
-//		chart.setTitle(new TextTitle(chartTitle, new Font("Serif", java.awt.Font.BOLD, 18)));
 
 	}
 	

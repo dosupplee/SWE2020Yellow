@@ -385,7 +385,6 @@ public class EditMealScreen extends Stage {
 			if (oldValue != newValue && !oldval.equals(editProbabilityTF.getText())) { // if the current text is not
 																						// what was the last time
 																						// selected
-				System.out.println(oldval);
 				Double probability = -1.0;
 				try {
 					probability = Double.parseDouble(editProbabilityTF.getText());

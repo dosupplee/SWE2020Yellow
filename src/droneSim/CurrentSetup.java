@@ -8,7 +8,7 @@ import java.util.Scanner;
 
 public class CurrentSetup {
 	// TODO change to not final so the user can update these???
-	private final int numShifts = 50; // number of shifts to simulate
+	private final int numShifts = 5; // number of shifts to simulate
 	private final int numHours = 4; // how many hours there are in a shift
 	private final int[] ordersPerHour = { 38, 45, 60, 30 }; // must be the length of numHours
 
@@ -311,6 +311,18 @@ public class CurrentSetup {
 	// --------------------------------------------
 	// FOOD STUFF
 	// --------------------------------------------
+	
+	/**
+	 * @return the total number of orders simulated
+	 */
+	public int getTotalOrdersSimulated() {
+		int ordersPerShift = 0;
+		for (int numOrders : ordersPerHour) {
+			ordersPerShift += numOrders;
+		}
+		
+		return ordersPerShift*numShifts;
+	}
 
 	/**
 	 * @return allFoods
@@ -548,10 +560,11 @@ public class CurrentSetup {
 
 	/**
 	 * @param orders
+	 * @param time 
 	 * @return Tuple of time taken and string of best path
 	 */
-	public Tuple sendDrone(ArrayList<Order> orders) {
-		return currentDrone.runTSP(orders);
+	public Tuple sendDrone(ArrayList<Order> orders, String time) {
+		return currentDrone.runTSP(orders, time);
 	}
 
 	/**
