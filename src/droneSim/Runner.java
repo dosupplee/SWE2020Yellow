@@ -58,30 +58,7 @@ public class Runner {
 		HashMap<Time, Integer> map = new HashMap<>();
 		
 		
-		/*
-		 * CSV file setup:
-		 * -----------------------------------
-		 * <Frame Title>
-		 * <Chart Title>
-		 * <tAxis Title>
-		 * <yAxis Title>
-		 * <s1 name>,<s2 name>,...,<sn name>
-		 * ###################################
-		 * <h:m:s>,<y>,...,<y>
-		 * <h:m:s>,<y>,...,<y>
-		 * .
-		 * .
-		 * .
-		 * <h:m:s>,<y>,...,<y>
-		 * -----------------------------------
-		 */
-		// create csv log headers
-		csvTextSB.append("Orders Over Time Chart\n");
-		csvTextSB.append("# of Orders vs. Time for " +  currentSetup.getNumShifts() + " shifts\n");
-		csvTextSB.append("Time\n");
-		csvTextSB.append("# of Orders\n");
-		csvTextSB.append("# of Orders\n");
-		csvTextSB.append("########################\n");
+		createCSVheader();
 		
 		
 		// generate all orders to XML
@@ -372,6 +349,36 @@ public class Runner {
 		simRunning = false;
 		Tuple results = new Tuple(displayTextSB, csvTextSB);
 		return results;
+	}
+
+	/**
+	 * 
+	 */
+	private void createCSVheader() {
+		/*
+		 * CSV file setup:
+		 * -----------------------------------
+		 * <Frame Title>
+		 * <Chart Title>
+		 * <tAxis Title>
+		 * <yAxis Title>
+		 * <s1 name>,<s2 name>,...,<sn name>
+		 * ###################################
+		 * <h:m:s>,<y>,...,<y>
+		 * <h:m:s>,<y>,...,<y>
+		 * .
+		 * .
+		 * .
+		 * <h:m:s>,<y>,...,<y>
+		 * -----------------------------------
+		 */
+		// create csv log headers
+		csvTextSB.append("Orders Over Time Chart\n");
+		csvTextSB.append("# of Orders vs. Time for " +  currentSetup.getNumShifts() + " shifts\n");
+		csvTextSB.append("Time\n");
+		csvTextSB.append("# of Orders\n");
+		csvTextSB.append("# of Orders\n");
+		csvTextSB.append("########################\n");
 	}
 	
 	public boolean isRunning() {
