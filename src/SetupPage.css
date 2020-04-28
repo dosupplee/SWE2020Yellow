@@ -2,13 +2,33 @@
 	-fx-background-color: #ECDFC8;
 }
 
+.menu-bar {
+	-fx-background-color: #DF7861;
+}
+
+.menu {
+	-fx-background-color: #ECB390;
+}
+
+.menu-button:hover {
+	-fx-background-color: #FCF8E8;
+}
+
+.menu-item:hover {
+	-fx-background-color: #ECB390;
+}
+
+.menu-item:focused {
+	-fx-background-color: #ECB390;
+}
+
 .label {
 	-fx-text-fill: #000000;
 }
 
 .button {
 	-fx-background-color: #DF7861;
-	-fx-font-weight: bold;
+	-fx-font-size: 12pt;
 	-fx-background-radius: 50em;
 }
 
@@ -21,6 +41,10 @@
 }
 
 
+
+.combo-box {
+	-fx-background-color: #ECB390;
+}
 
 .list-cell {
 	-fx-background-color: #DF7861;
