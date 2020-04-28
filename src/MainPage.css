@@ -1,20 +1,25 @@
 .root {
-	-fx-background-color: #DF7861;
-}
-
-
-
-
-.button {
 	-fx-background-color: #ECDFC8;
 }
 
+
+.label {
+	-fx-text-fill: #000000;
+}
+
+
+.button {
+	-fx-background-color: #DF7861;
+	-fx-font-weight: bold;
+	-fx-background-radius: 50em;
+}
+
 .button:hover {
-	-fx-background-color: #FCF8E8;
+	-fx-background-color: #ECB390;
 }
 
 .button:pressed {
-	-fx-background-color: #ECB390;
+	-fx-background-color: #FCF8E8;
 }
 
 

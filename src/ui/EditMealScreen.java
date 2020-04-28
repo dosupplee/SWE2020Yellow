@@ -33,6 +33,8 @@ public class EditMealScreen extends Stage {
 	private HBox probabilityHBox, bottomActionsHBox;
 	private CustomMealListView mealListView;
 	private PopUp customPopup;
+	
+	private Scene editMealScene;
 
 	public EditMealScreen(UI_Setup ui_Setup, CustomMealListView mealListView) {
 		this.ui_Setup = ui_Setup;
@@ -80,7 +82,9 @@ public class EditMealScreen extends Stage {
 		VBox screenBox = makeScreenVBox(selectionHBox);
 
 		screenBox.setAlignment(Pos.CENTER);
-		setScene(new Scene(screenBox, 600, 400));
+		editMealScene = new Scene(screenBox, 600, 400);
+		editMealScene.getStylesheets().add("EditMeal.css");
+		setScene(editMealScene);
 		show();
 	}
 

@@ -1,0 +1,42 @@
+.root {
+	-fx-background-color: #ECDFC8;
+}
+
+.table-cell {
+	-fx-background-color: #DF7861;
+}
+
+.table-row-cell:selected .table-cell {
+	-fx-background-color: #DF7861;
+	/*-fx-text-fill: #000000;*/
+}
+
+.table-cell:odd {
+	-fx-background-color: #ECB390;
+}
+
+.table-cell:even {
+	-fx-background-color: #ECB390;
+}
+
+.table-cell:odd:hover {
+	-fx-background-color: #DF7861;
+}
+
+.table-cell:even:hover {
+	-fx-background-color: #DF7861;
+}
+
+.button {
+	-fx-background-color: #DF7861;
+	-fx-font-weight: bold;
+	-fx-background-radius: 50em;
+}
+
+.button:hover {
+	-fx-background-color: #ECB390;
+}
+
+.button:pressed {
+	-fx-background-color: #FCF8E8;
+}
