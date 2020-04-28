@@ -51,6 +51,8 @@ public class Time implements Comparable<Time>{
 		this.startHour = startHour;
 		this.startMinute = startMinute;
 		this.startSecond = startSecond;
+		seconds = 1;
+		shiftNum = 0;
 	}
 
 	/**
@@ -68,6 +70,18 @@ public class Time implements Comparable<Time>{
 		this.startHour = startHour;
 		this.startMinute = startMinute;
 		this.startSecond = startSecond;
+	}
+	
+	/**
+	 * copy constructor
+	 * @param time
+	 */
+	public Time(Time time) {
+		this.shiftNum = time.shiftNum;
+		this.seconds = time.seconds;
+		this.startHour = time.startHour;
+		this.startMinute = time.startMinute;
+		this.startSecond = time.startSecond;
 	}
 
 	/**
@@ -112,7 +126,7 @@ public class Time implements Comparable<Time>{
 			SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
 			Date date1 = format.parse(time1);
 			Date date2 = format.parse(time2);
-			long difference = date1.getTime() - date2.getTime();
+			long difference = Math.abs(date1.getTime() - date2.getTime());
 			long seconds = difference/1000; // convert from mili-sec to sec
 			
 			newTime = new Time(seconds);
@@ -132,8 +146,10 @@ public class Time implements Comparable<Time>{
 	 */
 	@Override
 	public int compareTo(Time otherTime) {
-		int pseudoTime = (startHour * 60) + startMinute;
-		int otherPseudoTime = (otherTime.startHour * 60) + otherTime.startMinute;
+		//int pseudoTime = (startHour * 60) + startMinute ;
+		//int otherPseudoTime = (otherTime.startHour * 60) + otherTime.startMinute;
+		int pseudoTime = getNumberOfSeconds() + shiftNum;
+		int otherPseudoTime = otherTime.getNumberOfSeconds() + otherTime.shiftNum;
 
 		return pseudoTime - otherPseudoTime;
 	}
@@ -158,6 +174,8 @@ public class Time implements Comparable<Time>{
 				&& this.startSecond == other.startSecond 
 				);
 	}
+	
+	
 	
 	// --------------------------------------------
 	// TIMER STUFF

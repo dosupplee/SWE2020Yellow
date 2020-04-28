@@ -1,18 +1,27 @@
 package ui;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import javax.imageio.ImageIO;
 import droneSim.CurrentSetup;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Side;
 import javafx.scene.Scene;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.CategoryAxis;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
-import javafx.scene.layout.HBox;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 
 public class BarChartScreen extends Stage {
 	private CurrentSetup currentSetup;
@@ -20,9 +29,12 @@ public class BarChartScreen extends Stage {
 	private ArrayList<Integer> fifoTimes;
 	private ArrayList<Integer> knapSackTimes;
 	private BarChart<String, Number> barChart;
+	private MenuBar mb;
+	private Scene scene;
 	private final int NUMBER_OF_BARS = 20; // how many bars to make
 	private int height = 425;
 	private int width = 700;
+
 
 	public BarChartScreen(CurrentSetup currentSetup) {
 		this.currentSetup = currentSetup;
@@ -36,13 +48,16 @@ public class BarChartScreen extends Stage {
 		setTitle(screenTitle);
 
 		makeGraph();
+		
+		makeMenuBar();
 
 		// Creating a Group object
-		HBox root = new HBox(barChart);
-		HBox.setHgrow(barChart, Priority.ALWAYS);
+		VBox root = new VBox(mb, barChart);
+		VBox.setVgrow(barChart, Priority.ALWAYS);
+		
 
 		// Creating a scene object
-		Scene scene = new Scene(root, width, height);
+		scene = new Scene(root, width, height);
 
 		// Setting title to the Stage
 		setTitle("Bar Chart");
@@ -52,6 +67,52 @@ public class BarChartScreen extends Stage {
 
 		// Displaying the contents of the stage
 		show();
+	}
+	
+	public void saveAsPng() {
+        WritableImage image = scene.snapshot(null);
+        
+        FileChooser fileChooser = new FileChooser();
+
+		// Set extension filter
+		FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("PNG files (*.png)",
+				"*.png");
+		fileChooser.getExtensionFilters().add(extFilter);
+
+		// Show save file dialog
+		File file = fileChooser.showSaveDialog(this);
+
+		if (file != null) {
+			try {
+	            ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", file);
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	        }
+		}
+    }
+	
+	private void makeMenuBar() {
+		Menu m = new Menu("File");
+		
+		String saveS = "Save as png";
+		MenuItem m1 = new MenuItem(saveS);	
+
+		// add event
+		m1.setOnAction(onclick -> {
+			saveAsPng();
+		});
+		
+		// add menu items to menu
+		m.getItems().add(m1);
+		
+		// create a menubar
+		mb = new MenuBar();
+
+		// add menu to menubar
+		mb.getMenus().add(m);
+		
+		
+
 	}
 
 	public void makeGraph() {
@@ -114,6 +175,7 @@ public class BarChartScreen extends Stage {
 			}
 			curTime += step;
 		}
+		// uncomment for analysis
 		//System.out.println(String.format("Time: %d, Step: %d, Index: %d, curVal: %d, Amount in Bar: %d", curTime, step, index, curValue, amountInBar));
 
 

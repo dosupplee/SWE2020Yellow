@@ -231,7 +231,7 @@ public class KnapsackPacker
 	
 	public void printNumSkipped()
 	{
-		System.out.println(numSkipped);
+		System.out.println("Number of skipped meals: " + numSkipped);
 		
 	}
 }

@@ -60,14 +60,14 @@ public class Drone {
 	 * TODO adjust for time orderes
 	 *
 	 * Main function to run the algorithm and print the output
-	 * @param time 
+	 * @param currentTime 
 	 * 
 	 * @param ArrayList<DeliveryPoint>
 	 *            containing the fastest path to take
 	 * @return Tuple of time taken and string of best path
 	 */
-	public Tuple runTSP(ArrayList<Order> orders, String time) {
-		Time sendTime = new Time(time);
+	public Tuple runTSP(ArrayList<Order> orders, Time currentTime) {
+		Time sendTime = currentTime;
 		String bestPathString = "";
 		orderLocations.clear();
 		bestLengthSoFar = Integer.MAX_VALUE;
@@ -145,12 +145,16 @@ public class Drone {
 					Time orderTime = order.getOrderTime();
 					Time waitTime = sendTime.subtractTime(orderTime);
 					int waitTimeSeconds = waitTime.getNumberOfSeconds();
-					deliveryTimes.set(index, deliveryTimes.get(index) + waitTimeSeconds);
-					
-					if (waitTimeSeconds < 0) {
-						System.out.println("index: " + index + ", seconds: " + waitTimeSeconds + ", deliv: " + deliveryTimes.get(index) + ", order time: " + order.getOrderTime() + ", sendTime: " + sendTime + ", Order: " + order);
 
-					}
+					waitTimeSeconds += deliveryTimes.get(index);
+					deliveryTimes.set(index, waitTimeSeconds);
+					
+					// set the order delivery time, wait, and send time
+					Time deliveryTimeT = new Time(orderTime);
+					deliveryTimeT.incrementTimerSecond(waitTimeSeconds);
+					order.setDeliveryTime(deliveryTimeT);
+					order.setWaitTime(waitTimeSeconds);
+					order.setDroneSentTime(sendTime);
 				}
 			}
 			index++;

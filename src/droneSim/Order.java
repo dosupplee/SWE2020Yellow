@@ -7,6 +7,8 @@ public class Order {
 	private DeliveryPoint deliveryPoint; // location order is delivered too
 	private Time orderTime;			 	 // time ordered
 	private Time deliveryTime;		     // time delivered
+	private Time droneSentTime;			 // time the drone was sent out
+
 	private int waitTime;				 // time waited in seconds
 	
 
@@ -88,6 +90,21 @@ public class Order {
 	public void setOrderTime(Time orderTime) {
 		this.orderTime = orderTime;
 	}
+	
+	/**
+	 * @return the droneSentTime
+	 */
+	public Time getDroneSentTime() {
+		return droneSentTime;
+	}
+
+	/**
+	 * @param droneSentTime the droneSentTime to set
+	 */
+	public void setDroneSentTime(Time droneSentTime) {
+		this.droneSentTime = droneSentTime;
+	}
+	
 	/**
 	 * @return the deliveryTime
 	 */

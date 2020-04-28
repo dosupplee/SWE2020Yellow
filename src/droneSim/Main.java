@@ -138,7 +138,7 @@ public class Main {
 						 * 
 						 * Increment currentTime accordingly (how long the trip took + recharge of batteries)
 						 */
-						int secondsTaken = (int)currentSetup.sendDrone(packedOrders, "").getA();
+						int secondsTaken = (int)currentSetup.sendDrone(packedOrders, currentTime).getA();
 						
 						//if orders were actually delievered
 						if(secondsTaken !=0)

@@ -274,13 +274,13 @@ public class XYGraph extends JFrame {
 		//createMovingAverage(XYDataset source, int series, String name, double period, double skip)
 		XYSeriesCollection fifoAvg = new XYSeriesCollection();
 		fifoAvg.addSeries(seriesFIFO);
-		XYSeries movingAvgF = MovingAverage.createMovingAverage(fifoAvg, 0, "Fifo Average", 500.0, 0.0); // avg of cur series 
+		XYSeries movingAvgF = MovingAverage.createMovingAverage(fifoAvg, 0, "Fifo Average", 250.0, 0.0); // avg of cur series 
 		avgDataset.addSeries(movingAvgF); // add to dataset
 		
 		//createMovingAverage(XYDataset source, int series, String name, double period, double skip)
 		XYSeriesCollection knapAvg = new XYSeriesCollection(); // create the data set used for the knapsack average
 		knapAvg.addSeries(seriesKnapsack); // add data to the dataset
-		XYSeries movingAvgK = MovingAverage.createMovingAverage(knapAvg, 0, "Knapsack Average", 500.0, 0.0); // avg of cur series 
+		XYSeries movingAvgK = MovingAverage.createMovingAverage(knapAvg, 0, "Knapsack Average", 250.0, 0.0); // avg of cur series 
 		avgDataset.addSeries(movingAvgK); // add moving average to dataset
 		
 	}

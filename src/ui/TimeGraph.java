@@ -10,7 +10,6 @@ import org.jfree.data.time.MovingAverage;
 import org.jfree.data.time.Second;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
-import org.jfree.ui.RefineryUtilities;
 
 import droneSim.Time;
 
@@ -150,7 +149,7 @@ public class TimeGraph extends JFrame {
 				TimeSeries  series = new TimeSeries(curSeries); // create the series
 				
 				for (int val = 0; val < seriesValsT.size(); val++) {
-					series.add(seriesValsT.get(val), seriesValsY.get(s).get(val)); // add (t,y)
+					series.addOrUpdate(seriesValsT.get(val), seriesValsY.get(s).get(val)); // add (t,y)
 				}
 				TimeSeries movingAvg = MovingAverage.createMovingAverage(series, "Average", 1600, 0); // avg of cur series 
 				dataset.addSeries(series); // add to dataset
