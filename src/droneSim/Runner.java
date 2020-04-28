@@ -166,8 +166,7 @@ public class Runner {
 						for (int i = 0; i < newOrders.size(); i++) {
 							Order order = newOrders.get(i);
 						}
-						
-						created += newOrders.size();
+	
 						
 
 						for (int i = 0; i < orderBacklog.size(); i++) {
@@ -179,10 +178,7 @@ public class Runner {
 						} else {
 							packedOrders = fp.pack(orderBacklog);
 						}
-						
-						
-
-						packed += packedOrders.size();
+					
 
 
 
@@ -262,7 +258,8 @@ public class Runner {
 						
 						if(secondsTaken!=0)
 						{
-							incrementMin = Math.round(secondsTaken / 60);
+							//if we had a flight, increment timers by flightTime + drone turn around time
+							incrementMin = Math.round(secondsTaken / 60) + (currentSetup.getDrone().getTurnAroundTime()/60);
 						}
 						// increment timer
 						min += incrementMin;
@@ -288,23 +285,7 @@ public class Runner {
 			}
 		}
 		
-		kp.printNumSkipped();
 		
-		int avg = 0;
-		for(int timeVal : deliveryTimesFifo)
-		{
-			avg +=timeVal;
-		}
-		avg = (avg / numOrders);
-		System.out.println("FIFO:" + avg);
-		
-		avg = 0;
-		for(int timeVal : deliveryTimesKnapsack)
-		{
-			avg +=timeVal;
-		}
-		avg = (avg / numOrders);
-		System.out.println("Knapsack:" + avg);
 		
 
 		
@@ -328,12 +309,12 @@ public class Runner {
 		
 		// add results to string builder for output to screen
 		displayTextSB.append("Simulation Results:\n----");
-		displayTextSB.append("\nTRIP STATS:");
+		displayTextSB.append("\nDRONE TRIP STATS:");
 		
 		if (sumKnapsack > 1) {
-			String fastestS = String.format("\nFastest Time Knapsack: %.3f seconds", fastestTimeKnapsack);
-			String slowestS = String.format("\nSlowest Time Knapsack: %.3f seconds", slowestTimeKnapsack);
-			String avgS = String.format("\nAverage Time Knapsack: %.3f seconds", (sumKnapsack / numOrders));
+			String fastestS = String.format("\nFastest Trip Time Knapsack: %.3f seconds", fastestTimeKnapsack);
+			String slowestS = String.format("\nSlowest Trip Time Knapsack: %.3f seconds", slowestTimeKnapsack);
+			String avgS = String.format("\nAverage Trip Time Knapsack: %.3f seconds", (sumKnapsack / numOrders));
 			
 			//displayTextSB.append("\nSum Knapsack: " + sumKnapsack);
 			displayTextSB.append(fastestS);
@@ -342,15 +323,64 @@ public class Runner {
 		}
 
 		if (sumFIFO > 1) {
-			String fastestS = String.format("\n\nFastest Time FIFO: %.3f seconds", fastestTimeFIFO);
-			String slowestS = String.format("\nSlowest Time FIFO: %.3f seconds", slowestTimeFIFO);
-			String avgS = String.format("\nAverage Time FIFO: %.3f seconds", (sumFIFO / numOrders));
+			String fastestS = String.format("\n\nFastest Trip Time FIFO: %.3f seconds", fastestTimeFIFO);
+			String slowestS = String.format("\nSlowest Trip Time FIFO: %.3f seconds", slowestTimeFIFO);
+			String avgS = String.format("\nAverage Trip Time FIFO: %.3f seconds", (sumFIFO / numOrders));
 			
 			//displayTextSB.append("\n\nSum FIFO: " + sumFIFO);
 			displayTextSB.append(fastestS);
 			displayTextSB.append(slowestS);
 			displayTextSB.append(avgS);
 		}
+		
+		displayTextSB.append("\n\nDELIVERY TIME STATS:\n");
+		
+		double avg = 0;
+		double high = 0;
+		double low = Integer.MAX_VALUE;
+		for(int timeVal : deliveryTimesKnapsack)
+		{
+			avg +=timeVal;
+			if(timeVal>high)
+				high = timeVal;
+			if(timeVal<low)
+				low = timeVal;
+		}
+		avg = (avg / numOrders);
+		
+		String fastestS = String.format("\nFastest Delivery Time Knapsack: %.3f seconds", low);
+		String slowestS = String.format("\nSlowest Delivery Time Knapsack: %.3f seconds", high);
+		String avgS = String.format("\nAverage Delivery Time Knapsack: %.3f seconds\n", avg);
+		
+		displayTextSB.append(fastestS);
+		displayTextSB.append(slowestS);
+		displayTextSB.append(avgS);
+		
+		
+		
+		avg = 0;
+		high = 0;
+		low = Integer.MAX_VALUE;
+		for(int timeVal : deliveryTimesFifo)
+		{
+			avg +=timeVal;
+			if(timeVal>high)
+				high = timeVal;
+			if(timeVal<low)
+				low = timeVal;
+		}
+		avg = (avg / numOrders);
+		
+		fastestS = String.format("\nFastest Delivery Time FIFO: %.3f seconds", low);
+		slowestS = String.format("\nSlowest Delivery Time FIFO: %.3f seconds", high);
+		avgS = String.format("\nAverage Delivery Time FIFO: %.3f seconds", avg);
+		
+		displayTextSB.append(fastestS);
+		displayTextSB.append(slowestS);
+		displayTextSB.append(avgS);
+		
+		
+		
 
 		long stopTime = new Date().getTime();
 		double runTime = (stopTime - startTime) / 1000.0;

@@ -5,9 +5,12 @@ import java.util.ArrayList;
 public class FIFOPacker {
 	
 	private CurrentSetup currentSetup;
+	private double longestDistance;
 	
 	public FIFOPacker(CurrentSetup currentSetup) {
 		this.currentSetup = currentSetup;
+		//longest distance between any two points
+		longestDistance = currentSetup.getCurrentMap().getLongestFlighDistance();
 	}
 	
 	/**
@@ -25,8 +28,13 @@ public class FIFOPacker {
 				
 		// arrayList containing the packed orders with their respective weight
 		ArrayList<Order> packed = new ArrayList<Order>();
-
-		while (orderBacklog.size() > 0 && tripWeight + orderBacklog.get(0).getOrderWeight() <= droneCarryWeight) {
+		
+		//the time to fly the max distance and then drop off food
+		double timePerDestination = (longestDistance * 10) / currentSetup.getDrone().getSpeedMPS() + currentSetup.getDrone().getDropOffTime();
+		
+		int numMaxDestinations = (int) ((currentSetup.getDrone().getMaxFlightTime() * 0.95) / timePerDestination);
+		
+		while (orderBacklog.size() > 0 && tripWeight + orderBacklog.get(0).getOrderWeight() <= droneCarryWeight && packed.size() < numMaxDestinations) {
 			// get the first order to pack
 			Order orderToPack = orderBacklog.remove(0);
 			
