@@ -1,24 +1,57 @@
 .root {
-	-fx-background-color: #DF7861;
-}
-
-
-
-
-.button {
 	-fx-background-color: #ECDFC8;
 }
 
-.button:hover {
+.menu-bar {
+	-fx-background-color: #DF7861;
+}
+
+.menu {
+	-fx-background-color: #ECB390;
+}
+
+.menu-button:hover {
 	-fx-background-color: #FCF8E8;
 }
 
+.menu-item:hover {
+	-fx-background-color: #ECB390;
+}
+
+.menu-item:focused {
+	-fx-background-color: #ECB390;
+}
+
+.label {
+	-fx-text-fill: #000000;
+}
+
+.button {
+	-fx-background-color: #DF7861;
+	-fx-font-size: 12pt;
+	-fx-background-radius: 50em;
+}
+
+.button:hover {
+	-fx-background-color: #ECB390;
+}
+
 .button:pressed {
+	-fx-background-color: #FCF8E8;
+}
+
+
+
+.combo-box {
 	-fx-background-color: #ECB390;
 }
 
 .list-cell {
-	-fx-background-color: #ECDFC8;
+	-fx-background-color: #DF7861;
+}
+
+.list-cell:filled:selected {
+	-fx-background-color: #DF7861;
 }
 
 .list-cell:odd {
@@ -30,11 +63,9 @@
 }
 
 .list-cell:odd:hover {
-	-fx-background-color: #FCF8E8;
-	-fx-text-fill: #FFFFFF;
+	-fx-background-color: #DF7861;
 }
 
 .list-cell:even:hover {
-	-fx-background-color: #FCF8E8;
-	-fx-text-fill: #FFFFFF;
+	-fx-background-color: #DF7861;
 }
