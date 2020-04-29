@@ -68,7 +68,6 @@ public class Drone {
 	 */
 	public Tuple runTSP(ArrayList<Order> orders, Time currentTime) {
 		Time sendTime = currentTime;
-		String bestPathString = "";
 		orderLocations.clear();
 		bestLengthSoFar = Integer.MAX_VALUE;
 
@@ -84,17 +83,6 @@ public class Drone {
 			// visit
 			recursiveFindPath(new ArrayList<DeliveryPoint>(), orderLocations);
 
-			
-			// Print the best path to take as text
-			// also get delivery time for each order
-//			bestPathString += "\n\nFound Best path of distance: " + bestLengthSoFar + " feet";
-//			bestPathString += "\nHome -> ";
-//
-//			for (int i = 0; i < bestPath.size(); i++) {
-//				bestPathString += bestPath.get(i).getName() + " -> ";
-//			}
-//
-//			bestPathString += "Home\n\n";
 			times.addAll(getDeliveryTimes(orders, sendTime));
 		}
 

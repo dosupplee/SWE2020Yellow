@@ -60,13 +60,10 @@ public class MainScreen implements MapComponentInitializedListener {
 		/*
 		 * Main page screen setup
 		 */
-		double screenW = ui_Setup.SCREEN_WIDTH;
-		double screenH = ui_Setup.SCREEN_HEIGHT;
 		int insets = 15;
 		int numColumns = 4;
 		int numRows = 13;
-		double colW = screenW / numColumns;
-		double rowH = screenH / numRows;
+
 
 		// layout for the main page
 		GridPane screenLayoutMain = new GridPane();
@@ -116,16 +113,13 @@ public class MainScreen implements MapComponentInitializedListener {
 
 		// create menu items
 		String selectFileString = "Select Map File";
-		String openGraphFile = "Select Graph File";
 		String saveLogString = "Save Log Output";
 
 		MenuItem mainScreenSelectFileMenuItem = new MenuItem(selectFileString);
-		MenuItem mainScreenSelectGraphFile = new MenuItem(openGraphFile);
 		MenuItem mainScreenSaveLogMenuItem = new MenuItem(saveLogString);
 
 		// add menu item to menu
 		mainPageMenu.getItems().add(mainScreenSelectFileMenuItem);
-		mainPageMenu.getItems().add(mainScreenSelectGraphFile);
 		mainPageMenu.getItems().add(mainScreenSaveLogMenuItem);
 
 		MenuBar mainPageMenuBar = new MenuBar();
@@ -144,10 +138,6 @@ public class MainScreen implements MapComponentInitializedListener {
 			}
 		});
 
-		// graph the selected file
-		mainScreenSelectGraphFile.setOnAction(e -> {
-			ui_Setup.graphingTools.GraphFilePicker(ui_Setup.window);
-		});
 
 		mainScreenSaveLogMenuItem.setOnAction(e -> {
 			if (ui_Setup.runner.getDisplayStringBuilder() != null
@@ -223,11 +213,10 @@ public class MainScreen implements MapComponentInitializedListener {
 				outputLog.appendText("---------------------------------------------------------------------------------------\n");
 				outputLog.appendText("---------------------------------------------------------------------------------------\n\n\n");
 
-				// graph
 
 				// Show save file dialog
 				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd_hh;mm;ss");
-				String fName = "Number of Orders vs Time_ " + format.format(simTime) + "_time graph.csv";
+				String fName = "Simulation Results_ " + format.format(simTime) + "_RAW.csv";
 				File csvFile = new File(fName);
 
 				if (csvFile != null) {
@@ -236,11 +225,6 @@ public class MainScreen implements MapComponentInitializedListener {
 						pWriter.append(logStringBuilder.toString());
 						pWriter.flush();
 						pWriter.close();
-
-						// graph result
-						TimeGraph timeGraph = new TimeGraph();
-						timeGraph.createDataSet(csvFile);
-						timeGraph.showGraph();
 
 					} catch (FileNotFoundException e1) {
 						System.err.println(e1.getMessage());

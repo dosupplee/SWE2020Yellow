@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.TreeMap;
 
 import ui.BarChartScreen;
-import ui.XYGraph;
+import ui.TimeGraph;
 
 public class Runner {
 
@@ -34,7 +34,7 @@ public class Runner {
 	private ArrayList<Integer> deliveryTimesKnapsack;
 
 	private boolean simRunning = false;
-	private StringBuilder csvTextSB;
+	private StringBuilder rawDataTextSB;
 	private StringBuilder displayTextSB;
 
 	/**
@@ -45,14 +45,14 @@ public class Runner {
 		simRunning = true;
 
 		long startTime = new Date().getTime();
-		csvTextSB = new StringBuilder(); // text to save to log file
+		rawDataTextSB = new StringBuilder(); // text to save to csv file
 		displayTextSB = new StringBuilder(); // text to display to log screen
+		
+		// create the csv header
+		createRawDataCSVheader();
 
 		// Hash map of (time -> numOrders)
 		HashMap<Time, Integer> map = new HashMap<>();
-
-		// create the csv header
-		createCSVheader();
 
 		// generate all orders to XML
 		XMLOrderGenerator gen = new XMLOrderGenerator(currentSetup);
@@ -144,21 +144,24 @@ public class Runner {
 																										// delivery
 																										// times in
 																										// seconds
-						/*
-						 * for (Order order : packedOrders) {
-							if (order.getWaitTime() > 6000) {
-								System.out.println("Packing type: " + type + "\t\tShift: " + shift + "\tOrdered at: " + order.getOrderTime() + "\tSent at: "+ order.getDroneSentTime() + "\tDelivered at: " + order.getDeliveryTime() + "\tWait time: " + order.getWaitTime() + "\t\tDelivered to: " + order.getDeliveryPoint().getName());
-
-							}
-
-						}*/
+						
+						
 						// if no delivery made, dont update stats
 						if (secondsTaken != 0) {
+							String packingMethod = "null";
+							
 							// add the delivery times
 							if (packagerType == Packager.Knapsack) {
 								deliveryTimesKnapsack.addAll(curDeliveryTimes);
+								packingMethod = "KNAPSACK";
 							} else if (packagerType == Packager.FIFO) {
 								deliveryTimesFifo.addAll(curDeliveryTimes);
+								packingMethod = "FIFO";
+							}
+							
+							// append to csv string builder
+							for (Order order : packedOrders) {
+								rawDataTextSB.append(packingMethod +"," + shift + "," + order.getOrderTime() + "," +  order.getDroneSentTime() + "," + order.getDeliveryTime() + "," + order.getWaitTime() + "," + order.getDeliveryPoint().getName() + "\n");
 							}
 						}
 
@@ -201,24 +204,30 @@ public class Runner {
 		// -------------------------------------------------
 		getTimeStatistics(); // avg, long, short
 
-		// print map to file
-		// TreeMap to store sorted values of HashMap
-		TreeMap<Time, Integer> sorted = new TreeMap<>(map);
-		for (Time t : sorted.keySet()) {
-			csvTextSB.append(t.toString() + "," + sorted.get(t) + "\n");
-		}
-
-		// create xy chart
-		//createDeliveryTImeChart();
 
 		// create bar chart
 		createBarChart();
 
+		// set display text
 		appentResultsToCSV(startTime, numOrders);
+		
+		// create order chart
+		createOrderChart(map);
 
 		simRunning = false;
-		Tuple results = new Tuple(displayTextSB, csvTextSB);
+		Tuple results = new Tuple(displayTextSB, rawDataTextSB);
 		return results;
+	}
+
+	/**
+	 * @param map
+	 */
+	private void createOrderChart(HashMap<Time, Integer> map) {
+		// TreeMap to store sorted values of HashMap by time
+		TreeMap<Time, Integer> sortedOrders = new TreeMap<>(map);
+		TimeGraph timeGraph = new TimeGraph();
+		timeGraph.createDataSet(sortedOrders, currentSetup.getNumShifts());
+		timeGraph.showGraph();
 	}
 
 	/**
@@ -264,15 +273,6 @@ public class Runner {
 		barChartScreen.init(deliveryTimesFifo, deliveryTimesKnapsack);
 	}
 
-	/**
-	 * 
-	 */
-	private void createDeliveryTImeChart() {
-		XYGraph xyGraph = new XYGraph("Order #", "Delivery Time (Seconds)", "Delivery Times for FIFO & Knapsack",
-				"Chart of Delivery Times");
-		xyGraph.createDataSet(new String[] { "FIFO", "Knapsack" }, deliveryTimesFifo, deliveryTimesKnapsack);
-		xyGraph.showGraph();
-	}
 
 	/**
 	 * calculates the average, shortest, and longest delivery times
@@ -299,20 +299,8 @@ public class Runner {
 	/**
 	 * 
 	 */
-	private void createCSVheader() {
-		/*
-		 * CSV file setup: ----------------------------------- <Frame Title> <Chart
-		 * Title> <tAxis Title> <yAxis Title> <s1 name>,<s2 name>,...,<sn name>
-		 * ################################### <h:m:s>,<y>,...,<y> <h:m:s>,<y>,...,<y> .
-		 * . . <h:m:s>,<y>,...,<y> -----------------------------------
-		 */
-		// create csv log headers
-		csvTextSB.append("Orders Over Time Chart\n");
-		csvTextSB.append("# of Orders vs. Time for " + currentSetup.getNumShifts() + " shifts\n");
-		csvTextSB.append("Time\n");
-		csvTextSB.append("# of Orders\n");
-		csvTextSB.append("# of Orders\n");
-		csvTextSB.append("########################\n");
+	private void createRawDataCSVheader() {
+		rawDataTextSB.append("Packing Method,Shift,Order Time,Drone Send Time,Delivery Time,Wait Time (seconds),Delivery Location\n");
 	}
 
 	public boolean isRunning() {
@@ -324,7 +312,7 @@ public class Runner {
 	}
 
 	public StringBuilder getLogStringBuilder() {
-		return csvTextSB;
+		return rawDataTextSB;
 	}
 
 	public StringBuilder getDisplayStringBuilder() {

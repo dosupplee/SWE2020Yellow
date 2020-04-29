@@ -14,12 +14,10 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import javafx.stage.FileChooser;
-import javafx.stage.Stage;
 
 public class GraphingTools {
 
-	public final String TIME_GRAPH_ENDING = "_time graph.csv";
+	public final String TIME_GRAPH_ENDING = "_RAW.csv";
 	public final String XY_GRAPH_ENDING = "_xy graph.csv";
 	public final String RESULTS_TXT = "Simulation Results.txt";
 
@@ -45,37 +43,6 @@ public class GraphingTools {
 
 	}
 
-	/**
-	 * Opens a file chooser dialog Graphs either a time graph or a XY graph
-	 * 
-	 * @param stage
-	 */
-	public void GraphFilePicker(Stage stage) {
-		FileChooser fileChooser = new FileChooser();
-		FileChooser.ExtensionFilter fileExtensions = new FileChooser.ExtensionFilter(
-				TIME_GRAPH_ENDING + ", " + XY_GRAPH_ENDING, "*.csv");
-		fileChooser.getExtensionFilters().add(fileExtensions);
-
-		File selectedFile = fileChooser.showOpenDialog(stage);
-
-		if (selectedFile != null) { // if a file was selected
-
-			// make sure valid file type
-			String fileName = selectedFile.getName();
-
-			if (fileName.toLowerCase().endsWith(TIME_GRAPH_ENDING)) { // a time graph
-				TimeGraph tGraph = new TimeGraph();
-				tGraph.createDataSet(selectedFile);
-				tGraph.showGraph();
-			} else if (fileName.toLowerCase().endsWith(XY_GRAPH_ENDING)) { // an xy graph
-				XYGraph xYGraph = new XYGraph();
-				xYGraph.createDataSet(selectedFile);
-				xYGraph.showGraph();
-			} else { // wrong file type
-				System.err.println("ERROR: Invalid File Name");
-			}
-		}
-	}
 
 	/**
 	 * Returns the names of the graph files and sim results file in the current

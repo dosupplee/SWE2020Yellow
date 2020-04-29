@@ -22,6 +22,7 @@ import java.io.FileNotFoundException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.TreeMap;
 
 public class TimeGraph extends JFrame {
 	
@@ -58,153 +59,52 @@ public class TimeGraph extends JFrame {
 		this.frameTitle = "Time vs. y";
 	}
 
+
 	
-
-
 	/**
-	 * Creates an XY data set to be ploted
-	 * Takes in a csvFile
-	 * 
-	 * CSV file setup:
-	 * -----------------------------------
-	 * <Frame Title>
-	 * <Chart Title>
-	 * <tAxis Title>
-	 * <yAxis Title>
-	 * <s1 name>,<s2 name>,...,<sn name>
-	 * ###################################
-	 * <h:m:s>,<y>,...,<y>
-	 * <h:m:s>,<y>,...,<y>
-	 * .
-	 * .
-	 * .
-	 * <h:m:s>,<y>,...,<y>
-	 * -----------------------------------
-	 * 
-	 * 
-	 * @return
+	 * creates the series to be plottes
+	 * @param values
+	 * @param numShifts
 	 */
-	public void createDataSet(File csvFile) {
-		String[] seriesNames; // names of ty sets
-		ArrayList<Second> seriesValsT = new ArrayList<>(); // t values
-		ArrayList<ArrayList<Integer>> seriesValsY = new ArrayList<>(); // y values
+	public void createDataSet(TreeMap<Time, Integer> values, int numShifts) {
+		
 		dataset = new TimeSeriesCollection (); // the data set of all the series
 		avgDataSet = new TimeSeriesCollection();
+
+
+		// -------------------------
+		// set title and headers
+		// -------------------------
+		frameTitle = "Orders Over Time Chart"; // frame title
+		chartTitle = "# of Orders vs. Time for " + numShifts + " shifts\n"; // chart title
+		tTitle = "Time"; // t axis title
+		yTitle = "# of Orders"; // y axis title
+
 		
-		try {
-			Scanner fileScn = new Scanner(csvFile);
-			
-			// -------------------------
-			// get title and headers
-			// -------------------------
-			frameTitle = fileScn.nextLine().trim(); // frame title
-			chartTitle = fileScn.nextLine().trim(); // chart title
-			tTitle     = fileScn.nextLine().trim(); // t axis title
-			yTitle     = fileScn.nextLine().trim(); // y axis title
-			seriesNames = fileScn.nextLine().trim().split(","); // series names
-			fileScn.nextLine(); // skip the blank line
 
-			// -------------------------
-			// intialise the y series
-			// -------------------------
-			for (int i = 0; i < seriesNames.length; i++) {
-				seriesValsY.add(new ArrayList<Integer>());
-			}
-			
-			// -------------------------
-			// extract the t,y series
-			// -------------------------			
-			while (fileScn.hasNextLine()) {
-				// get line and seperate values
-				String curLine = fileScn.nextLine();
-				String[] line = curLine.split(",", -1); 
-				
-				// parse time
-				String timeS = line[0].trim();
-				Time t = new Time(timeS);
-				// Create a Second object
-				Second curSec = new Second(t.getStartSecond(), t.getStartMinute(), t.getStartHour(), 1, 1, 2020);
-				seriesValsT.add(curSec);
-				
-				for (int i = 1; i < line.length; i++) { // start at first value after time
-					if (!line[i].trim().equals("")) {  // if not empty
-						// parse value
-						Integer y = Integer.parseInt(line[i].trim());
-						
-						// add value to series
-						seriesValsY.get(i - 1).add(y);
-						//seriesValsY.get(i-1).addor
-					}
-				}
-			}
-			
-			// close the file
-			fileScn.close();
-			
-			// -------------------------
-			// add the t,y series to dataset
-			// -------------------------
-			for (int s = 0; s < seriesNames.length; s++) {
-				String curSeries = seriesNames[s].trim(); // get the name
-				TimeSeries  series = new TimeSeries(curSeries); // create the series
-				
-				for (int val = 0; val < seriesValsT.size(); val++) {
-					series.addOrUpdate(seriesValsT.get(val), seriesValsY.get(s).get(val)); // add (t,y)
-				}
-				TimeSeries movingAvg = MovingAverage.createMovingAverage(series, "Average", 1600, 0); // avg of cur series 
-				dataset.addSeries(series); // add to dataset
-				avgDataSet.addSeries(movingAvg); // add to dataset
-			}
-
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		// -------------------------
+		// intialise and extract the t,y series
+		// -------------------------
+		String seriesName = "# of orders";
+		TimeSeries series = new TimeSeries(seriesName);
+		
+		// add data to series
+		for (Time t : values.keySet()) {
+			Second curSec = new Second(t.getStartSecond(), t.getStartMinute(), t.getStartHour(), 1, 1, 2020);
+			Integer numOrders = values.get(t);
+			series.addOrUpdate(curSec, numOrders); // add (t,y)
 		}
+		
+		// create moving average series
+		TimeSeries movingAvg = MovingAverage.createMovingAverage(series, "Average", 1600, 0); // avg of cur series
+		dataset.addSeries(series); // add to dataset
+		avgDataSet.addSeries(movingAvg); // add to dataset
 	}
+	
 
 	
-	/**
-	 * Creates an TY data set to be ploted
-	 * @param seriesNames
-	 * 	- String array
-	 * @param seriesValsT
-	 * 	- Time array
-	 * @param seriesValsY
-	 *  - int array
-	 */
-	public void createDataSet(String[] seriesNames, Time[] seriesValsT, int[][] seriesValsY) {
-		// initialise the dataset
-		dataset = new TimeSeriesCollection ();
-		
-		// unpack the inputed series
-		for (int i = 0; i < seriesNames.length; i++) {
-			String curSeries = seriesNames[i]; // get the name
-			TimeSeries  series = new TimeSeries(curSeries); // create the current series
-			
-			for (int j = 0; j < seriesValsT.length; j++) {
-				Second curSec = new Second(seriesValsT[j].getStartSecond(), seriesValsT[j].getStartMinute(), seriesValsT[j].getStartHour(), 1, 1, 2020);
-				series.add(curSec, seriesValsY[i][j]);
-			}
-			
-			// add series to dataset
-			dataset.addSeries(series);
-		}
-	}
 	
 	private void createChart() {
-
-		/*
-		 * The ChartFactory.createXYLineChart() creates a new line chart. The parameters
-		 * of the method are: chart title, X axis label, Y axis label, data, plot
-		 * orientation, and three flags indicating whether to show legend, tooltips, and
-		 * URLs.
-		 */
-//		chart = ChartFactory.createScatterPlot(
-//				chartTitle, // title
-//				tTitle, // x axis
-//				yTitle, // y axis
-//				dataset);
-		
 		
 		NumberAxis rangeAxis = new NumberAxis();
 		// format time axis
