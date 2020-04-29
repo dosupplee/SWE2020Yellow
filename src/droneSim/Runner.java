@@ -95,6 +95,8 @@ public class Runner {
 					// while either is one of the first three hours or is the final hour and have
 					// finished all orders
 					while ((min < 60 && hour <= 2) || ((min < 60 || canStopLastHour == false) && hour == 3)) {
+						
+						
 						String time = Integer.toString(hour) + ":" + Integer.toString(min) + ":00";
 
 						// grab new orders from parser
@@ -170,7 +172,7 @@ public class Runner {
 						 */
 
 						// if have gotten the last few orders from that shift
-						if (hour == 3 && min >= 60 && packedOrders.size() == 0) {
+						if (hour == 3 && min >= 60 && orderBacklog.size() == 0) {
 							canStopLastHour = true;
 						}
 
@@ -182,9 +184,12 @@ public class Runner {
 							//if we had a flight, increment timers by flightTime + drone turn around time
 							incrementMin = Math.round(secondsTaken / 60) + (currentSetup.getDrone().getTurnAroundTime()/60);
 						}
+						
+						
 						// increment timer
 						min += incrementMin;
 						currentTime.incrementTimerMinute(incrementMin);
+						
 					}
 				}
 
