@@ -105,29 +105,33 @@ public class CurrentSetup {
 		addFood(new Food("French Fries", 4));
 
 		// Create some basic meal stuffs ArrayList<Meal>
-		Meal comboMeal = new Meal("Combo Meal", 0.55);
+		Meal comboMeal = new Meal("Combo Meal", 0.50);
 		comboMeal.addFood(getFood(0));
 		comboMeal.addFood(getFood(1));
 		comboMeal.addFood(getFood(2));
 		addMeal(comboMeal);
 
-		Meal comboMealPlus = new Meal("Combo Meal Plus", 0.1);
+		Meal comboMealPlus = new Meal("Combo Meal Plus", 0.2);
 		comboMealPlus.addFood(getFood(0));
 		comboMealPlus.addFood(getFood(0));
 		comboMealPlus.addFood(getFood(1));
 		comboMealPlus.addFood(getFood(2));
 		addMeal(comboMealPlus);
 		
-		Meal comboMealDrinkless = new Meal("Combo Meal - No Drink", 0.2);
+		Meal comboMealDrinkless = new Meal("Combo Meal - No Drink", 0.15);
 		comboMealDrinkless.addFood(getFood(0));
 		comboMealDrinkless.addFood(getFood(2));
 		addMeal(comboMealDrinkless);
 		
-		Meal comboMealPlusDrinkless = new Meal("Combo Meal Plus - No Drink", 0.15);
+		Meal comboMealPlusDrinkless = new Meal("Combo Meal Plus - No Drink", 0.10);
 		comboMealPlusDrinkless.addFood(getFood(0));
 		comboMealPlusDrinkless.addFood(getFood(0));
 		comboMealPlusDrinkless.addFood(getFood(2));
 		addMeal(comboMealPlusDrinkless);
+		
+		Meal midnightSnack = new Meal("Midnight Snack", 0.05);
+		midnightSnack.addFood(getFood(2));
+		addMeal(midnightSnack);
 		
 	
 
@@ -138,7 +142,7 @@ public class CurrentSetup {
 		addDeliveryPoint(new DeliveryPoint(0, 5, "HAL"));
 		addDeliveryPoint(new DeliveryPoint(-2, -8, "STEM"));
 		addDeliveryPoint(new DeliveryPoint(9, -15, "Lincoln"));
-		addDeliveryPoint(new DeliveryPoint(9, -6, "Library"));
+		addDeliveryPoint(new DeliveryPoint(9, -16, "Library"));
 
 		setCurrentMap(new Map("mainMap", "C://MapLocation", getDeliveryPoints()));
 	}
@@ -585,6 +589,12 @@ public class CurrentSetup {
 	public void clearFoodsAndMeals() {
 		allFoods.clear();
 		allMeals.clear();
+	}
+	
+	
+	public Drone getDrone()
+	{
+		return currentDrone;
 	}
 	
 

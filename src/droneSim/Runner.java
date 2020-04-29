@@ -116,7 +116,7 @@ public class Runner {
 
 								map.put(timeObj, newOrders.size() + oldVal);
 							}
-							
+
 						}
 
 
@@ -176,8 +176,11 @@ public class Runner {
 
 						int incrementMin = 1;
 
-						if (secondsTaken != 0) {
-							incrementMin = Math.round(secondsTaken / 60);
+						
+						if(secondsTaken!=0)
+						{
+							//if we had a flight, increment timers by flightTime + drone turn around time
+							incrementMin = Math.round(secondsTaken / 60) + (currentSetup.getDrone().getTurnAroundTime()/60);
 						}
 						// increment timer
 						min += incrementMin;
@@ -198,6 +201,7 @@ public class Runner {
 				packagerType = Packager.Knapsack;
 			}
 		}
+
 
 		// -------------------------------------------------
 		// get Stats
@@ -257,6 +261,7 @@ public class Runner {
 		displayTextSB.append(fastestK);
 		displayTextSB.append(slowestK);
 		displayTextSB.append(avgK);
+
 
 		long stopTime = new Date().getTime();
 		double runTime = (stopTime - startTime) / 1000.0;

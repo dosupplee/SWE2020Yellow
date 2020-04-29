@@ -2,6 +2,7 @@ package droneSim;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.lang.Math;
 
 public class Map {
 	private String mapName;		// name of map
@@ -74,6 +75,33 @@ public class Map {
 		}
 		
 		return null;
+	}
+	
+	/*
+	 * 
+	 * 
+	 */
+	public double getLongestFlighDistance()
+	{
+		double longest = 0;
+		for(DeliveryPoint dp : points)
+		{
+			for(DeliveryPoint dp2: points)
+			{
+				if(dp!=dp2)
+				{
+					//a^2 + b^2 = c^2
+					double length = Math.sqrt(Math.pow((Math.abs(dp.getX() - dp2.getX())),2) + Math.pow((Math.abs(dp.getY() - dp2.getY())),2));
+					
+					if(length>longest)
+					{
+						longest = length;
+					}
+				}
+			}
+		}
+		
+		return longest;
 	}
 	
 	

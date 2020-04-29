@@ -1,14 +1,20 @@
+Tue Apr 28 16:30:30 EDT 2020
 Simulation Results:
 ----
-Sum Knapsack: 808009.0
-Fastest Time Knapsack: 342.0
-Slowest Time Knapsack: 180.0
-Average Time Knapsack: 234.2055072463768
+DRONE TRIP STATS:
+Fastest Trip Time Knapsack: 32.000 seconds
+Slowest Trip Time Knapsack: 720.000 seconds
+Average Trip Time Knapsack: 95.388 seconds
 
-Sum FIFO: 808009.0
-Fastest Time FIFO: 342.0
-Slowest Time FIFO: 180.0
-Average Time FIFO: 234.2055072463768
+Fastest Trip Time FIFO: 32.000 seconds
+Slowest Trip Time FIFO: 720.000 seconds
+Average Trip Time FIFO: 95.676 seconds
 ----
-Number of Orders: 3450
-Simulation Took: 6.203 seconds
+Number of Orders Simulated: 8650
+Simulation Took: 17.411 seconds
+
+
+---------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------
+
+

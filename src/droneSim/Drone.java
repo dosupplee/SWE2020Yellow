@@ -49,9 +49,9 @@ public class Drone {
 	public Drone() {
 		this.name = "DefaultDrone";
 		this.weightCapacity = 12 * 16; // in oz
-		this.speed = (int) (20 * 1.5); // 20 mph to 30 ft/sec
+		this.speed = (int) (25 * 1.5); // 20 mph to 30 ft/sec
 		this.maxFlightTime = 20 * 60; // 20 minutes
-		this.turnAroundTime = 3 * 60; // 3 minutes
+		this.turnAroundTime = 2 * 60; // 3 minutes
 		this.dropOffTime = 30; // 30 seconds
 		this.orderLocations = new ArrayList<DeliveryPoint>();
 	}
@@ -167,7 +167,8 @@ public class Drone {
 		}
 		else
 		{
-			return ((distance * 10) / this.speed) + (this.dropOffTime * numStops) + this.turnAroundTime;
+			//this turnAround time was the previous turnAround
+			return ((distance * 10) / this.speed) + (this.dropOffTime * numStops);
 		}
 	}
 
@@ -218,7 +219,7 @@ public class Drone {
 	 *            second delivery point
 	 * @return int of calculated distance
 	 */
-	private int findP2PDistance(DeliveryPoint a, DeliveryPoint b) {
+	public int findP2PDistance(DeliveryPoint a, DeliveryPoint b) {
 		// Use basic 2D distance formula and cast into integer
 		return (int) Math.sqrt(Math.pow(a.getY() - b.getY(), 2) + Math.pow(a.getX() - b.getX(), 2));
 	}

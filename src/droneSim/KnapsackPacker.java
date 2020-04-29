@@ -14,12 +14,15 @@ public class KnapsackPacker
 	public ArrayList<Order> skippedOrders; 
 	private CurrentSetup currentSetup;
 	private int numSkipped;
+	private double longestDistance;
 	
 	public KnapsackPacker(CurrentSetup currentSetup)
 	{
 		this.currentSetup = currentSetup;
 		skippedOrders = new ArrayList<Order>();
 		numSkipped = 0;
+		//longest distance between any two points
+		longestDistance = currentSetup.getCurrentMap().getLongestFlighDistance();
 	}
 	
 	
@@ -211,22 +214,41 @@ public class KnapsackPacker
 	 */
 	public int findLastValidItem(int numStart,ArrayList<Order> arrayList)
 	{
+	
+		int retVal = arrayList.size();
+		
 		//MaxThisCycle is the space that can be filled this cycle while still allowing the next cycle to fulfill any skipped orders
 		double maxThisCycle = ((double) currentSetup.getDroneWeight() * 1.5) - (double)getAllWeight(skippedOrders);
 		int sum = 0;
-		
+		//Make sure that we are not going to violate our weight packing condition
 		for(int i=numStart;i<arrayList.size();i++)
 		{
 			if(sum+arrayList.get(i).getOrderWeight()>maxThisCycle)
 			{
-				return i;
+				retVal = i;
+				break;
 			}
 			else
 			{
 				sum +=arrayList.get(i).getOrderWeight();
 			}
 		}
-		return arrayList.size();
+		
+		
+		//Make sure we are not going to violate our flight time condition
+		
+		//the time to fly the max distance and then drop off food
+		double timePerDestination = (longestDistance * 10) / currentSetup.getDrone().getSpeedMPS() + currentSetup.getDrone().getDropOffTime();
+		
+		//max number of flights possible
+		int numMaxDestinations = (int) ((currentSetup.getDrone().getMaxFlightTime() * 0.95) / timePerDestination);
+		
+		//make sure that number of possible packed items does not exceed max number of destinations, taking into account skipped items
+		if(retVal > numMaxDestinations)
+			retVal = numMaxDestinations;
+		
+		
+		return retVal;
 	}
 	
 	public void printNumSkipped()
