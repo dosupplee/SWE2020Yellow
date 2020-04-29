@@ -143,12 +143,7 @@ public class MainScreen implements MapComponentInitializedListener {
 			if (ui_Setup.runner.getDisplayStringBuilder() != null
 					&& !ui_Setup.runner.getDisplayStringBuilder().toString().equals("")) {
 
-				// zip stats file with the graph file
-
-				// ------------------------------
-				// get the graph file names to save
-				// ------------------------------
-				String[] fileNames = ui_Setup.graphingTools.getGraphFileNames();
+				// zip stats file with the graph file and food settings file
 
 				// ------------------------------
 				// Open File dialog for saving
@@ -176,6 +171,15 @@ public class MainScreen implements MapComponentInitializedListener {
 						pWriter.append(logString);
 						pWriter.flush();
 						pWriter.close();
+						
+						// create a foods setting file
+						File foodSettingFile = new File("Food's in Simulation.csv");
+						ui_Setup.curSetup.saveFoodSettings(foodSettingFile);
+						
+						// ------------------------------
+						// get the graph file names to save
+						// ------------------------------
+						String[] fileNames = ui_Setup.graphingTools.getGraphFileNames();
 
 						// zip them up
 						ui_Setup.graphingTools.zipFiles(fileNames, zip);

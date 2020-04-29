@@ -20,6 +20,7 @@ public class GraphingTools {
 	public final String TIME_GRAPH_ENDING = "_RAW.csv";
 	public final String XY_GRAPH_ENDING = "_xy graph.csv";
 	public final String RESULTS_TXT = "Simulation Results.txt";
+	public final String FOOD_SETTINGS_NAME = "Food's in Simulation.csv";
 
 	/**
 	 * Deletes all the graph files in current directory
@@ -30,7 +31,8 @@ public class GraphingTools {
 		ArrayList<String> lsOutput = lsCommand(); // get contents of directory
 		// filter -> get the graph file names
 		List<String> graphFileNames = lsOutput.stream()
-				.filter(e -> e.endsWith(TIME_GRAPH_ENDING) || e.endsWith(XY_GRAPH_ENDING)).collect(Collectors.toList());
+				.filter(e -> e.endsWith(TIME_GRAPH_ENDING) || e.endsWith(XY_GRAPH_ENDING) || e.endsWith(FOOD_SETTINGS_NAME))
+				.collect(Collectors.toList());
 		
 
 		// delete the files
@@ -54,7 +56,7 @@ public class GraphingTools {
 		ArrayList<String> lsOutput = lsCommand(); // get contents of directory
 		// filter
 		List<String> graphFileNames = lsOutput.stream()
-				.filter(e -> e.endsWith(TIME_GRAPH_ENDING) || e.endsWith(XY_GRAPH_ENDING) || e.endsWith(RESULTS_TXT))
+				.filter(e -> e.endsWith(TIME_GRAPH_ENDING) || e.endsWith(XY_GRAPH_ENDING) || e.endsWith(RESULTS_TXT) || e.endsWith(FOOD_SETTINGS_NAME))
 				.collect(Collectors.toList());
 		
 
