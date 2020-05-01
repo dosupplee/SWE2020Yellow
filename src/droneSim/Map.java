@@ -84,7 +84,7 @@ public class Map {
 			Scanner fileReader = new Scanner(csvMap);
 			
 			//while scanner sees next line loop
-			Boolean first = true;
+			Boolean first = true;	//true for first loop 
 			while (fileReader.hasNextLine()) {
 				if (first) {
 					String []data = fileReader.nextLine().split(",");;
