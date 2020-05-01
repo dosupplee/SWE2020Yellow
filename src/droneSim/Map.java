@@ -42,12 +42,57 @@ public class Map {
 	
 	//TODO
 	public void saveMap() {}
+	
+	
+	/**
+	 * Loads map 
+	 * @param mapName
+	 * @param fileAddress
+	 */
 	public void loadMap(String mapName, String fileAddress) {
 		// save current map
 		saveMap();
 		this.mapName = mapName;
 		this.fileAddress = fileAddress;
-		// TODO get file access and delivery points
+		File csvMap = new File(fileAddress); // open file
+		
+		 // if the file does not exist
+		if (!csvMap.exists()) {
+			System.err.println("File not found");
+			return;
+		}
+		//If file does exit try
+		try {
+			//create scanner to read file
+			Scanner fileReader = new Scanner(csvMap);
+			
+			//while scanner sees next line loop
+			while (fileReader.hasNextLine()) {
+				
+				//comma separated file is read
+				String []data = fileReader.nextLine().split(",");;
+				String name = data[0].trim();
+				int x = Integer.parseInt(data[1].trim());
+			    int y = Integer.parseInt(data[2].trim());
+			    
+
+				//New delivery point created and added to map
+			    DeliveryPoint point= new DeliveryPoint(x,y,name);	
+			    addPoint(point);
+			    
+				}
+			//close scanner 
+			fileReader.close();
+			
+		}
+		catch (Exception e) {
+			System.err.println(e.getMessage());
+		}
+	}
+	
+	
+	public ArrayList<DeliveryPoint> getPoints() {
+		return points;
 	}
 	
 	
