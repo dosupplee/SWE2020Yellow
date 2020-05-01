@@ -84,20 +84,29 @@ public class Map {
 			Scanner fileReader = new Scanner(csvMap);
 			
 			//while scanner sees next line loop
+			Boolean first = true;
 			while (fileReader.hasNextLine()) {
-				
-				//comma separated file is read
-				String []data = fileReader.nextLine().split(",");;
-				String name = data[0].trim();
-				int x = Integer.parseInt(data[1].trim());
-			    int y = Integer.parseInt(data[2].trim());
+				if (first) {
+					String []data = fileReader.nextLine().split(",");;
+					String name = data[0].trim();
+					double lat= Double.parseDouble(data[1].trim());
+				    double lon = Double.parseDouble(data[2].trim());
+				    
+				    addPoint(name, lat, lon);
+				}
+				else {
+					//comma separated file is read
+					String []data = fileReader.nextLine().split(",");;
+					String name = data[0].trim();
+					int x = Integer.parseInt(data[1].trim());
+					int y = Integer.parseInt(data[2].trim());
 			    
 
-				//New delivery point created and added to map
-			    DeliveryPoint point= new DeliveryPoint(x,y,name);	
-			    addPoint(point);
-			    
+					//New delivery point created and added to map
+					DeliveryPoint point= new DeliveryPoint(x,y,name);	
+					addPoint(point);
 				}
+			}
 			//close scanner 
 			fileReader.close();
 			
@@ -112,10 +121,6 @@ public class Map {
 		return points;
 	}
 	
-	
-	public ArrayList<DeliveryPoint> getPoints() {
-		return points;
-	}
 	
 	
 	public ArrayList<Tuple> getLatLongPointDoubles() {
