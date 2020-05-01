@@ -318,22 +318,24 @@ public class MainScreen implements MapComponentInitializedListener {
         removeMarkerMenuItem.setOnAction(new EventHandler<ActionEvent>() {
         	@Override
         	public void handle(ActionEvent event) {
-        		boolean alreadyRemoved = false;
-        		
+        		boolean alreadyDelete = false;
         		for (int index = 0; index < pointNames.size(); index++) {
         			double distanceOfPointToClick = 0.0;
-        			Tuple pointDoubles = ui_Setup.curSetup.getCurrentMap().getPointDoubles(index);
-        			LatLong currentPoint = new LatLong(pointDoubles.getLatitude(), pointDoubles.getLongitude());
+        			Tuple pointTuple = ui_Setup.curSetup.getCurrentMap().getPointDoubles(index);
+        			LatLong currentPoint = new LatLong(pointTuple.getLatitude(), pointTuple.getLongitude());
         			
-        			distanceOfPointToClick += rightClickLatLong.getLatitude() -
-        					currentPoint.getLatitude();
-        			distanceOfPointToClick += rightClickLatLong.getLongitude() -
-        					currentPoint.getLongitude();
-        			if (Math.abs(distanceOfPointToClick) < 0.0008 && alreadyRemoved == false) {
+          			distanceOfPointToClick += Math.pow(rightClickLatLong.getLatitude() -
+          					currentPoint.getLatitude(), 2);
+          			distanceOfPointToClick += Math.pow(rightClickLatLong.getLongitude() -
+          					currentPoint.getLongitude(), 2);
+          			
+          			distanceOfPointToClick = Math.sqrt(distanceOfPointToClick) * 1000;
+          			
+        			if (Math.abs(distanceOfPointToClick) < 0.1 && alreadyDelete == false) {
         				System.out.println("Distance found: " + distanceOfPointToClick);
         				ui_Setup.curSetup.getCurrentMap().deletePoint(index);
         				pointNames.remove(index);
-        				alreadyRemoved = true;
+        				alreadyDelete = true;
         			}
         		}
         		
@@ -344,7 +346,7 @@ public class MainScreen implements MapComponentInitializedListener {
         			
         			LatLong currentPoint = new LatLong(pointDoubles.getLatitude(), pointDoubles.getLongitude());
         			MarkerOptions markerOptions = new MarkerOptions()
-        					.position( currentPoint)
+        					.position(currentPoint)
         	                .visible(Boolean.TRUE)
         	                .title(pointNames.get(updatedIndex));
         	
