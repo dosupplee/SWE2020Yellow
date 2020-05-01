@@ -4,10 +4,13 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 import com.lynden.gmapsfx.GoogleMapView;
 import com.lynden.gmapsfx.MapComponentInitializedListener;
+import com.lynden.gmapsfx.javascript.event.GMapMouseEvent;
+import com.lynden.gmapsfx.javascript.event.UIEventType;
 import com.lynden.gmapsfx.javascript.object.GoogleMap;
 import com.lynden.gmapsfx.javascript.object.LatLong;
 import com.lynden.gmapsfx.javascript.object.MapOptions;
@@ -16,17 +19,21 @@ import com.lynden.gmapsfx.javascript.object.Marker;
 import com.lynden.gmapsfx.javascript.object.MarkerOptions;
 
 import droneSim.Tuple;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
@@ -45,6 +52,8 @@ public class MainScreen implements MapComponentInitializedListener {
 	private UI_Setup ui_Setup;
 	private GoogleMapView mapView;
 	private GoogleMap map;
+	LatLong rightClickLatLong;
+	ArrayList<String> pointNames = new ArrayList<String>();
 
 	public MainScreen(UI_Setup ui_Setup) {
 		this.ui_Setup = ui_Setup;
@@ -265,8 +274,104 @@ public class MainScreen implements MapComponentInitializedListener {
 		// ---------------------------------
 		// GOOGLE MAPS VIEW
 		// ---------------------------------
-		mapView = new GoogleMapView();
+		//Create the JavaFX component and set this as a listener so we know when 
+	    //the map has been initialized, at which point we can then begin manipulating it.
+	    mapView = new GoogleMapView();
 	    mapView.addMapInializedListener(this);
+	    
+        ContextMenu mapContextMenu = new ContextMenu();
+ 
+        MenuItem addMarkerMenuItem = new MenuItem("Add Marker");
+        MenuItem removeMarkerMenuItem = new MenuItem("Remove Nearby Marker");
+        MenuItem reloadPageMenuItem = new MenuItem("Reload Map");
+        
+        addMarkerMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+        	    
+        	    PopUp inputPopUp = new PopUp("Delivery Point Name");
+        	    
+        	    inputPopUp.getInputBox().setOnAction(new EventHandler<ActionEvent>() { 
+                    public void handle(ActionEvent e) { 
+                    	String newPointName = inputPopUp.getInputBox().getText();
+                    	
+                    	ui_Setup.curSetup.getCurrentMap().addPoint(
+                    			newPointName, rightClickLatLong.getLatitude(), rightClickLatLong.getLongitude());
+                    	pointNames.add(newPointName);
+                    	
+                    	MarkerOptions markerOptions = new MarkerOptions().position( rightClickLatLong )
+            	                .visible(Boolean.TRUE)
+            	                .title(newPointName);
+            	
+                    	Marker marker = new Marker( markerOptions );
+                	    map.addMarker(marker);
+                    	inputPopUp.hide();
+                    } 
+                });
+        	    
+        	    int currentZoom = map.getZoom();
+                map.setZoom( currentZoom - 1 );
+                map.setZoom( currentZoom );
+            }
+        });
+        
+        removeMarkerMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+        	@Override
+        	public void handle(ActionEvent event) {
+        		boolean alreadyRemoved = false;
+        		
+        		for (int index = 0; index < pointNames.size(); index++) {
+        			double distanceOfPointToClick = 0.0;
+        			Tuple pointDoubles = ui_Setup.curSetup.getCurrentMap().getPointDoubles(index);
+        			LatLong currentPoint = new LatLong(pointDoubles.getLatitude(), pointDoubles.getLongitude());
+        			
+        			distanceOfPointToClick += rightClickLatLong.getLatitude() -
+        					currentPoint.getLatitude();
+        			distanceOfPointToClick += rightClickLatLong.getLongitude() -
+        					currentPoint.getLongitude();
+        			if (Math.abs(distanceOfPointToClick) < 0.0008 && alreadyRemoved == false) {
+        				System.out.println("Distance found: " + distanceOfPointToClick);
+        				ui_Setup.curSetup.getCurrentMap().deletePoint(index);
+        				pointNames.remove(index);
+        				alreadyRemoved = true;
+        			}
+        		}
+        		
+        		map.clearMarkers();
+        		
+        		for (int updatedIndex = 0; updatedIndex < pointNames.size(); updatedIndex++) {
+        			Tuple pointDoubles = ui_Setup.curSetup.getCurrentMap().getPointDoubles(updatedIndex);
+        			
+        			LatLong currentPoint = new LatLong(pointDoubles.getLatitude(), pointDoubles.getLongitude());
+        			MarkerOptions markerOptions = new MarkerOptions()
+        					.position( currentPoint)
+        	                .visible(Boolean.TRUE)
+        	                .title(pointNames.get(updatedIndex));
+        	
+	        	    Marker marker = new Marker( markerOptions );
+
+	        	    map.addMarker(marker);
+        		}
+        	}
+        });
+        
+        reloadPageMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+        	@Override
+        	public void handle(ActionEvent event) {
+        		mapView.getWebview().getEngine().reload();
+        	}
+        });
+        
+        // Add MenuItem to ContextMenu
+        mapContextMenu.getItems().addAll(addMarkerMenuItem, removeMarkerMenuItem, reloadPageMenuItem);
+ 
+        // When user right-click on List View of meals
+        mapView.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
+            @Override
+            public void handle(ContextMenuEvent event) {
+                mapContextMenu.show(ui_Setup.window, event.getScreenX(), event.getScreenY());
+            }
+        });
 
 		// change the size of buttons
 		setupPageButton.setPrefSize(150, 50);
@@ -301,43 +406,44 @@ public class MainScreen implements MapComponentInitializedListener {
 	@Override
 	public void mapInitialized() {
 	    //Set the initial properties of the map.
-	    MapOptions mapOptions = new MapOptions();
+		ArrayList<Tuple> existingPoints = ui_Setup.curSetup.getCurrentMap().getLatLongPointDoubles();
+		MapOptions mapOptions = new MapOptions();
+	    
+		LatLong homePoint = new LatLong(
+    			existingPoints.get(0).getLatitude(), existingPoints.get(0).getLongitude());
+		
+	    mapOptions.center(homePoint)
+	            .mapType(MapTypeIdEnum.ROADMAP)
+	            .overviewMapControl(false)
+	            .panControl(false)
+	            .rotateControl(false)
+	            .scaleControl(false)
+	            .streetViewControl(false)
+	            .zoomControl(false)
+	            .zoom(10);
 	
-	    mapOptions.center(new LatLong(41.1558, -80.0785))
-        .mapType(MapTypeIdEnum.SATELLITE)
-        .overviewMapControl(false)
-        .mapTypeControl(false)
-        .panControl(false)
-        .rotateControl(false)
-        .scaleControl(false)
-        .streetViewControl(false)
-        .zoomControl(false)
-        .zoom(17);
-
-		map = mapView.createMap(mapOptions);
-		
-		//Add a marker to the map
-		MarkerOptions sacMarkerOption = new MarkerOptions();
-		MarkerOptions halMarkerOption = new MarkerOptions();
-		MarkerOptions stemMarkerOption = new MarkerOptions();
-		
-		sacMarkerOption.position( new LatLong(41.1548, -80.0778) )
-		        .visible(Boolean.TRUE)
-		        .title("SAC");
-		halMarkerOption.position( new LatLong(41.1546, -80.0773) )
-				.visible(Boolean.TRUE)
-				.title("HAL");
-		stemMarkerOption.position( new LatLong(41.1553, -80.0789) )
-				.visible(Boolean.TRUE)
-				.title("STEM");
-		
-		Marker sacMarker = new Marker( sacMarkerOption );
-		Marker halMarker = new Marker( halMarkerOption );
-		Marker stemMarker = new Marker( stemMarkerOption );
-		
-		map.addMarker(sacMarker);
-		map.addMarker(halMarker);
-		map.addMarker(stemMarker);
+	    map = mapView.createMap(mapOptions);
+	    
+	    map.addMouseEventHandler(UIEventType.rightclick, (GMapMouseEvent event) -> {
+     	   rightClickLatLong = event.getLatLong();
+     	});
+	    
+	    for (int index = 0; index < existingPoints.size(); index++) {
+	    	pointNames.add(ui_Setup.curSetup.getCurrentMap().getPointName(index));
+	    	
+	    	LatLong pointToAdd = new LatLong(
+	    			existingPoints.get(index).getLatitude(), existingPoints.get(index).getLongitude());
+	    	MarkerOptions markerOptions = new MarkerOptions().position(pointToAdd)
+	                .visible(Boolean.TRUE)
+	                .title(pointNames.get(index));
+	
+        	Marker marker = new Marker( markerOptions );
+        	
+        	map.addMarker(marker);
+	    }
+	    
+	    map.setZoom( 17 );
+	
 	}
 
 }
