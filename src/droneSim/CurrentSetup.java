@@ -8,20 +8,19 @@ import java.util.Scanner;
 
 public class CurrentSetup {
 	// TODO change to not final so the user can update these???
-	private final int numShifts = 5; // number of shifts to simulate
+	private final int numShifts = 50; // number of shifts to simulate
 	private final int numHours = 4; // how many hours there are in a shift
-	private final int[] ordersPerHour = { 38, 45, 60, 30 }; // must be the length of numHours
+	private final int[] ordersPerHour = { 15, 17, 22, 15 }; // must be the length of numHours
 
 	private ArrayList<Meal> allMeals;
 	private ArrayList<Food> allFoods;
-	private ArrayList<DeliveryPoint> points;
+	//private ArrayList<DeliveryPoint> points;
 	private Map currentMap;
 	private Drone currentDrone;
 
 	public CurrentSetup() {
 		allFoods = new ArrayList<>();
 		allMeals = new ArrayList<>();
-		points = new ArrayList<>();
 
 		loadDefaultFoodSettings();
 		loadDefaultDroneSettings();
@@ -45,49 +44,6 @@ public class CurrentSetup {
 	 */
 	public void setCurrentMap(Map map) {
 		currentMap = map;
-	}
-
-	/**
-	 * Add a delivery point
-	 * 
-	 * @param point
-	 */
-	public void addDeliveryPoint(DeliveryPoint point) {
-		points.add(point);
-	}
-
-	/**
-	 * remove point by index
-	 * 
-	 * @param pointIndex
-	 */
-	public void removeDeliveryPoint(int pointIndex) {
-		int indexH = points.size() - 1; // last index
-		if (pointIndex < 0 || pointIndex > indexH) { // check if a valid index
-			return; // TODO throw error??
-		}
-
-		points.remove(pointIndex);
-	}
-
-	/**
-	 * Remove point by object
-	 * 
-	 * @param point
-	 */
-	public void removeDeliveryPoint(DeliveryPoint point) {
-		if (points.contains(point)) {
-			points.remove(point);
-		}
-	}
-
-	/**
-	 * returns all the delivery points
-	 * 
-	 * @return points
-	 */
-	public ArrayList<DeliveryPoint> getDeliveryPoints() {
-		return points;
 	}
 
 	// --------------------------------------------
@@ -139,12 +95,16 @@ public class CurrentSetup {
 
 		// Create some basic point stuffs
 
-		addDeliveryPoint(new DeliveryPoint(0, 5, "HAL"));
-		addDeliveryPoint(new DeliveryPoint(-2, -8, "STEM"));
-		addDeliveryPoint(new DeliveryPoint(9, -15, "Lincoln"));
-		addDeliveryPoint(new DeliveryPoint(9, -16, "Library"));
+		Map newMap = new Map("mainMap", "C://MapLocation");
+		
+		newMap.addPoint("SAC", 41.1548, -80.0778);
+		newMap.addPoint(new DeliveryPoint(-1, 4, "HAL"));
+		newMap.addPoint(new DeliveryPoint(3, -9, "STEM"));
+		newMap.addPoint(new DeliveryPoint(-1, -21, "Lincoln"));
+		newMap.addPoint(new DeliveryPoint(-6, -10, "Library"));
+		newMap.addPoint(new DeliveryPoint(8, -3, "PLC"));
 
-		setCurrentMap(new Map("mainMap", "C://MapLocation", getDeliveryPoints()));
+		setCurrentMap(newMap);
 	}
 
 	/**
@@ -182,7 +142,7 @@ public class CurrentSetup {
 			// FOODS
 			// ------------------
 			if (fileReader.hasNextLine()) {
-				String titlesFood = fileReader.nextLine(); // get the titles (not used)
+				fileReader.nextLine(); // get the titles
 			}
 
 			while (fileReader.hasNextLine() && stillFoods) { // while more foods
@@ -207,8 +167,6 @@ public class CurrentSetup {
 			// ------------------
 			// MEALS
 			// ------------------
-			// get meal titles
-			String titlesMeal = currentLine; // get the titles (not used)
 
 			while (fileReader.hasNextLine() && moreMeals) { // while more foods
 				currentLine = fileReader.nextLine();
@@ -315,7 +273,7 @@ public class CurrentSetup {
 	// --------------------------------------------
 	// FOOD STUFF
 	// --------------------------------------------
-	
+
 	/**
 	 * @return the total number of orders simulated
 	 */
@@ -327,7 +285,7 @@ public class CurrentSetup {
 		
 		return ordersPerShift*numShifts;
 	}
-
+	
 	/**
 	 * @return allFoods
 	 */
@@ -591,12 +549,9 @@ public class CurrentSetup {
 		allMeals.clear();
 	}
 	
-	
 	public Drone getDrone()
 	{
 		return currentDrone;
 	}
-	
-
 
 }

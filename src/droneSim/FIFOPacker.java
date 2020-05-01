@@ -10,7 +10,7 @@ public class FIFOPacker {
 	public FIFOPacker(CurrentSetup currentSetup) {
 		this.currentSetup = currentSetup;
 		//longest distance between any two points
-		longestDistance = currentSetup.getCurrentMap().getLongestFlighDistance();
+		longestDistance = currentSetup.getCurrentMap().getLongestFlightDistance();
 	}
 	
 	/**

@@ -1,23 +1,18 @@
 package droneSim;
 
 import java.util.ArrayList;
-import java.util.Dictionary;
-import java.util.Hashtable;
 import java.util.Random;
-
-import com.lynden.gmapsfx.javascript.object.LatLong;
 
 public class Map {
 	private String mapName;		// name of map
 	private String fileAddress; // file address of current map
 	private ArrayList<DeliveryPoint> points; // delivery locations
 	private ArrayList<Tuple> pointLatLongDoubles;
-	private LatLong homeBase;
 	
 	
 	public Map(String name, String fileAddress) {
 		super();
-		this.mapName = mapName;
+		this.mapName = name;
 		this.fileAddress = fileAddress;
 		this.points = new ArrayList<DeliveryPoint>();
 		this.pointLatLongDoubles = new ArrayList<Tuple>();
@@ -29,9 +24,9 @@ public class Map {
 	 * @param fileAddress
 	 * @param points
 	 */
-	public Map(String mapName, String fileAddress, ArrayList<DeliveryPoint> points) {
+	public Map(String name, String fileAddress, ArrayList<DeliveryPoint> points) {
 		super();
-		this.mapName = mapName;
+		this.mapName = name;
 		this.fileAddress = fileAddress;
 		this.points = points;
 		this.pointLatLongDoubles = new ArrayList<Tuple>();
@@ -61,16 +56,13 @@ public class Map {
 	}
 	
 	
-	public Dictionary<String, LatLong> getPointsInAngularMeasurement() {
-		Dictionary<String, LatLong> convertedPoints = new Hashtable<String, LatLong>();
-		convertedPoints.put(points.get(0).getName(), homeBase);
-		
-		for (int index = 1; index < points.size(); index++) {
-			double calculatedLatitude = homeBase.getLatitude() + convertFeetToAngular(points.get(index).getX());
-			double calculatedLongitude = homeBase.getLongitude() + convertFeetToAngular(points.get(index).getY());
-			convertedPoints.put(points.get(index).getName(), new LatLong(calculatedLatitude, calculatedLongitude));
-		}
-		return convertedPoints;		
+	public ArrayList<Tuple> getLatLongPointDoubles() {
+		return pointLatLongDoubles;
+	}
+	
+	
+	public String getPointName(int index) {
+		return points.get(index).getName();
 	}
 	
 	
@@ -79,29 +71,46 @@ public class Map {
 	}
 	
 	
-	public void addPoint(DeliveryPoint point) {
-		points.add(point);
+	public Tuple getPointDoubles(int index) {
+		return pointLatLongDoubles.get(index);
 	}
 	
-	public void addPoint(String name, LatLong location) {
-		if (pointLatLongDoubles.get(0) == null) {
-			pointLatLongDoubles.add(new Tuple(location.getLatitude(), location.getLongitude()));
+	
+	public void addPoint(DeliveryPoint point) {
+		if (pointLatLongDoubles.size() == 0) {
+			//return error
+		} else {
+			points.add(point);
+			double latitude = pointLatLongDoubles.get(0).getLatitude() +
+					convertFeetToAngular(point.getX() * 50);
+			double longitude = pointLatLongDoubles.get(0).getLongitude() +
+					convertFeetToAngular(point.getY() * 50);
+			
+			Tuple newPointDoubles = new Tuple(latitude, longitude);
+			pointLatLongDoubles.add(newPointDoubles);
+		}
+	}
+	
+	public void addPoint(String name, double latitude, double longitude) {
+		if (pointLatLongDoubles.size() == 0) {
+			pointLatLongDoubles.add(new Tuple(latitude, longitude));
 			points.add(new DeliveryPoint(0,0, name));
 		} else {
-			int newX = convertAngularToFeet(location.getLatitude()) -
+			int newX = convertAngularToFeet(latitude) -
 					convertAngularToFeet(pointLatLongDoubles.get(0).getLatitude());
-			int newY = convertAngularToFeet(location.getLongitude()) -
+			
+			int newY = convertAngularToFeet(longitude) -
 					convertAngularToFeet(pointLatLongDoubles.get(0).getLongitude());
 			
 			points.add(new DeliveryPoint(newX, newY, name));
-			pointLatLongDoubles.add(new Tuple(location.getLatitude(), location.getLongitude()));
+			pointLatLongDoubles.add(new Tuple(latitude, longitude));
 		}
 	}
 	
 	
-	public void deletePoint(DeliveryPoint point) {
-		points.remove(points.indexOf(point));
-		pointLatLongDoubles.remove(points.indexOf(point));
+	public void deletePoint(int index) {
+		points.remove(index);
+		pointLatLongDoubles.remove(index);
 	}
 	
 	
@@ -137,6 +146,26 @@ public class Map {
 		return null;
 	}
 	
+	
+	public double getLongestFlightDistance() {
+		double longest = 0;
+		for (DeliveryPoint dp : points) {
+			for (DeliveryPoint dp2 : points) {
+				if (dp != dp2) {
+					//a^2 + b^2 = c^2
+					double length = Math.sqrt(Math.pow((Math.abs(dp.getX() - dp2.getX())),2) + Math.pow((Math.abs(dp.getY() - dp2.getY())),2));
+
+					if (length > longest) {
+						longest = length;
+					}
+				}
+			}
+		}
+
+		return longest;
+	}
+	
+	
 	private int convertAngularToFeet(double latitudeOrLongitude) {
 		return (int) (latitudeOrLongitude * (10000/90) * (3280.4));
 	}
@@ -144,6 +173,5 @@ public class Map {
 	private double convertFeetToAngular(int feet) {
 		return ((double) feet) / (3280.4 * (10000/90));
 	}
-	
 
 }

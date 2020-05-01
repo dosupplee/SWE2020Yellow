@@ -22,7 +22,7 @@ public class KnapsackPacker
 		skippedOrders = new ArrayList<Order>();
 		numSkipped = 0;
 		//longest distance between any two points
-		longestDistance = currentSetup.getCurrentMap().getLongestFlighDistance();
+		longestDistance = currentSetup.getCurrentMap().getLongestFlightDistance();
 	}
 	
 

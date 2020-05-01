@@ -10,6 +10,8 @@ public class Tuple {
 	// abstract objects
 	private Object a; 
 	private Object b;
+	private double latitude;
+	private double longitude;
 	
 	/**
 	 * Default constructor for (a of type A, b of type B)
@@ -19,6 +21,11 @@ public class Tuple {
 	public Tuple(Object a, Object b) {
 		this.a = a;
 		this.b = b;
+	}
+	
+	public Tuple(double a, double b) {
+		latitude = a;
+		longitude = b;
 	}
 
 	/**
@@ -49,6 +56,20 @@ public class Tuple {
 		this.b = b;
 	}
 	
-	
+	public double getLatitude() {
+		return latitude;
+	}
+
+	public void setLatitude(double latitude) {
+		this.latitude = latitude;
+	}
+
+	public double getLongitude() {
+		return longitude;
+	}
+
+	public void setLongitude(double longitude) {
+		this.longitude = longitude;
+	}
 	
 }
