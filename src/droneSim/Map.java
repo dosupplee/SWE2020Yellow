@@ -1,7 +1,11 @@
 package droneSim;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.Scanner;
 
 public class Map {
 	private String mapName;		// name of map
@@ -40,8 +44,21 @@ public class Map {
 		return mapName;
 	}
 	
-	//TODO
-	public void saveMap() {}
+	/**
+	 * Saves the map to file address
+	 */
+	public void saveMap() {
+		File csvFile = new File(fileAddress); // open/create file
+		try {
+			PrintWriter fileWriter = new PrintWriter(csvFile); // create output stream
+			for(DeliveryPoint point: this.points) {
+				fileWriter.append(point.getName()+","+point.getX()+","+point.getY());
+			}
+		}
+		catch (FileNotFoundException e) {
+			System.err.println(e.getMessage());
+		}
+	}
 	
 	
 	/**
