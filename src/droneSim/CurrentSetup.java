@@ -14,7 +14,6 @@ public class CurrentSetup {
 
 	private ArrayList<Meal> allMeals;
 	private ArrayList<Food> allFoods;
-	//private ArrayList<DeliveryPoint> points;
 	private Map currentMap;
 	private Drone currentDrone;
 
@@ -102,7 +101,7 @@ public class CurrentSetup {
 		newMap.addPoint(new DeliveryPoint(3, -9, "STEM"));
 		newMap.addPoint(new DeliveryPoint(-1, -21, "Lincoln"));
 		newMap.addPoint(new DeliveryPoint(-6, -10, "Library"));
-		newMap.addPoint(new DeliveryPoint(8, -3, "PLC"));
+		newMap.addPoint(new DeliveryPoint(8, -2, "PLC"));
 
 		setCurrentMap(newMap);
 	}
