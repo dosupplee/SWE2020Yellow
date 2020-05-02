@@ -17,11 +17,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import java.awt.Color;
 import java.awt.EventQueue;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Scanner;
 import java.util.TreeMap;
 
 public class TimeGraph extends JFrame {

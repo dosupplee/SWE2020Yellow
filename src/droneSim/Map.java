@@ -45,15 +45,22 @@ public class Map {
 	}
 	
 	/**
-	 * Saves the map to file address
+	 * Saves the map points to file address and clears all points
 	 */
 	public void saveMap() {
 		File csvFile = new File(fileAddress); // open/create file
 		try {
 			PrintWriter fileWriter = new PrintWriter(csvFile); // create output stream
-			for(DeliveryPoint point: this.points) {
-				fileWriter.append(point.getName()+","+point.getX()+","+point.getY());
+			fileWriter.append(points.get(0).getName() + "," + pointLatLongDoubles.get(0).getLatitude() + 
+					"," + pointLatLongDoubles.get(0).getLongitude() + "\n");
+			
+			for (int index = 1; index < points.size(); index++) {
+				fileWriter.append(points.get(index).getName() + "," + points.get(index).getX() + 
+						"," + points.get(index).getY() + "\n");
 			}
+			fileWriter.flush();
+			fileWriter.close();
+			
 		}
 		catch (FileNotFoundException e) {
 			System.err.println(e.getMessage());
@@ -67,8 +74,12 @@ public class Map {
 	 * @param fileAddress
 	 */
 	public void loadMap(String mapName, String fileAddress) {
-		// save current map
+		// Save current map and clear current contents
 		saveMap();
+		this.points = new ArrayList<DeliveryPoint>();
+		this.pointLatLongDoubles = new ArrayList<Tuple>();
+		
+		// Update map with new data
 		this.mapName = mapName;
 		this.fileAddress = fileAddress;
 		File csvMap = new File(fileAddress); // open file
@@ -76,43 +87,43 @@ public class Map {
 		 // if the file does not exist
 		if (!csvMap.exists()) {
 			System.err.println("File not found");
-			return;
-		}
-		//If file does exit try
-		try {
-			//create scanner to read file
-			Scanner fileReader = new Scanner(csvMap);
-			
-			//while scanner sees next line loop
-			Boolean first = true;	//true for first loop 
-			while (fileReader.hasNextLine()) {
-				if (first) {
-					String []data = fileReader.nextLine().split(",");;
+		} else {
+			//If file does exit try
+			try {
+				//create scanner to read file
+				Scanner fileReader = new Scanner(csvMap);
+				
+				//while scanner sees next line loop
+				Boolean isFirstLine = true;	//true for first loop 
+				while (fileReader.hasNextLine()) {
+					String[] data = fileReader.nextLine().split(",", 3);
 					String name = data[0].trim();
-					double lat= Double.parseDouble(data[1].trim());
-				    double lon = Double.parseDouble(data[2].trim());
+					
+					if (isFirstLine == true) {
+						double lat= Double.parseDouble(data[1].trim());
+					    double lon = Double.parseDouble(data[2].trim());
+					    
+					    addPoint(name, lat, lon);
+					    isFirstLine = false;
+					}
+					else {
+						//comma separated file is read
+						int x = Integer.parseInt(data[1].trim());
+						int y = Integer.parseInt(data[2].trim());
 				    
-				    addPoint(name, lat, lon);
+	
+						//New delivery point created and added to map
+						DeliveryPoint point= new DeliveryPoint(x,y,name);	
+						addPoint(point);
+					}
 				}
-				else {
-					//comma separated file is read
-					String []data = fileReader.nextLine().split(",");;
-					String name = data[0].trim();
-					int x = Integer.parseInt(data[1].trim());
-					int y = Integer.parseInt(data[2].trim());
-			    
-
-					//New delivery point created and added to map
-					DeliveryPoint point= new DeliveryPoint(x,y,name);	
-					addPoint(point);
-				}
+				//close scanner 
+				fileReader.close();
+				
 			}
-			//close scanner 
-			fileReader.close();
-			
-		}
-		catch (Exception e) {
-			System.err.println(e.getMessage());
+			catch (Exception e) {
+				System.err.println(e.getMessage());
+			}
 		}
 	}
 	
@@ -123,7 +134,7 @@ public class Map {
 	
 	
 	
-	public ArrayList<Tuple> getLatLongPointDoubles() {
+	public ArrayList<Tuple> getLatLongPoints() {
 		return pointLatLongDoubles;
 	}
 	
@@ -138,7 +149,7 @@ public class Map {
 	}
 	
 	
-	public Tuple getPointDoubles(int index) {
+	public Tuple getLatLongPoint(int index) {
 		return pointLatLongDoubles.get(index);
 	}
 	

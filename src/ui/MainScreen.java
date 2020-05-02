@@ -211,7 +211,6 @@ public class MainScreen implements MapComponentInitializedListener {
 				alert.setTitle("Simulation Info:");
 				alert.show();
 
-				// TODO display graphs
 				Tuple results = ui_Setup.runner.run(); // run the simulation and get strings
 				StringBuilder displayString = (StringBuilder) results.getA(); // text to display
 				StringBuilder logStringBuilder = (StringBuilder) results.getB(); // text to save
@@ -321,7 +320,7 @@ public class MainScreen implements MapComponentInitializedListener {
         		boolean alreadyDelete = false;
         		for (int index = 0; index < pointNames.size(); index++) {
         			double distanceOfPointToClick = 0.0;
-        			Tuple pointTuple = ui_Setup.curSetup.getCurrentMap().getPointDoubles(index);
+        			Tuple pointTuple = ui_Setup.curSetup.getCurrentMap().getLatLongPoint(index);
         			LatLong currentPoint = new LatLong(pointTuple.getLatitude(), pointTuple.getLongitude());
         			
           			distanceOfPointToClick += Math.pow(rightClickLatLong.getLatitude() -
@@ -342,7 +341,7 @@ public class MainScreen implements MapComponentInitializedListener {
         		map.clearMarkers();
         		
         		for (int updatedIndex = 0; updatedIndex < pointNames.size(); updatedIndex++) {
-        			Tuple pointDoubles = ui_Setup.curSetup.getCurrentMap().getPointDoubles(updatedIndex);
+        			Tuple pointDoubles = ui_Setup.curSetup.getCurrentMap().getLatLongPoint(updatedIndex);
         			
         			LatLong currentPoint = new LatLong(pointDoubles.getLatitude(), pointDoubles.getLongitude());
         			MarkerOptions markerOptions = new MarkerOptions()
@@ -408,7 +407,7 @@ public class MainScreen implements MapComponentInitializedListener {
 	@Override
 	public void mapInitialized() {
 	    //Set the initial properties of the map.
-		ArrayList<Tuple> existingPoints = ui_Setup.curSetup.getCurrentMap().getLatLongPointDoubles();
+		ArrayList<Tuple> existingPoints = ui_Setup.curSetup.getCurrentMap().getLatLongPoints();
 		MapOptions mapOptions = new MapOptions();
 	    
 		LatLong homePoint = new LatLong(
