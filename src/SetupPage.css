@@ -1,71 +1,85 @@
+* {
+	/* variables used throughout the code */
+	-fx-lightOrange: #ECDFC8;
+	-fx-darkOrange: #DF7861;
+	-fx-hoverOrange: #ECB390;
+	-fx-pressedOrange: #FCF8E8;
+}
+
+
 .root {
-	-fx-background-color: #ECDFC8;
+	/*background of the homepage*/
+	-fx-background-color: -fx-lightOrange;
 }
 
-.menu-bar {
-	-fx-background-color: #DF7861;
+
+.thumb {
+	/* this is a strange thing but thumb is actually all of the scrollers within the page */
+	-fx-background-color: -fx-darkOrange;
 }
 
+
+/* menu bar is for the file save and select button in the top left */
 .menu {
-	-fx-background-color: #ECB390;
+	-fx-background-color: -fx-hoverOrange;
 }
-
+.menu-bar {
+	-fx-background-color: -fx-darkOrange;
+}
 .menu-button:hover {
-	-fx-background-color: #FCF8E8;
+	-fx-background-color: -fx-pressedOrange;
 }
-
 .menu-item:hover {
-	-fx-background-color: #ECB390;
+	-fx-background-color: -fx-hoverOrange;
 }
-
 .menu-item:focused {
-	-fx-background-color: #ECB390;
+	-fx-background-color: -fx-hoverOrange;
 }
 
+
+/* label for the text above the orders */
 .label {
 	-fx-text-fill: #000000;
 }
 
+
+/* all buttons on the page */
 .button {
-	-fx-background-color: #DF7861;
+	-fx-background-color: -fx-darkOrange;
 	-fx-font-size: 12pt;
+	/* this makes the buttons round instead of square */
 	-fx-background-radius: 50em;
 }
-
 .button:hover {
-	-fx-background-color: #ECB390;
+	-fx-background-color: -fx-hoverOrange;
 }
-
 .button:pressed {
-	-fx-background-color: #FCF8E8;
+	-fx-background-color: -fx-pressedOrange;
 }
 
 
-
+/* not sure what this does but the page breaks if we do not have it... soo */
 .combo-box {
-	-fx-background-color: #ECB390;
+	-fx-background-color: -fx-hoverOrange;
 }
 
+
+/* list cells are the items you can select for an order and how many of said item */
 .list-cell {
-	-fx-background-color: #DF7861;
+	-fx-background-color: -fx-darkOrange;
 }
-
 .list-cell:filled:selected {
-	-fx-background-color: #DF7861;
+	-fx-background-color: -fx-darkOrange;
 }
-
 .list-cell:odd {
-	-fx-background-color: #ECB390;
+	-fx-background-color: -fx-hoverOrange;
 }
-
 .list-cell:even {
-	-fx-background-color: #ECB390;
+	-fx-background-color: -fx-hoverOrange;
 }
-
 .list-cell:odd:hover {
-	-fx-background-color: #DF7861;
+	-fx-background-color: -fx-darkOrange;
 }
-
 .list-cell:even:hover {
-	-fx-background-color: #DF7861;
+	-fx-background-color: -fx-darkOrange;
 }

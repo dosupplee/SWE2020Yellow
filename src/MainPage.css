@@ -1,45 +1,52 @@
+* {
+	/* variables used throughout the code */
+	-fx-lightOrange: #ECDFC8;
+	-fx-darkOrange: #DF7861;
+	-fx-hoverOrange: #ECB390;
+	-fx-pressedOrange: #FCF8E8;
+}
+
 .root {
-	-fx-background-color: #ECDFC8;
+	-fx-background-color: -fx-lightOrange;
 }
 
 
-.menu-bar {
-	-fx-background-color: #DF7861;
-}
-
+/* menu bar is for the file save and select button in the top left */
 .menu {
-	-fx-background-color: #ECB390;
+	-fx-background-color: -fx-hoverOrange;
 }
-
+.menu-bar {
+	-fx-background-color: -fx-darkOrange;
+}
 .menu-button:hover {
-	-fx-background-color: #FCF8E8;
+	-fx-background-color: -fx-pressedOrange;
 }
-
 .menu-item:hover {
-	-fx-background-color: #ECB390;
+	-fx-background-color: -fx-hoverOrange;
 }
-
 .menu-item:focused {
-	-fx-background-color: #ECB390;
+	-fx-background-color: -fx-hoverOrange;
 }
 
+
+/* text that will go to what file you have selected */
 .label {
 	-fx-text-fill: #000000;
 }
 
 
+/* all buttons on the page */
 .button {
-	-fx-background-color: #DF7861;
+	-fx-background-color: -fx-darkOrange;
 	-fx-font-size: 12pt;
+	/* this makes the buttons round*/
 	-fx-background-radius: 50em;
 }
-
 .button:hover {
-	-fx-background-color: #ECB390;
+	-fx-background-color: -fx-hoverOrange;
 }
-
 .button:pressed {
-	-fx-background-color: #FCF8E8;
+	-fx-background-color: -fx-pressedOrange;
 }
 
 
