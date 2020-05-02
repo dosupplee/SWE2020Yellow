@@ -1,49 +1,57 @@
+* {
+	/* variables used throughout the code */
+	-fx-lightOrange: #ECDFC8;
+	-fx-darkOrange: #DF7861;
+	-fx-hoverOrange: #ECB390;
+	-fx-pressedOrange: #FCF8E8;
+}
+
+
 .root {
-	-fx-background-color: #ECDFC8;
+	-fx-background-color: -fx-lightOrange;
 }
 
 /* not really sure what this changes but I am afraid to take it out haha */
 .combo-box {
-	-fx-background-color: #ECB390;
+	-fx-background-color: -fx-hoverOrange;
 }
 
 
 /* Used to change the table view (adding and removing meals from an order) */
 .table-column {
-	-fx-background-color: #DF7861;
+	-fx-background-color: -fx-darkOrange;
 }
 .thumb {
-	-fx-background-color: #DF7861;
+	-fx-background-color: -fx-darkOrange;
 }
 .table-cell {
-	-fx-background-color: #DF7861;
+	-fx-background-color: -fx-darkOrange;
 }
 .table-row-cell:selected .table-cell {
-	-fx-background-color: #DF7861;
-	/*-fx-text-fill: #000000;*/
+	-fx-background-color: -fx-darkOrange;
 }
 .table-cell:odd {
-	-fx-background-color: #ECB390;
+	-fx-background-color: -fx-hoverOrange;
 }
 .table-cell:even {
-	-fx-background-color: #ECB390;
+	-fx-background-color: -fx-hoverOrange;
 }
 .table-cell:odd:hover {
-	-fx-background-color: #DF7861;
+	-fx-background-color: -fx-darkOrange;
 }
 .table-cell:even:hover {
-	-fx-background-color: #DF7861;
+	-fx-background-color: -fx-darkOrange;
 }
 
 /* change css of all buttons within this class */
 .button {
-	-fx-background-color: #DF7861;
+	-fx-background-color: -fx-darkOrange;
 	-fx-font-size: 9pt;
 	-fx-background-radius: 50em;
 }
 .button:hover {
-	-fx-background-color: #ECB390;
+	-fx-background-color: -fx-hoverOrange;
 }
 .button:pressed {
-	-fx-background-color: #FCF8E8;
+	-fx-background-color: -fx-pressedOrange;
 }
