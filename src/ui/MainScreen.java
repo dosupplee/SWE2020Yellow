@@ -146,7 +146,7 @@ public class MainScreen implements MapComponentInitializedListener {
 			// Set initial display settings for File Explorer window
 			selectSetupFile.setTitle("Select Saved Map");
 			selectSetupFile.setInitialDirectory(new File(
-					"C:\\Users\\SuppleeDO17\\OneDrive - Grove City College\\COMP 350\\Semester Project\\Maps"));
+					System.getProperty("user.home") + "\\Documents"));
 			selectSetupFile.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
 			
 			File selectedSetupFile = selectSetupFile.showOpenDialog(ui_Setup.window);
@@ -168,7 +168,7 @@ public class MainScreen implements MapComponentInitializedListener {
 			// Set initial display settings for File Explorer window
 			selectSetupFile.setTitle("Select Save Location");
 			selectSetupFile.setInitialDirectory(new File(
-					"C:\\Users\\SuppleeDO17\\OneDrive - Grove City College\\COMP 350\\Semester Project\\Maps"));
+					System.getProperty("user.home") + "\\Documents"));
 			selectSetupFile.setInitialFileName(ui_Setup.curSetup.getCurrentMap().getMapName());
 			selectSetupFile.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
 			

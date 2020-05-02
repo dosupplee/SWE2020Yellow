@@ -92,7 +92,7 @@ public class CurrentSetup {
 
 		// Create some default points
 
-		Map newMap = new Map("mainMap", "C:\\Users\\SuppleeDO17\\OneDrive - Grove City College\\COMP 350\\Semester Project\\Maps");
+		Map newMap = new Map("mainMap", System.getProperty("user.home") + "\\Documents");
 		
 		newMap.addPoint("SAC", 41.1548, -80.0778);
 		newMap.addPoint(new DeliveryPoint(-50, 200, "HAL"));
