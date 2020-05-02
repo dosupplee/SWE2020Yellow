@@ -219,10 +219,10 @@ public class MainScreen implements MapComponentInitializedListener {
 						// ------------------------------
 						// get the graph file names to save
 						// ------------------------------
-						String[] fileNames = ui_Setup.graphingTools.getGraphFileNames();
+						String[] fileNames = ui_Setup.fileTools.getGraphFileNames();
 
 						// zip them up
-						ui_Setup.graphingTools.zipFiles(fileNames, zip);
+						ui_Setup.fileTools.zipFiles(fileNames, zip);
 					} catch (FileNotFoundException e1) {
 						System.err.println(e1.getMessage());
 					}
@@ -297,7 +297,7 @@ public class MainScreen implements MapComponentInitializedListener {
 		// CLEAR LOG BUTTON EVENT
 		// ---------------------------------
 		clearLogButton.setOnAction(e -> {
-			ui_Setup.graphingTools.deleteGraphFiles();
+			ui_Setup.fileTools.deleteGraphFiles();
 			outputLog.clear();
 		});
 		

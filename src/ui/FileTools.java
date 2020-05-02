@@ -15,7 +15,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 
-public class GraphingTools {
+public class FileTools {
 
 	public final String TIME_GRAPH_ENDING = "_RAW.csv";
 	public final String XY_GRAPH_ENDING = "_xy graph.csv";

@@ -56,7 +56,7 @@ public class MainScreenFX extends Application {
 	 */
 	@Override
 	public void stop() {
-		ui_Setup.graphingTools.deleteGraphFiles();
+		ui_Setup.fileTools.deleteGraphFiles();
 	}
 
 }
