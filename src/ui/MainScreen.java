@@ -123,27 +123,56 @@ public class MainScreen implements MapComponentInitializedListener {
 		// create menu items
 		String selectFileString = "Select Map File";
 		String saveLogString = "Save Log Output";
+		String saveMapString = "Save Map as .csv";
 
-		MenuItem mainScreenSelectFileMenuItem = new MenuItem(selectFileString);
+		MenuItem mainScreenLoadMapMenuItem = new MenuItem(selectFileString);
 		MenuItem mainScreenSaveLogMenuItem = new MenuItem(saveLogString);
+		MenuItem mainScreenSaveMapMenuItem = new MenuItem(saveMapString);
 
 		// add menu item to menu
-		mainPageMenu.getItems().add(mainScreenSelectFileMenuItem);
+		mainPageMenu.getItems().add(mainScreenLoadMapMenuItem);
 		mainPageMenu.getItems().add(mainScreenSaveLogMenuItem);
+		mainPageMenu.getItems().add(mainScreenSaveMapMenuItem);
 
 		MenuBar mainPageMenuBar = new MenuBar();
 
 		mainPageMenuBar.getMenus().add(mainPageMenu);
 
 		// Setup event handlers for menu items
-		mainScreenSelectFileMenuItem.setOnAction(e -> {
+		mainScreenLoadMapMenuItem.setOnAction(e -> {
 			// file chooser for selecting a saved setup
 			FileChooser selectSetupFile = new FileChooser();
-			// title for the file chooser
+			
+			// Set initial display settings for file chooser
 			selectSetupFile.setTitle("Select Saved Map");
+			selectSetupFile.setInitialDirectory(new File(
+					"C:\\Users\\SuppleeDO17\\OneDrive - Grove City College\\COMP 350\\Semester Project\\Maps"));
+			selectSetupFile.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
+			
 			File selectedSetupFile = selectSetupFile.showOpenDialog(ui_Setup.window);
 			if (selectedSetupFile != null) {
 				fileName.setText(selectedSetupFile.getName());
+				ui_Setup.curSetup.getCurrentMap().loadMap(selectedSetupFile.getName(), 
+						selectedSetupFile.getAbsolutePath());
+				mapInitialized();
+			}
+		});
+		
+		
+		mainScreenSaveMapMenuItem.setOnAction(e -> {
+			// file chooser for selecting a save location
+			FileChooser selectSetupFile = new FileChooser();
+			
+			// Set initial display settings for file chooser
+			selectSetupFile.setTitle("Select Save Location");
+			selectSetupFile.setInitialDirectory(new File(
+					"C:\\Users\\SuppleeDO17\\OneDrive - Grove City College\\COMP 350\\Semester Project\\Maps"));
+			selectSetupFile.setInitialFileName(ui_Setup.curSetup.getCurrentMap().getMapName());
+			selectSetupFile.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
+			
+			File selectedSetupFile = selectSetupFile.showOpenDialog(ui_Setup.window);
+			if (selectedSetupFile != null) {
+				ui_Setup.curSetup.getCurrentMap().saveMap(selectedSetupFile.getName());
 			}
 		});
 

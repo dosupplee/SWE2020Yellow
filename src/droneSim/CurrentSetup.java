@@ -94,14 +94,14 @@ public class CurrentSetup {
 
 		// Create some basic point stuffs
 
-		Map newMap = new Map("mainMap", "C://MapLocation");
+		Map newMap = new Map("mainMap", "C:\\Users\\SuppleeDO17\\OneDrive - Grove City College\\COMP 350\\Semester Project\\Maps");
 		
 		newMap.addPoint("SAC", 41.1548, -80.0778);
-		newMap.addPoint(new DeliveryPoint(-1, 4, "HAL"));
-		newMap.addPoint(new DeliveryPoint(3, -9, "STEM"));
-		newMap.addPoint(new DeliveryPoint(-1, -21, "Lincoln"));
-		newMap.addPoint(new DeliveryPoint(-6, -10, "Library"));
-		newMap.addPoint(new DeliveryPoint(8, -2, "PLC"));
+		newMap.addPoint(new DeliveryPoint(-50, 200, "HAL"));
+		newMap.addPoint(new DeliveryPoint(150, -450, "STEM"));
+		newMap.addPoint(new DeliveryPoint(-50, -1050, "Lincoln"));
+		newMap.addPoint(new DeliveryPoint(-300, -500, "Library"));
+		newMap.addPoint(new DeliveryPoint(400, -100, "PLC"));
 
 		setCurrentMap(newMap);
 	}

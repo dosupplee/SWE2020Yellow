@@ -16,7 +16,7 @@ public class Map {
 	
 	public Map(String name, String fileAddress) {
 		super();
-		this.mapName = name;
+		this.mapName = name + ".csv";
 		this.fileAddress = fileAddress;
 		this.points = new ArrayList<DeliveryPoint>();
 		this.pointLatLongDoubles = new ArrayList<Tuple>();
@@ -30,7 +30,7 @@ public class Map {
 	 */
 	public Map(String name, String fileAddress, ArrayList<DeliveryPoint> points) {
 		super();
-		this.mapName = name;
+		this.mapName = name + ".csv";
 		this.fileAddress = fileAddress;
 		this.points = points;
 		this.pointLatLongDoubles = new ArrayList<Tuple>();
@@ -47,8 +47,8 @@ public class Map {
 	/**
 	 * Saves the map points to file address and clears all points
 	 */
-	public void saveMap() {
-		File csvFile = new File(fileAddress); // open/create file
+	public void saveMap(String saveName) {
+		File csvFile = new File(fileAddress + "\\" + saveName); // open/create file
 		try {
 			PrintWriter fileWriter = new PrintWriter(csvFile); // create output stream
 			fileWriter.append(points.get(0).getName() + "," + pointLatLongDoubles.get(0).getLatitude() + 
@@ -75,13 +75,12 @@ public class Map {
 	 */
 	public void loadMap(String mapName, String fileAddress) {
 		// Save current map and clear current contents
-		saveMap();
+		saveMap(this.mapName);
 		this.points = new ArrayList<DeliveryPoint>();
 		this.pointLatLongDoubles = new ArrayList<Tuple>();
 		
 		// Update map with new data
 		this.mapName = mapName;
-		this.fileAddress = fileAddress;
 		File csvMap = new File(fileAddress); // open file
 		
 		 // if the file does not exist
@@ -160,9 +159,9 @@ public class Map {
 		} else {
 			points.add(point);
 			double latitude = pointLatLongDoubles.get(0).getLatitude() +
-					convertFeetToAngular(point.getX() * 50);
+					convertFeetToAngular(point.getX());
 			double longitude = pointLatLongDoubles.get(0).getLongitude() +
-					convertFeetToAngular(point.getY() * 50);
+					convertFeetToAngular(point.getY());
 			
 			Tuple newPointDoubles = new Tuple(latitude, longitude);
 			pointLatLongDoubles.add(newPointDoubles);
