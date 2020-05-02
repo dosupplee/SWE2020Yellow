@@ -143,7 +143,7 @@ public class MainScreen implements MapComponentInitializedListener {
 			// file chooser for selecting a saved setup
 			FileChooser selectSetupFile = new FileChooser();
 			
-			// Set initial display settings for file chooser
+			// Set initial display settings for File Explorer window
 			selectSetupFile.setTitle("Select Saved Map");
 			selectSetupFile.setInitialDirectory(new File(
 					"C:\\Users\\SuppleeDO17\\OneDrive - Grove City College\\COMP 350\\Semester Project\\Maps"));
@@ -151,6 +151,8 @@ public class MainScreen implements MapComponentInitializedListener {
 			
 			File selectedSetupFile = selectSetupFile.showOpenDialog(ui_Setup.window);
 			if (selectedSetupFile != null) {
+				// Load the new map into the Map instance and refresh the GoogleMap instance 
+				//  with the new delivery points
 				fileName.setText(selectedSetupFile.getName());
 				ui_Setup.curSetup.getCurrentMap().loadMap(selectedSetupFile.getName(), 
 						selectedSetupFile.getAbsolutePath());
@@ -163,7 +165,7 @@ public class MainScreen implements MapComponentInitializedListener {
 			// file chooser for selecting a save location
 			FileChooser selectSetupFile = new FileChooser();
 			
-			// Set initial display settings for file chooser
+			// Set initial display settings for File Explorer window
 			selectSetupFile.setTitle("Select Save Location");
 			selectSetupFile.setInitialDirectory(new File(
 					"C:\\Users\\SuppleeDO17\\OneDrive - Grove City College\\COMP 350\\Semester Project\\Maps"));
@@ -313,12 +315,14 @@ public class MainScreen implements MapComponentInitializedListener {
         MenuItem removeMarkerMenuItem = new MenuItem("Remove Nearby Marker");
         MenuItem reloadPageMenuItem = new MenuItem("Reload Map");
         
+        // Add marker (delivery point) to GoogleMap instance on button click
         addMarkerMenuItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-        	    
+        	    // Get user input for name of new DeliveryPoint
         	    PopUp inputPopUp = new PopUp("Delivery Point Name");
         	    
+        	    // Activated when the user hits enter in the PopUp instance
         	    inputPopUp.getInputBox().setOnAction(new EventHandler<ActionEvent>() { 
                     public void handle(ActionEvent e) { 
                     	String newPointName = inputPopUp.getInputBox().getText();
@@ -337,21 +341,28 @@ public class MainScreen implements MapComponentInitializedListener {
                     } 
                 });
         	    
+        	    // Resets the view of the GoogleMap instance for if a new Marker object does not load immediately
         	    int currentZoom = map.getZoom();
                 map.setZoom( currentZoom - 1 );
                 map.setZoom( currentZoom );
             }
         });
         
+        // Remove nearest marker (delivery point) to GoogleMap instance on button click
         removeMarkerMenuItem.setOnAction(new EventHandler<ActionEvent>() {
         	@Override
         	public void handle(ActionEvent event) {
         		boolean alreadyDelete = false;
+        		
+        		// Loop through all points to find the nearest point 
+        		//   (within a given distance of the mouse right-click)
         		for (int index = 0; index < pointNames.size(); index++) {
         			double distanceOfPointToClick = 0.0;
+        			//Retrieve each point from the Map instance
         			Tuple pointTuple = ui_Setup.curSetup.getCurrentMap().getLatLongPoint(index);
         			LatLong currentPoint = new LatLong(pointTuple.getLatitude(), pointTuple.getLongitude());
         			
+        			// Basic distance formula
           			distanceOfPointToClick += Math.pow(rightClickLatLong.getLatitude() -
           					currentPoint.getLatitude(), 2);
           			distanceOfPointToClick += Math.pow(rightClickLatLong.getLongitude() -
@@ -367,8 +378,12 @@ public class MainScreen implements MapComponentInitializedListener {
         			}
         		}
         		
+        		// Since only Marker objects can be removed individually from the GoogleMap instance and the
+        		//  Marker objects are not saved, all markers must be cleared and the remaining DeliveryPoints
+        		//  used to repopulate the GoogleMap instance
         		map.clearMarkers();
         		
+        		// Repopulate the GoogleMap instance with all remaining DeliveryPoints in the Map instance
         		for (int updatedIndex = 0; updatedIndex < pointNames.size(); updatedIndex++) {
         			Tuple pointDoubles = ui_Setup.curSetup.getCurrentMap().getLatLongPoint(updatedIndex);
         			
@@ -385,6 +400,7 @@ public class MainScreen implements MapComponentInitializedListener {
         	}
         });
         
+        // Reload GoogleMap instance on button click (for when map does not load automatically)
         reloadPageMenuItem.setOnAction(new EventHandler<ActionEvent>() {
         	@Override
         	public void handle(ActionEvent event) {
@@ -454,10 +470,12 @@ public class MainScreen implements MapComponentInitializedListener {
 	
 	    map = mapView.createMap(mapOptions);
 	    
+	    // Save latitude and longitude of mouse right-click for use in add/delete point functionality (look above)
 	    map.addMouseEventHandler(UIEventType.rightclick, (GMapMouseEvent event) -> {
      	   rightClickLatLong = event.getLatLong();
      	});
 	    
+	    // When the map is initially loaded, populate with all the pre-existing points in the Map instance
 	    for (int index = 0; index < existingPoints.size(); index++) {
 	    	pointNames.add(ui_Setup.curSetup.getCurrentMap().getPointName(index));
 	    	

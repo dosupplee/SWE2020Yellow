@@ -87,12 +87,10 @@ public class CurrentSetup {
 		Meal midnightSnack = new Meal("Midnight Snack", 0.05);
 		midnightSnack.addFood(getFood(2));
 		addMeal(midnightSnack);
-		
-	
 
 		adjustMealProbabilities();
 
-		// Create some basic point stuffs
+		// Create some default points
 
 		Map newMap = new Map("mainMap", "C:\\Users\\SuppleeDO17\\OneDrive - Grove City College\\COMP 350\\Semester Project\\Maps");
 		
