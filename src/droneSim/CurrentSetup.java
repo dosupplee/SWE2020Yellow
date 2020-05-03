@@ -100,7 +100,30 @@ public class CurrentSetup {
 		newMap.addPoint(new DeliveryPoint(-50, -1050, "Lincoln"));
 		newMap.addPoint(new DeliveryPoint(-300, -500, "Library"));
 		newMap.addPoint(new DeliveryPoint(400, -100, "PLC"));
-
+		newMap.addPoint(new DeliveryPoint(-48, -424, "Hoyt"));
+		newMap.addPoint(new DeliveryPoint(251, -572, "Rockwell"));
+		newMap.addPoint(new DeliveryPoint(194, -1029, "Ketler"));
+		newMap.addPoint(new DeliveryPoint(332, -1287, "Crawford"));
+		newMap.addPoint(new DeliveryPoint(132, -1545, "Memorial"));
+		newMap.addPoint(new DeliveryPoint(-59, -1650, "President's House"));
+		newMap.addPoint(new DeliveryPoint(746, -1068, "Harbison"));
+		newMap.addPoint(new DeliveryPoint(772, -734, "MAP West"));
+		newMap.addPoint(new DeliveryPoint(580, -743, "MAP South"));
+		newMap.addPoint(new DeliveryPoint(740, -501, "MAP North"));
+		newMap.addPoint(new DeliveryPoint(687, -243, "MEP"));
+		newMap.addPoint(new DeliveryPoint(400, -100, "Harker"));
+		newMap.addPoint(new DeliveryPoint(924, -943, "Rathburn"));
+		newMap.addPoint(new DeliveryPoint(-597, 270, "PEW"));
+		newMap.addPoint(new DeliveryPoint(-507, -218, "Hicks"));
+		newMap.addPoint(new DeliveryPoint(-249, -976, "Hopeman"));
+		newMap.addPoint(new DeliveryPoint(-188, -1279, "Zerbe"));
+		newMap.addPoint(new DeliveryPoint(1255, -529, "Baseball Fields"));
+		newMap.addPoint(new DeliveryPoint(1314, 149, "Soccer Fields"));
+		newMap.addPoint(new DeliveryPoint(1055, -2251, "Thorn Field Lockers"));
+		newMap.addPoint(new DeliveryPoint(925, -2636, "Thorn Field Stadium"));
+		newMap.addPoint(new DeliveryPoint(790, -3046, "Colonial Hall Apartments"));
+		newMap.addPoint(new DeliveryPoint(846, -3282, "Carnegie Alumni Center"));
+		newMap.addPoint(new DeliveryPoint(1074, -1729, "Lower Campus Bungalow"));
 		setCurrentMap(newMap);
 	}
 

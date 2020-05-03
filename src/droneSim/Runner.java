@@ -304,6 +304,7 @@ public class Runner {
 		avgk = (avgk / deliveryTimesKnapsack.size());
 		longestk = Collections.max(deliveryTimesKnapsack);
 		shortestk = Collections.min(deliveryTimesKnapsack);
+	
 	}
 
 	/**

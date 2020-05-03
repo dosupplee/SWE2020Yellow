@@ -1,17 +1,39 @@
-Tue Apr 28 16:30:30 EDT 2020
-Simulation Results:
+Sun May 03 17:57:27 EDT 2020
+SIMULATION DELIVERY TIME RESULTS:
 ----
-DRONE TRIP STATS:
-Fastest Trip Time Knapsack: 32.000 seconds
-Slowest Trip Time Knapsack: 720.000 seconds
-Average Trip Time Knapsack: 95.388 seconds
+KNAPSACK:
+Fastest:	90 seconds ? 1.50 minutes
+Slowest:	50007 seconds ? 833.45 minutes
+Average:	19656.15 seconds ? 327.60 minutes
 
-Fastest Trip Time FIFO: 32.000 seconds
-Slowest Trip Time FIFO: 720.000 seconds
-Average Trip Time FIFO: 95.676 seconds
+FIFO:
+Fastest:	90 seconds ? 1.50 minutes
+Slowest:	50007 seconds ? 833.45 minutes
+Average:	19656.15 seconds ? 327.60 minutes
 ----
-Number of Orders Simulated: 8650
-Simulation Took: 17.411 seconds
+Number of Orders Simulated: 3450
+Simulation Took: 11.099 seconds
+
+
+---------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------
+
+
+Sun May 03 17:59:05 EDT 2020
+SIMULATION DELIVERY TIME RESULTS:
+----
+KNAPSACK:
+Fastest:	90 seconds ? 1.50 minutes
+Slowest:	49022 seconds ? 817.03 minutes
+Average:	19675.05 seconds ? 327.92 minutes
+
+FIFO:
+Fastest:	90 seconds ? 1.50 minutes
+Slowest:	49022 seconds ? 817.03 minutes
+Average:	19675.05 seconds ? 327.92 minutes
+----
+Number of Orders Simulated: 3450
+Simulation Took: 6.439 seconds
 
 
 ---------------------------------------------------------------------------------------
