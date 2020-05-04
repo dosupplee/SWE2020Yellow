@@ -1,7 +1,6 @@
 package ui;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
@@ -19,6 +18,7 @@ import com.lynden.gmapsfx.javascript.object.MapTypeIdEnum;
 import com.lynden.gmapsfx.javascript.object.Marker;
 import com.lynden.gmapsfx.javascript.object.MarkerOptions;
 
+import droneSim.CurrentSetup;
 import droneSim.Tuple;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -34,8 +34,6 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.Background;
@@ -336,22 +334,33 @@ public class MainScreen implements MapComponentInitializedListener {
         	    // Activated when the user hits enter in the PopUp instance
         	    inputPopUp.getInputBox().setOnAction(new EventHandler<ActionEvent>() { 
                     public void handle(ActionEvent e) { 
+                    	CurrentSetup curr = ui_Setup.curSetup;
                     	String newPointName = inputPopUp.getInputBox().getText();
                     	
-                    	ui_Setup.curSetup.getCurrentMap().addPoint(
+                    	curr.getCurrentMap().addPoint(
                     			newPointName, rightClickLatLong.getLatitude(), rightClickLatLong.getLongitude());
-                    	pointNames.add(newPointName);
+                    	double timePerDestination = (curr.getCurrentMap().getLongestFlightDistance()) / 
+                    			curr.getDrone().getSpeedMPS() + curr.getDrone().getDropOffTime();
+                    	// determine max number of flights possible
+                    	int numMaxDestinations = ((int) ((curr.getDrone().getMaxFlightTime() * 0.95) /
+                    			timePerDestination) - 1);
                     	
-                    	//TODO only create point if within certain distance of HOME
-                    	//if (ui_Setup.curSetup.getCurrentMap().getLongestFlightDistance() > 
-                    			
-                    	MarkerOptions markerOptions = new MarkerOptions().position( rightClickLatLong )
-            	                .visible(Boolean.TRUE)
-            	                .title(newPointName);
-            	
-                    	Marker marker = new Marker( markerOptions );
-                	    map.addMarker(marker);
                     	inputPopUp.hide();
+                    	
+                    	// only create point if within certain distance of HOME
+                    	if (numMaxDestinations < 2) {
+                    		curr.getCurrentMap().deletePoint(curr.getCurrentMap().getNumPoints() - 1);
+                    		new PopUp("Invalid point selection", 
+                    				"Location cannot be reached by the drone");
+                    	} else {
+                    		pointNames.add(newPointName);
+                    		MarkerOptions markerOptions = new MarkerOptions().position( rightClickLatLong )
+                	                .visible(Boolean.TRUE)
+                	                .title(newPointName);
+                	
+                        	Marker marker = new Marker( markerOptions );
+                    	    map.addMarker(marker);
+                    	}
                     } 
                 });
         	    
@@ -367,8 +376,9 @@ public class MainScreen implements MapComponentInitializedListener {
         	@Override
         	public void handle(ActionEvent event) {
         		boolean alreadyDelete = false;
-        		double searchRadius = 0.2 * Math.pow(20 - map.getZoom(), 2);
-
+        		double searchRadius = 0.01 * Math.pow(20 - map.getZoom(), 2);
+        		System.out.println(searchRadius);
+        		
         		// Loop through all points to find the nearest point 
         		//   (within a given distance of the mouse right-click)
         		for (int index = 0; index < pointNames.size(); index++) {
@@ -385,7 +395,7 @@ public class MainScreen implements MapComponentInitializedListener {
           			
           			distanceOfPointToClick = Math.sqrt(distanceOfPointToClick) * 1000;
           			
-        			if (Math.abs(distanceOfPointToClick) < 0.1 && alreadyDelete == false) {
+        			if (Math.abs(distanceOfPointToClick) < searchRadius && alreadyDelete == false) {
         				ui_Setup.curSetup.getCurrentMap().deletePoint(index);
         				pointNames.remove(index);
         				alreadyDelete = true;
