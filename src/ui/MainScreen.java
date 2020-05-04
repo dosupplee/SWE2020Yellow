@@ -376,7 +376,7 @@ public class MainScreen implements MapComponentInitializedListener {
         	@Override
         	public void handle(ActionEvent event) {
 
-        		double searchRadius = 0.2 * Math.pow(20 - map.getZoom(), 2);
+        		double searchRadius = 0.05 * Math.pow(20 - map.getZoom(), 2);
         		int nearestPointIndex =-1; //nearest point to click
         		double nearestPointDistance=-1; //nearest point's to click distance
 
