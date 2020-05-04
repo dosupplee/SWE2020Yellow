@@ -338,6 +338,9 @@ public class MainScreen implements MapComponentInitializedListener {
                     			newPointName, rightClickLatLong.getLatitude(), rightClickLatLong.getLongitude());
                     	pointNames.add(newPointName);
                     	
+                    	//TODO only create point if within certain distance of HOME
+                    	//if (ui_Setup.curSetup.getCurrentMap().getLongestFlightDistance() > 
+                    			
                     	MarkerOptions markerOptions = new MarkerOptions().position( rightClickLatLong )
             	                .visible(Boolean.TRUE)
             	                .title(newPointName);
@@ -360,7 +363,8 @@ public class MainScreen implements MapComponentInitializedListener {
         	@Override
         	public void handle(ActionEvent event) {
         		boolean alreadyDelete = false;
-        		
+        		double searchRadius = 0.2 * Math.pow(20 - map.getZoom(), 2);
+
         		// Loop through all points to find the nearest point 
         		//   (within a given distance of the mouse right-click)
         		for (int index = 0; index < pointNames.size(); index++) {
@@ -463,6 +467,8 @@ public class MainScreen implements MapComponentInitializedListener {
 	    
 		LatLong homePoint = new LatLong(
     			existingPoints.get(0).getLatitude(), existingPoints.get(0).getLongitude());
+		//Set default value for rightClickLatLong to avoid errors when clicking on markers upon startup
+		rightClickLatLong = new LatLong(0,0);
 		
 	    mapOptions.center(homePoint)
 	            .mapType(MapTypeIdEnum.ROADMAP)
@@ -480,7 +486,7 @@ public class MainScreen implements MapComponentInitializedListener {
 	    map = mapView.createMap(mapOptions);
 	    
 	    // Save latitude and longitude of mouse right-click for use in add/delete point functionality (look above)
-	    map.addMouseEventHandler(UIEventType.rightclick, (GMapMouseEvent event) -> {
+	    map.addMouseEventHandler(UIEventType.mouseup, (GMapMouseEvent event) -> {
      	   rightClickLatLong = event.getLatLong();
      	});
 	    
