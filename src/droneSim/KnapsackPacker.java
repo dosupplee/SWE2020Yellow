@@ -244,10 +244,10 @@ public class KnapsackPacker
 		//Make sure we are not going to violate our flight time condition
 		
 		//the time to fly the max distance and then drop off food
-		double timePerDestination = (longestDistance * 10) / currentSetup.getDrone().getSpeedMPS() + currentSetup.getDrone().getDropOffTime();
+		double timePerDestination = (longestDistance) / currentSetup.getDrone().getSpeedMPS() + currentSetup.getDrone().getDropOffTime();
 		
 		//max number of flights possible
-		int numMaxDestinations = (int) ((currentSetup.getDrone().getMaxFlightTime() * 0.95) / timePerDestination);
+		int numMaxDestinations = ((int) ((currentSetup.getDrone().getMaxFlightTime() * 0.95) / timePerDestination)-1);
 		
 		//make sure that number of possible packed items does not exceed max number of destinations, taking into account skipped items
 		if(retVal > numMaxDestinations)
@@ -263,5 +263,7 @@ public class KnapsackPacker
 		
 	}
 }
+
+
 
 

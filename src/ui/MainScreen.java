@@ -244,6 +244,10 @@ public class MainScreen implements MapComponentInitializedListener {
 		runSimulationButton.setOnAction(e -> {
 
 			if (!ui_Setup.runner.isRunning()) {
+				
+				if(ui_Setup.curSetup.getAllMeals()==null || ui_Setup.curSetup.getAllMeals().size()==0)
+					ui_Setup.curSetup.loadDefaultFoodSettings();
+				
 				// show an alert to let the user know the simulation is running
 				Alert alert = new Alert(AlertType.NONE,
 						"Running " + ui_Setup.curSetup.getNumShifts() + " Simulations...", ButtonType.CLOSE);

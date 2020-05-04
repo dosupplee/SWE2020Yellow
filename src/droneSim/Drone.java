@@ -12,7 +12,7 @@ import java.util.ArrayList;
 public class Drone {
 	private String name; // the name of the drone
 	private int weightCapacity; // the weight capacity of the drone (OZ)
-	private int speed; // the speed of the drone (MPS)
+	private int speed; // the speed of the drone (FPS)
 	private int maxFlightTime; // the maximum flight time (seconds)
 	private int turnAroundTime; // time between flights (seconds)
 	private int dropOffTime; // time to unload the drone at a delivery point (seconds)
@@ -167,8 +167,7 @@ public class Drone {
 		}
 		else
 		{
-			//this turnAround time was the previous turnAround
-			return ((distance * 10) / this.speed) + (this.dropOffTime * numStops);
+			return ((distance) / this.speed) + (this.dropOffTime * numStops);
 		}
 	}
 
