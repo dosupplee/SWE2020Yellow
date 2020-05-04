@@ -30,9 +30,9 @@ public class FIFOPacker {
 		ArrayList<Order> packed = new ArrayList<Order>();
 		
 		//the time to fly the max distance and then drop off food
-		double timePerDestination = (longestDistance * 10) / currentSetup.getDrone().getSpeedMPS() + currentSetup.getDrone().getDropOffTime();
+		double timePerDestination = (longestDistance) / currentSetup.getDrone().getSpeedMPS() + currentSetup.getDrone().getDropOffTime();
 		
-		int numMaxDestinations = (int) ((currentSetup.getDrone().getMaxFlightTime() * 0.95) / timePerDestination);
+		int numMaxDestinations = ((int) ((currentSetup.getDrone().getMaxFlightTime() * 0.95) / timePerDestination)-1);
 		
 		while (orderBacklog.size() > 0 && tripWeight + orderBacklog.get(0).getOrderWeight() <= droneCarryWeight && packed.size() < numMaxDestinations) {
 			// get the first order to pack
