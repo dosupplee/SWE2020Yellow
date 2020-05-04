@@ -46,6 +46,33 @@ public class Map {
 	
 	/**
 	 * Saves the map points to file address and clears all points
+	 * Overloaded version saves new file
+	 */
+	public void saveMap(File fileArg) {
+		File file = fileArg; // open/create file
+		try {
+			PrintWriter fileWriter = new PrintWriter(file); // create output stream
+			fileWriter.append(points.get(0).getName() + "," + pointLatLongDoubles.get(0).getLatitude() + 
+					"," + pointLatLongDoubles.get(0).getLongitude() + "\n");
+			
+			for (int index = 1; index < points.size(); index++) {
+				fileWriter.append(points.get(index).getName() + "," + points.get(index).getX() + 
+						"," + points.get(index).getY() + "\n");
+			}
+			fileWriter.flush();
+			fileWriter.close();
+			
+		}
+		catch (FileNotFoundException e) {
+			System.err.println(e.getMessage());
+		}
+	}
+	
+	
+	
+	/**
+	 * Saves the map points to file address and clears all points
+	 * Overloaded version takes string and saves to previous location
 	 */
 	public void saveMap(String saveName) {
 		File csvFile = new File(fileAddress + "\\" + saveName); // open/create file
@@ -66,6 +93,9 @@ public class Map {
 			System.err.println(e.getMessage());
 		}
 	}
+	
+	
+	
 	
 	
 	/**
