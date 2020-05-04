@@ -375,13 +375,17 @@ public class MainScreen implements MapComponentInitializedListener {
         removeMarkerMenuItem.setOnAction(new EventHandler<ActionEvent>() {
         	@Override
         	public void handle(ActionEvent event) {
-        		boolean alreadyDelete = false;
-        		double searchRadius = 0.01 * Math.pow(20 - map.getZoom(), 2);
-        		System.out.println(searchRadius);
-        		
+
+        		double searchRadius = 0.2 * Math.pow(20 - map.getZoom(), 2);
+        		int nearestPointIndex =-1; //nearest point to click
+        		double nearestPointDistance=-1; //nearest point's to click distance
+
         		// Loop through all points to find the nearest point 
         		//   (within a given distance of the mouse right-click)
-        		for (int index = 0; index < pointNames.size(); index++) {
+        		
+       
+        		for (int index = 0; index < pointNames.size(); index++) 
+        		{
         			double distanceOfPointToClick = 0.0;
         			//Retrieve each point from the Map instance
         			Tuple pointTuple = ui_Setup.curSetup.getCurrentMap().getLatLongPoint(index);
@@ -395,12 +399,33 @@ public class MainScreen implements MapComponentInitializedListener {
           			
           			distanceOfPointToClick = Math.sqrt(distanceOfPointToClick) * 1000;
           			
-        			if (Math.abs(distanceOfPointToClick) < searchRadius && alreadyDelete == false) {
-        				ui_Setup.curSetup.getCurrentMap().deletePoint(index);
-        				pointNames.remove(index);
-        				alreadyDelete = true;
+
+          			//if close enough to be able to delete
+        			if (Math.abs(distanceOfPointToClick) < searchRadius) 
+        			{
+        				//if there is no current closest
+        				if(nearestPointIndex==-1)
+        				{
+        					nearestPointIndex = index;
+        					nearestPointDistance = Math.abs(distanceOfPointToClick);
+        				}
+        				//if nearer than previous nearest point
+        				else if(Math.abs(distanceOfPointToClick) < nearestPointDistance)
+        				{
+        					nearestPointIndex = index;
+        					nearestPointDistance = Math.abs(distanceOfPointToClick);
+        				}
+
         			}
         		}
+        		
+        		//if there is a valid nearest point
+        		if(nearestPointIndex !=-1)
+        		{
+        			ui_Setup.curSetup.getCurrentMap().deletePoint(nearestPointIndex);
+        			pointNames.remove(nearestPointIndex);
+        		}
+        		
         		
         		// Since only Marker objects can be removed individually from the GoogleMap instance and the
         		//  Marker objects are not saved, all markers must be cleared and the remaining DeliveryPoints
