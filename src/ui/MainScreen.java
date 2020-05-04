@@ -1,6 +1,7 @@
 package ui;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
@@ -33,6 +34,8 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.Background;
@@ -76,16 +79,21 @@ public class MainScreen implements MapComponentInitializedListener {
 
 		// layout for the main page
 		GridPane screenLayoutMain = new GridPane();
+		GridPane mapLayout = new GridPane();
 
 		screenLayoutMain.setPadding(new Insets(insets));
 		screenLayoutMain.setHgap(5);
 		screenLayoutMain.setVgap(5);
 
-		// set column widths
+		// set column widths (and rows for mapLayout)
 		for (int i = 0; i < numColumns; i++) {
 			ColumnConstraints column = new ColumnConstraints();
+			RowConstraints row = new RowConstraints();
 			column.setPercentWidth(25);
+			row.setPercentHeight(25);
 			screenLayoutMain.getColumnConstraints().add(column);
+			mapLayout.getColumnConstraints().add(column);
+			mapLayout.getRowConstraints().add(row);
 		}
 
 		// set column heights
@@ -96,7 +104,7 @@ public class MainScreen implements MapComponentInitializedListener {
 		}
 
 		// Main Page text
-		Label fileName = new Label("<FileName>");
+		Label fileName = new Label("Grove City College");
 
 		// change the size and font of the label
 		fileName.setFont(new Font("Arial", 18));
@@ -313,7 +321,6 @@ public class MainScreen implements MapComponentInitializedListener {
  
         MenuItem addMarkerMenuItem = new MenuItem("Add Marker");
         MenuItem removeMarkerMenuItem = new MenuItem("Remove Nearby Marker");
-        MenuItem reloadPageMenuItem = new MenuItem("Reload Map");
         
         // Add marker (delivery point) to GoogleMap instance on button click
         addMarkerMenuItem.setOnAction(new EventHandler<ActionEvent>() {
@@ -371,7 +378,6 @@ public class MainScreen implements MapComponentInitializedListener {
           			distanceOfPointToClick = Math.sqrt(distanceOfPointToClick) * 1000;
           			
         			if (Math.abs(distanceOfPointToClick) < 0.1 && alreadyDelete == false) {
-        				System.out.println("Distance found: " + distanceOfPointToClick);
         				ui_Setup.curSetup.getCurrentMap().deletePoint(index);
         				pointNames.remove(index);
         				alreadyDelete = true;
@@ -400,16 +406,8 @@ public class MainScreen implements MapComponentInitializedListener {
         	}
         });
         
-        // Reload GoogleMap instance on button click (for when map does not load automatically)
-        reloadPageMenuItem.setOnAction(new EventHandler<ActionEvent>() {
-        	@Override
-        	public void handle(ActionEvent event) {
-        		mapView.getWebview().getEngine().reload();
-        	}
-        });
-        
         // Add MenuItem to ContextMenu
-        mapContextMenu.getItems().addAll(addMarkerMenuItem, removeMarkerMenuItem, reloadPageMenuItem);
+        mapContextMenu.getItems().addAll(addMarkerMenuItem, removeMarkerMenuItem);
  
         // When user right-click on List View of meals
         mapView.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
@@ -418,6 +416,14 @@ public class MainScreen implements MapComponentInitializedListener {
                 mapContextMenu.show(ui_Setup.window, event.getScreenX(), event.getScreenY());
             }
         });
+        
+        Button refreshMap = new Button("Load Map");
+        GridPane.setHalignment(setupPageButton, HPos.CENTER);
+        refreshMap.setOnAction(e -> {
+        	mapView.getWebview().getEngine().reload();
+        });
+        mapLayout.add(refreshMap, 2, 3);
+        mapView.getChildren().add(mapLayout);
 
 		// change the size of buttons
 		setupPageButton.setPrefSize(150, 50);
@@ -468,6 +474,7 @@ public class MainScreen implements MapComponentInitializedListener {
 	            .zoomControl(false)
 	            .zoom(10);
 	
+	    mapView.getChildren().remove(1);
 	    map = mapView.createMap(mapOptions);
 	    
 	    // Save latitude and longitude of mouse right-click for use in add/delete point functionality (look above)
