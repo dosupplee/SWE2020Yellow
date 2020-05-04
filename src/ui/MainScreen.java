@@ -178,7 +178,7 @@ public class MainScreen implements MapComponentInitializedListener {
 			selectSetupFile.setInitialFileName(ui_Setup.curSetup.getCurrentMap().getMapName());
 			selectSetupFile.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
 			
-			File selectedSetupFile = selectSetupFile.showOpenDialog(ui_Setup.window);
+			File selectedSetupFile = selectSetupFile.showSaveDialog(ui_Setup.window);
 			if (selectedSetupFile != null) {
 				ui_Setup.curSetup.getCurrentMap().saveMap(selectedSetupFile.getName());
 			}
