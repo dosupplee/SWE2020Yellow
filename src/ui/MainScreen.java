@@ -474,7 +474,9 @@ public class MainScreen implements MapComponentInitializedListener {
 	            .zoomControl(false)
 	            .zoom(10);
 	
-	    mapView.getChildren().remove(1);
+	    if (mapView.getChildren().size() > 1) {
+	    	mapView.getChildren().remove(1);
+	    }
 	    map = mapView.createMap(mapOptions);
 	    
 	    // Save latitude and longitude of mouse right-click for use in add/delete point functionality (look above)
