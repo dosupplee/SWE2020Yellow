@@ -180,7 +180,7 @@ public class MainScreen implements MapComponentInitializedListener {
 			
 			File selectedSetupFile = selectSetupFile.showSaveDialog(ui_Setup.window);
 			if (selectedSetupFile != null) {
-				ui_Setup.curSetup.getCurrentMap().saveMap(selectedSetupFile.getName());
+				ui_Setup.curSetup.getCurrentMap().saveMap(selectedSetupFile);
 			}
 		});
 
